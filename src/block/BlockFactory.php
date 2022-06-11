@@ -36,6 +36,7 @@ use pocketmine\block\tile\Bed as TileBed;
 use pocketmine\block\tile\Bell as TileBell;
 use pocketmine\block\tile\BlastFurnace as TileBlastFurnace;
 use pocketmine\block\tile\BrewingStand as TileBrewingStand;
+use pocketmine\block\tile\Campfire as TileCampfire;
 use pocketmine\block\tile\Chest as TileChest;
 use pocketmine\block\tile\Comparator as TileComparator;
 use pocketmine\block\tile\DaylightSensor as TileDaylightSensor;
@@ -155,6 +156,7 @@ class BlockFactory{
 
 		$chestBreakInfo = new BreakInfo(2.5, ToolType::AXE);
 		$this->registerAllMeta(new Chest(new BID(Ids::CHEST, 0, null, TileChest::class), "Chest", $chestBreakInfo));
+		$this->registerAllMeta(new Campfire(new BID(Ids::CAMPFIRE, 0, ItemIds::CAMPFIRE, TileCampfire::class), "Campfire", new BreakInfo(5.0, ToolType::AXE)));
 		$this->registerAllMeta(new Clay(new BID(Ids::CLAY_BLOCK, 0), "Clay Block", new BreakInfo(0.6, ToolType::SHOVEL)));
 		$this->registerAllMeta(new Coal(new BID(Ids::COAL_BLOCK, 0), "Coal Block", new BreakInfo(5.0, ToolType::PICKAXE, ToolTier::WOOD()->getHarvestLevel(), 30.0)));
 		$this->registerAllMeta(new CoalOre(new BID(Ids::COAL_ORE, 0), "Coal Ore", new BreakInfo(3.0, ToolType::PICKAXE, ToolTier::WOOD()->getHarvestLevel())));
@@ -621,7 +623,6 @@ class BlockFactory{
 
 		//region --- auto-generated TODOs for bedrock-1.11.0 ---
 		//TODO: minecraft:bubble_column
-		//TODO: minecraft:campfire
 		//TODO: minecraft:cartography_table
 		//TODO: minecraft:cauldron
 		//TODO: minecraft:chain_command_block

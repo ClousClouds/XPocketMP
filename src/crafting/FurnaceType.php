@@ -25,6 +25,7 @@ namespace pocketmine\crafting;
 
 use pocketmine\utils\EnumTrait;
 use pocketmine\world\sound\BlastFurnaceSound;
+use pocketmine\world\sound\CampfireSound;
 use pocketmine\world\sound\FurnaceSound;
 use pocketmine\world\sound\SmokerSound;
 use pocketmine\world\sound\Sound;
@@ -36,6 +37,7 @@ use pocketmine\world\sound\Sound;
  * @generate-registry-docblock
  *
  * @method static FurnaceType BLAST_FURNACE()
+ * @method static FurnaceType CAMPFIRE()
  * @method static FurnaceType FURNACE()
  * @method static FurnaceType SMOKER()
  */
@@ -49,6 +51,7 @@ final class FurnaceType{
 			new self("furnace", 200, new FurnaceSound()),
 			new self("blast_furnace", 100, new BlastFurnaceSound()),
 			new self("smoker", 100, new SmokerSound()),
+			new self("campfire", 600, new CampfireSound()),
 		);
 	}
 

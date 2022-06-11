@@ -217,6 +217,7 @@ class ItemFactory{
 		$this->register(new ItemBlock(new IID(Ids::REPEATER, 0), Blocks::REDSTONE_REPEATER()));
 		$this->register(new ItemBlock(new IID(Ids::SPRUCE_DOOR, 0), Blocks::SPRUCE_DOOR()));
 		$this->register(new ItemBlock(new IID(Ids::SUGARCANE, 0), Blocks::SUGARCANE()));
+		$this->register(new ItemBlock(new IID(Ids::CAMPFIRE_ITEM, 0), Blocks::CAMPFIRE()));
 
 		//the meta values for buckets are intentionally hardcoded because block IDs will change in the future
 		$waterBucket = new LiquidBucket(new IID(Ids::BUCKET, 8), "Water Bucket", Blocks::WATER());
