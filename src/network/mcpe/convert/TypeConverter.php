@@ -25,6 +25,7 @@ namespace pocketmine\network\mcpe\convert;
 
 use pocketmine\block\BlockLegacyIds;
 use pocketmine\block\inventory\AnvilInventory;
+use pocketmine\block\inventory\BeaconInventory;
 use pocketmine\block\inventory\CraftingTableInventory;
 use pocketmine\block\inventory\EnchantInventory;
 use pocketmine\block\inventory\LoomInventory;
@@ -295,6 +296,9 @@ class TypeConverter{
 						if($slotMap !== null){
 							$window = $current;
 							$slot = $slotMap[$pSlot] ?? null;
+						}elseif($current instanceof BeaconInventory){
+							$window = $current;
+							$slot = BeaconInventory::SLOT_INPUT;
 						}
 					}
 					if($slot === null){

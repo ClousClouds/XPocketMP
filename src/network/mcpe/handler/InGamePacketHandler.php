@@ -24,12 +24,16 @@ declare(strict_types=1);
 namespace pocketmine\network\mcpe\handler;
 
 use pocketmine\block\BaseSign;
+use pocketmine\block\Beacon;
+use pocketmine\block\inventory\BeaconInventory;
 use pocketmine\block\ItemFrame;
 use pocketmine\block\Lectern;
 use pocketmine\block\utils\SignText;
+use pocketmine\data\bedrock\EffectIdMap;
 use pocketmine\entity\animation\ConsumingItemAnimation;
 use pocketmine\entity\Attribute;
 use pocketmine\entity\InvalidSkinException;
+use pocketmine\event\block\BeaconActivateEvent;
 use pocketmine\event\player\PlayerEditBookEvent;
 use pocketmine\inventory\transaction\action\InventoryAction;
 use pocketmine\inventory\transaction\CraftingTransaction;
@@ -677,6 +681,39 @@ class InGamePacketHandler extends PacketHandler{
 			}
 
 			$this->session->getLogger()->debug("Invalid sign update data: " . base64_encode($packet->nbt->getEncodedNbt()));
+		}elseif($block instanceof Beacon){
+			$inventory = $this->player->getCurrentWindow();
+			if(!($inventory instanceof BeaconInventory)){
+				return false;
+			}
+			$itemId = $inventory->getInput()->getId();
+			if(!isset(Beacon::ALLOWED_ITEM_IDS[$itemId])){
+				throw new PacketHandlingException("Invalid input $itemId");
+			}
+
+			if(($beaconLevel = $block->getBeaconLevel()) > 0 && $block->viewSky()){
+				$allowedEffects = $block->getAllowedEffect($block->getBeaconLevel());
+				$primaryEffect = EffectIdMap::getInstance()->fromId($nbt->getInt("primary", 0));
+				if($primaryEffect !== null && in_array($primaryEffect, $allowedEffects, true)){
+					$event = new BeaconActivateEvent($block, $primaryEffect);
+					$secondaryEffect = EffectIdMap::getInstance()->fromId($nbt->getInt("secondary", 0));
+					if($secondaryEffect !== null && in_array($secondaryEffect, $allowedEffects, true) && $beaconLevel == Beacon::MAX_LEVEL_BEACON){
+						$event->setSecondaryEffect($secondaryEffect);
+					}
+					$event->call();
+					if(!$event->isCancelled()){
+						$block->setPrimaryEffect($event->getPrimaryEffect());
+						$block->setSecondaryEffect($event->getSecondaryEffect());
+						$item = $inventory->getInput();
+						$item->pop();
+						$inventory->setInput($item);
+						$world = $block->getPosition()->getWorld();
+						$world->setBlock($pos, $block);
+						$world->scheduleDelayedBlockUpdate($pos, 20);
+						return true;
+					}
+				}
+			}
 		}
 
 		return false;
