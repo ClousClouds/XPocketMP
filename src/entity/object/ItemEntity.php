@@ -325,4 +325,10 @@ class ItemEntity extends Entity{
 		}
 		$this->flagForDespawn();
 	}
+
+	protected function onDeath() : void{
+		foreach($this->item->getContainedItems() as $item){
+			$this->getWorld()->dropItem($this->location, $item);
+		}
+	}
 }
