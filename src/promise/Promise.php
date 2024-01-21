@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace pocketmine\promise;
 
+use function count;
 use function spl_object_id;
 
 /**
@@ -56,5 +57,56 @@ final class Promise{
 		//TODO: perhaps this should return true when rejected? currently there's no way to tell if a promise was
 		//rejected or just hasn't been resolved yet
 		return $this->shared->state === true;
+	}
+
+	/**
+	 * Returns a promise that will resolve only once all the Promises in
+	 * `$promises` have resolved. The resolution value of the returned promise
+	 * will be an array containing the resolution values of each Promises in
+	 * `$promises` indexed by the respective Promises' array keys.
+	 *
+	 * @template TPromiseValue
+	 * @template TKey of array-key
+	 * @phpstan-param array<TKey, Promise<TPromiseValue>> $promises
+	 *
+	 * @phpstan-return Promise<array<TKey, TPromiseValue>>
+	 */
+	public static function all(array $promises) : Promise {
+		/** @phpstan-var PromiseResolver<array<TKey, TPromiseValue>> $resolver */
+		$resolver = new PromiseResolver();
+		$values = [];
+		$toResolve = count($promises);
+		$continue = true;
+
+		foreach($promises as $key => $promise){
+			$promise->onCompletion(
+				function(mixed $value) use ($resolver, $key, &$toResolve, &$continue, &$values) : void{
+					$values[$key] = $value;
+
+					$toResolve--;
+					if($toResolve === 0 && $continue){
+						$resolver->resolve($values);
+						$continue = false;
+					}
+				},
+				function() use ($resolver, &$continue) : void{
+					if($continue){
+						$continue = false;
+						$resolver->reject();
+					}
+				}
+			);
+
+			if(!$continue){
+				break;
+			}
+		}
+
+		if($toResolve === 0 && $continue){
+			$continue = false;
+			$resolver->resolve($values);
+		}
+
+		return $resolver->getPromise();
 	}
 }
