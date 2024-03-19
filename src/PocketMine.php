@@ -26,25 +26,32 @@ namespace pocketmine {
 	use Composer\InstalledVersions;
 	use pocketmine\errorhandler\ErrorToExceptionHandler;
 	use pocketmine\thread\ThreadManager;
+	use pocketmine\thread\ThreadSafeClassLoader;
 	use pocketmine\utils\Filesystem;
 	use pocketmine\utils\MainLogger;
 	use pocketmine\utils\Process;
 	use pocketmine\utils\ServerKiller;
 	use pocketmine\utils\Terminal;
 	use pocketmine\utils\Timezone;
+	use pocketmine\utils\Utils;
 	use pocketmine\wizard\SetupWizard;
-	use Webmozart\PathUtil\Path;
+	use Symfony\Component\Filesystem\Path;
 	use function defined;
 	use function extension_loaded;
+	use function function_exists;
+	use function getcwd;
+	use function is_dir;
+	use function mkdir;
 	use function phpversion;
 	use function preg_match;
 	use function preg_quote;
-	use function strpos;
+	use function realpath;
 	use function version_compare;
+	use const DIRECTORY_SEPARATOR;
 
 	require_once __DIR__ . '/VersionInfo.php';
 
-	const MIN_PHP_VERSION = "8.0.0";
+	const MIN_PHP_VERSION = "8.1.0";
 
 	/**
 	 * @param string $message
@@ -97,7 +104,7 @@ namespace pocketmine {
 			"openssl" => "OpenSSL",
 			"pcre" => "PCRE",
 			"phar" => "Phar",
-			"pthreads" => "pthreads",
+			"pmmpthread" => "pmmpthread",
 			"reflection" => "Reflection",
 			"sockets" => "Sockets",
 			"spl" => "SPL",
@@ -112,18 +119,13 @@ namespace pocketmine {
 			}
 		}
 
-		if(extension_loaded("pthreads")){
-			$pthreads_version = phpversion("pthreads");
-			if(substr_count($pthreads_version, ".") < 2){
-				$pthreads_version = "0.$pthreads_version";
-			}
-			if(version_compare($pthreads_version, "4.0.0") < 0 || version_compare($pthreads_version, "5.0.0") > 0){
-				$messages[] = "pthreads ^4.0.0 is required, while you have $pthreads_version.";
+		if(($pmmpthread_version = phpversion("pmmpthread")) !== false){
+			if(version_compare($pmmpthread_version, "6.0.7") < 0 || version_compare($pmmpthread_version, "7.0.0") >= 0){
+				$messages[] = "pmmpthread ^6.0.7 is required, while you have $pmmpthread_version.";
 			}
 		}
 
-		if(extension_loaded("leveldb")){
-			$leveldb_version = phpversion("leveldb");
+		if(($leveldb_version = phpversion("leveldb")) !== false){
 			if(version_compare($leveldb_version, "0.2.1") < 0){
 				$messages[] = "php-leveldb >= 0.2.1 is required, while you have $leveldb_version.";
 			}
@@ -140,6 +142,13 @@ namespace pocketmine {
 			preg_match("/^" . preg_quote($wantedVersionLock, "/") . "\.\d+(?:-dev)?$/", $chunkutils2_version) === 0 //lock in at ^0.2, optionally at a patch release
 		)){
 			$messages[] = "chunkutils2 ^$wantedVersionMin is required, while you have $chunkutils2_version.";
+		}
+
+		if(($libdeflate_version = phpversion("libdeflate")) !== false){
+			//make sure level 0 compression is available
+			if(version_compare($libdeflate_version, "0.2.0") < 0 || version_compare($libdeflate_version, "0.3.0") >= 0){
+				$messages[] = "php-libdeflate ^0.2.0 is required, while you have $libdeflate_version.";
+			}
 		}
 
 		if(extension_loaded("pocketmine")){
@@ -160,7 +169,7 @@ namespace pocketmine {
 		if(PHP_DEBUG !== 0){
 			$logger->warning("This PHP binary was compiled in debug mode. This has a major impact on performance.");
 		}
-		if(extension_loaded("xdebug")){
+		if(extension_loaded("xdebug") && (!function_exists('xdebug_info') || count(xdebug_info('mode')) !== 0)){
 			$logger->warning("Xdebug extension is enabled. This has a major impact on performance.");
 		}
 		if(((int) ini_get('zend.assertions')) !== -1){
@@ -176,10 +185,10 @@ namespace pocketmine {
 
 
 	--------------------------------------- ! WARNING ! ---------------------------------------
-	You're using PHP 8.0 with JIT enabled. This provides significant performance improvements.
+	You're using PHP with JIT enabled. This provides significant performance improvements.
 	HOWEVER, it is EXPERIMENTAL, and has already been seen to cause weird and unexpected bugs.
 	Proceed with caution.
-	If you want to report any bugs, make sure to mention that you are using PHP 8.0 with JIT.
+	If you want to report any bugs, make sure to mention that you have enabled PHP JIT.
 	To turn off JIT, change `opcache.jit` to `0` in your php.ini file.
 	-------------------------------------------------------------------------------------------
 
@@ -198,6 +207,22 @@ JIT_WARNING
 		ini_set("display_startup_errors", '1');
 		ini_set("default_charset", "utf-8");
 		ini_set('assert.exception', '1');
+	}
+
+	function getopt_string(string $opt) : ?string{
+		$opts = getopt("", ["$opt:"]);
+		if(isset($opts[$opt])){
+			if(is_string($opts[$opt])){
+				return $opts[$opt];
+			}
+			if(is_array($opts[$opt])){
+				critical_error("Cannot specify --$opt multiple times");
+			}else{
+				critical_error("Missing value for --$opt");
+			}
+			exit(1);
+		}
+		return null;
 	}
 
 	/**
@@ -245,35 +270,48 @@ JIT_WARNING
 				exit(1);
 			}
 		}
-		if(extension_loaded('parallel')){
-			\parallel\bootstrap(\pocketmine\COMPOSER_AUTOLOADER_PATH);
-		}
 
 		ErrorToExceptionHandler::set();
 
-		$opts = getopt("", ["data:", "plugins:", "no-wizard", "enable-ansi", "disable-ansi"]);
-
-		$dataPath = isset($opts["data"]) ? $opts["data"] . DIRECTORY_SEPARATOR : realpath(getcwd()) . DIRECTORY_SEPARATOR;
-		$pluginPath = isset($opts["plugins"]) ? $opts["plugins"] . DIRECTORY_SEPARATOR : realpath(getcwd()) . DIRECTORY_SEPARATOR . "plugins" . DIRECTORY_SEPARATOR;
+		$cwd = Utils::assumeNotFalse(realpath(Utils::assumeNotFalse(getcwd())));
+		$dataPath = getopt_string(BootstrapOptions::DATA) ?? $cwd;
+		$pluginPath = getopt_string(BootstrapOptions::PLUGINS) ?? $cwd . DIRECTORY_SEPARATOR . "plugins";
 		Filesystem::addCleanedPath($pluginPath, Filesystem::CLEAN_PATH_PLUGINS_PREFIX);
 
-		if(!file_exists($dataPath)){
-			mkdir($dataPath, 0777, true);
+		if(!@mkdir($dataPath, 0777, true) && !is_dir($dataPath)){
+			critical_error("Unable to create/access data directory at $dataPath. Check that the target location is accessible by the current user.");
+			exit(1);
 		}
+		//this has to be done after we're sure the data path exists
+		$dataPath = realpath($dataPath) . DIRECTORY_SEPARATOR;
 
 		$lockFilePath = Path::join($dataPath, 'server.lock');
-		if(($pid = Filesystem::createLockFile($lockFilePath)) !== null){
+		try{
+			$pid = Filesystem::createLockFile($lockFilePath);
+		}catch(\InvalidArgumentException $e){
+			critical_error($e->getMessage());
+			critical_error("Please ensure that there is enough space on the disk and that the current user has read/write permissions to the selected data directory $dataPath.");
+			exit(1);
+		}
+		if($pid !== null){
 			critical_error("Another " . VersionInfo::NAME . " instance (PID $pid) is already using this folder (" . realpath($dataPath) . ").");
 			critical_error("Please stop the other server first before running a new one.");
 			exit(1);
 		}
 
+		if(!@mkdir($pluginPath, 0777, true) && !is_dir($pluginPath)){
+			critical_error("Unable to create plugin directory at $pluginPath. Check that the target location is accessible by the current user.");
+			exit(1);
+		}
+		$pluginPath = realpath($pluginPath) . DIRECTORY_SEPARATOR;
+
 		//Logger has a dependency on timezone
 		Timezone::init();
 
-		if(isset($opts["enable-ansi"])){
+		$opts = getopt("", [BootstrapOptions::NO_WIZARD, BootstrapOptions::ENABLE_ANSI, BootstrapOptions::DISABLE_ANSI]);
+		if(isset($opts[BootstrapOptions::ENABLE_ANSI])){
 			Terminal::init(true);
-		}elseif(isset($opts["disable-ansi"])){
+		}elseif(isset($opts[BootstrapOptions::DISABLE_ANSI])){
 			Terminal::init(false);
 		}else{
 			Terminal::init();
@@ -286,7 +324,7 @@ JIT_WARNING
 
 		$exitCode = 0;
 		do{
-			if(!file_exists(Path::join($dataPath, "server.properties")) and !isset($opts["no-wizard"])){
+			if(!file_exists(Path::join($dataPath, "server.properties")) && !isset($opts[BootstrapOptions::NO_WIZARD])){
 				$installer = new SetupWizard($dataPath);
 				if(!$installer->run()){
 					$exitCode = -1;
@@ -297,7 +335,7 @@ JIT_WARNING
 			/*
 			 * We now use the Composer autoloader, but this autoloader is still for loading plugins.
 			 */
-			$autoloader = new \BaseClassLoader();
+			$autoloader = new ThreadSafeClassLoader();
 			$autoloader->register(false);
 
 			new Server($autoloader, $logger, $dataPath, $pluginPath);
@@ -305,12 +343,12 @@ JIT_WARNING
 			$logger->info("Stopping other threads");
 
 			$killer = new ServerKiller(8);
-			$killer->start(PTHREADS_INHERIT_NONE);
+			$killer->start();
 			usleep(10000); //Fixes ServerKiller not being able to start on single-core machines
 
 			if(ThreadManager::getInstance()->stopAll() > 0){
 				$logger->debug("Some threads could not be stopped, performing a force-kill");
-				Process::kill(Process::pid(), true);
+				Process::kill(Process::pid());
 			}
 		}while(false);
 
