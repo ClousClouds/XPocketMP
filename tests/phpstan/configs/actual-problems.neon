@@ -1,1176 +1,2427 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^Parameter \\#3 \\$subject of function preg_replace expects array\\|string, string\\|null given\\.$#"
+			count: 2
+			path: ../../../build/make-release.php
+
+		-
+			message: "#^Parameter \\#1 \\$strings of function pocketmine\\\\build\\\\server_phar\\\\preg_quote_array expects array\\<string\\>, array\\<int, string\\|false\\> given\\.$#"
+			count: 1
+			path: ../../../build/server-phar.php
+
+		-
+			message: "#^Do\\-while loop condition is always false\\.$#"
+			count: 1
+			path: ../../../src/PocketMine.php
+
+		-
+			message: "#^Parameter \\#1 \\$array of static method pocketmine\\\\plugin\\\\PluginGraylist\\:\\:fromArray\\(\\) expects array, mixed given\\.$#"
+			count: 1
+			path: ../../../src/Server.php
+
+		-
+			message: "#^Cannot cast mixed to int\\.$#"
+			count: 2
+			path: ../../../src/ServerConfigGroup.php
+
+		-
+			message: "#^Cannot cast mixed to string\\.$#"
+			count: 2
+			path: ../../../src/ServerConfigGroup.php
+
+		-
+			message: "#^Cannot access offset 'git' on mixed\\.$#"
+			count: 1
+			path: ../../../src/VersionInfo.php
+
+		-
+			message: "#^Method pocketmine\\\\VersionInfo\\:\\:GIT_HASH\\(\\) should return string but returns mixed\\.$#"
+			count: 1
+			path: ../../../src/VersionInfo.php
+
+		-
+			message: "#^Static property pocketmine\\\\VersionInfo\\:\\:\\$gitHash \\(string\\|null\\) does not accept mixed\\.$#"
+			count: 1
+			path: ../../../src/VersionInfo.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 3
+			path: ../../../src/block/Block.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 3
+			path: ../../../src/block/Block.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\format\\\\Chunk\\:\\:setBlockStateId\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Block.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 3
+			path: ../../../src/block/Block.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Cactus.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of method pocketmine\\\\world\\\\World\\:\\:isInWorld\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Cactus.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Cactus.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\World\\:\\:isInWorld\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Cactus.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Cactus.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of method pocketmine\\\\world\\\\World\\:\\:isInWorld\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Cactus.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of method pocketmine\\\\world\\\\World\\:\\:isInWorld\\(\\) expects int, float\\|int given\\.$#"
+			count: 2
+			path: ../../../src/block/ChorusFlower.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\World\\:\\:isInWorld\\(\\) expects int, float\\|int given\\.$#"
+			count: 2
+			path: ../../../src/block/ChorusFlower.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of method pocketmine\\\\world\\\\World\\:\\:isInWorld\\(\\) expects int, float\\|int given\\.$#"
+			count: 2
+			path: ../../../src/block/ChorusFlower.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of method pocketmine\\\\world\\\\World\\:\\:getRealBlockSkyLightAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/DaylightSensor.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\World\\:\\:getRealBlockSkyLightAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/DaylightSensor.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of method pocketmine\\\\world\\\\World\\:\\:getRealBlockSkyLightAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/DaylightSensor.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/DragonEgg.php
+
+		-
+			message: "#^Parameter \\#1 \\$xDiff of class pocketmine\\\\world\\\\particle\\\\DragonEggTeleportParticle constructor expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/DragonEgg.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int\\<\\-64, 319\\> given\\.$#"
+			count: 1
+			path: ../../../src/block/DragonEgg.php
+
+		-
+			message: "#^Parameter \\#2 \\$yDiff of class pocketmine\\\\world\\\\particle\\\\DragonEggTeleportParticle constructor expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/DragonEgg.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/DragonEgg.php
+
+		-
+			message: "#^Parameter \\#3 \\$zDiff of class pocketmine\\\\world\\\\particle\\\\DragonEggTeleportParticle constructor expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/DragonEgg.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Fire.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of method pocketmine\\\\world\\\\World\\:\\:isInWorld\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Fire.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Fire.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\World\\:\\:isInWorld\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Fire.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Fire.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of method pocketmine\\\\world\\\\World\\:\\:isInWorld\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Fire.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/FrostedIce.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of method pocketmine\\\\world\\\\World\\:\\:getHighestAdjacentFullLightAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/FrostedIce.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/FrostedIce.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\World\\:\\:getHighestAdjacentFullLightAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/FrostedIce.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/FrostedIce.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of method pocketmine\\\\world\\\\World\\:\\:getHighestAdjacentFullLightAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/FrostedIce.php
+
+		-
+			message: "#^Parameter \\#1 \\$min of function mt_rand expects int, float\\|int given\\.$#"
+			count: 3
+			path: ../../../src/block/Grass.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Grass.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of method pocketmine\\\\world\\\\World\\:\\:getFullLightAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Grass.php
+
+		-
+			message: "#^Parameter \\#2 \\$max of function mt_rand expects int, float\\|int given\\.$#"
+			count: 3
+			path: ../../../src/block/Grass.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Grass.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\World\\:\\:getFullLightAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Grass.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Grass.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of method pocketmine\\\\world\\\\World\\:\\:getFullLightAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Grass.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of method pocketmine\\\\world\\\\World\\:\\:getHighestAdjacentBlockLight\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Ice.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\World\\:\\:getHighestAdjacentBlockLight\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Ice.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of method pocketmine\\\\world\\\\World\\:\\:getHighestAdjacentBlockLight\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Ice.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of static method pocketmine\\\\world\\\\World\\:\\:blockHash\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Leaves.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of static method pocketmine\\\\world\\\\World\\:\\:blockHash\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Leaves.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of static method pocketmine\\\\world\\\\World\\:\\:blockHash\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Leaves.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of method pocketmine\\\\world\\\\World\\:\\:isInWorld\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Liquid.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\World\\:\\:isInWorld\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Liquid.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of method pocketmine\\\\world\\\\World\\:\\:isInWorld\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Liquid.php
+
+		-
+			message: "#^Parameter \\#1 \\$min of function mt_rand expects int, float\\|int given\\.$#"
+			count: 3
+			path: ../../../src/block/Mycelium.php
+
+		-
+			message: "#^Parameter \\#2 \\$max of function mt_rand expects int, float\\|int given\\.$#"
+			count: 3
+			path: ../../../src/block/Mycelium.php
+
+		-
 			message: "#^Parameter \\#1 \\$start of method pocketmine\\\\utils\\\\Random\\:\\:nextRange\\(\\) expects int, float\\|int given\\.$#"
 			count: 2
-			path: ../../src/block/Nylium.php
+			path: ../../../src/block/Nylium.php
 
 		-
 			message: "#^Parameter \\#2 \\$end of method pocketmine\\\\utils\\\\Random\\:\\:nextRange\\(\\) expects int, float\\|int given\\.$#"
 			count: 2
-			path: ../../src/block/Nylium.php
+			path: ../../../src/block/Nylium.php
 
 		-
 			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
 			count: 2
-			path: ../../src/block/Nylium.php
+			path: ../../../src/block/Nylium.php
 
 		-
 			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\World\\:\\:setBlockAt\\(\\) expects int, float\\|int given\\.$#"
 			count: 1
-			path: ../../src/block/Nylium.php
+			path: ../../../src/block/Nylium.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of method pocketmine\\\\world\\\\World\\:\\:getFullLightAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/RedMushroom.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\World\\:\\:getFullLightAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/RedMushroom.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of method pocketmine\\\\world\\\\World\\:\\:getFullLightAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/RedMushroom.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of method pocketmine\\\\world\\\\World\\:\\:getBlockLightAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/SnowLayer.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\World\\:\\:getBlockLightAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/SnowLayer.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of method pocketmine\\\\world\\\\World\\:\\:getBlockLightAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/SnowLayer.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Sugarcane.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of method pocketmine\\\\world\\\\World\\:\\:isInWorld\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Sugarcane.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Sugarcane.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\World\\:\\:isInWorld\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Sugarcane.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Sugarcane.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of method pocketmine\\\\world\\\\World\\:\\:isInWorld\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/Sugarcane.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of class pocketmine\\\\math\\\\Vector3 constructor expects float\\|int, int\\|null given\\.$#"
+			count: 1
+			path: ../../../src/block/tile/Chest.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of method pocketmine\\\\world\\\\World\\:\\:getTileAt\\(\\) expects int, int\\|null given\\.$#"
+			count: 1
+			path: ../../../src/block/tile/Chest.php
+
+		-
+			message: "#^Parameter \\#2 \\$value of method pocketmine\\\\nbt\\\\tag\\\\CompoundTag\\:\\:setInt\\(\\) expects int, int\\|null given\\.$#"
+			count: 4
+			path: ../../../src/block/tile/Chest.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\World\\:\\:getTileAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/tile/Chest.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of class pocketmine\\\\math\\\\Vector3 constructor expects float\\|int, int\\|null given\\.$#"
+			count: 1
+			path: ../../../src/block/tile/Chest.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of method pocketmine\\\\world\\\\World\\:\\:getTileAt\\(\\) expects int, int\\|null given\\.$#"
+			count: 1
+			path: ../../../src/block/tile/Chest.php
+
+		-
+			message: "#^Property pocketmine\\\\block\\\\tile\\\\Chest\\:\\:\\$pairX \\(int\\|null\\) does not accept float\\|int\\.$#"
+			count: 2
+			path: ../../../src/block/tile/Chest.php
+
+		-
+			message: "#^Property pocketmine\\\\block\\\\tile\\\\Chest\\:\\:\\$pairZ \\(int\\|null\\) does not accept float\\|int\\.$#"
+			count: 2
+			path: ../../../src/block/tile/Chest.php
+
+		-
+			message: "#^Constant pocketmine\\\\block\\\\tile\\\\MobHead\\:\\:TAG_MOUTH_MOVING is unused\\.$#"
+			count: 1
+			path: ../../../src/block/tile/MobHead.php
+
+		-
+			message: "#^Constant pocketmine\\\\block\\\\tile\\\\MobHead\\:\\:TAG_MOUTH_TICK_COUNT is unused\\.$#"
+			count: 1
+			path: ../../../src/block/tile/MobHead.php
+
+		-
+			message: "#^Parameter \\#2 \\$value of method pocketmine\\\\nbt\\\\tag\\\\CompoundTag\\:\\:setInt\\(\\) expects int, float\\|int given\\.$#"
+			count: 3
+			path: ../../../src/block/tile/Spawnable.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of method pocketmine\\\\world\\\\World\\:\\:getPotentialLightAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/utils/CropGrowthHelper.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\World\\:\\:getPotentialLightAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/utils/CropGrowthHelper.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of method pocketmine\\\\world\\\\World\\:\\:getPotentialLightAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/block/utils/CropGrowthHelper.php
+
+		-
+			message: "#^Cannot call method addParticle\\(\\) on pocketmine\\\\world\\\\World\\|null\\.$#"
+			count: 1
+			path: ../../../src/command/defaults/ParticleCommand.php
+
+		-
+			message: "#^Cannot call method getSeed\\(\\) on pocketmine\\\\world\\\\World\\|null\\.$#"
+			count: 1
+			path: ../../../src/command/defaults/SeedCommand.php
+
+		-
+			message: "#^Cannot call method setSpawnLocation\\(\\) on pocketmine\\\\world\\\\World\\|null\\.$#"
+			count: 1
+			path: ../../../src/command/defaults/SetWorldSpawnCommand.php
+
+		-
+			message: "#^Cannot call method getTime\\(\\) on pocketmine\\\\world\\\\World\\|null\\.$#"
+			count: 1
+			path: ../../../src/command/defaults/TimeCommand.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of function fclose expects resource, resource\\|false given\\.$#"
+			count: 2
+			path: ../../../src/command/defaults/TimingsCommand.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of function fseek expects resource, resource\\|false given\\.$#"
+			count: 1
+			path: ../../../src/command/defaults/TimingsCommand.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of function fwrite expects resource, resource\\|false given\\.$#"
+			count: 1
+			path: ../../../src/command/defaults/TimingsCommand.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of function stream_get_contents expects resource, resource\\|false given\\.$#"
+			count: 1
+			path: ../../../src/command/defaults/TimingsCommand.php
 
 		-
 			message: "#^Access to an offset on an unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 1
-			path: ../../src/console/ConsoleReaderChildProcess.php
+			path: ../../../src/console/ConsoleReaderChildProcess.php
 
 		-
 			message: "#^Access to constant INHERIT_NONE on an unknown class pmmp\\\\thread\\\\Thread\\.$#"
 			count: 1
-			path: ../../src/console/ConsoleReaderChildProcess.php
+			path: ../../../src/console/ConsoleReaderChildProcess.php
 
 		-
-			message: "#^Call to an undefined method class@anonymous/console/ConsoleReaderChildProcess\\.php\\:52\\:\\:start\\(\\)\\.$#"
+			message: "#^Call to an undefined method class@anonymous/src/console/ConsoleReaderChildProcess\\.php\\:52\\:\\:start\\(\\)\\.$#"
 			count: 1
-			path: ../../src/console/ConsoleReaderChildProcess.php
+			path: ../../../src/console/ConsoleReaderChildProcess.php
 
 		-
 			message: "#^Call to method notify\\(\\) on an unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 1
-			path: ../../src/console/ConsoleReaderChildProcess.php
+			path: ../../../src/console/ConsoleReaderChildProcess.php
 
 		-
 			message: "#^Call to method shift\\(\\) on an unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 1
-			path: ../../src/console/ConsoleReaderChildProcess.php
+			path: ../../../src/console/ConsoleReaderChildProcess.php
 
 		-
 			message: "#^Call to method synchronized\\(\\) on an unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 2
-			path: ../../src/console/ConsoleReaderChildProcess.php
+			path: ../../../src/console/ConsoleReaderChildProcess.php
 
 		-
 			message: "#^Call to method wait\\(\\) on an unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 1
-			path: ../../src/console/ConsoleReaderChildProcess.php
+			path: ../../../src/console/ConsoleReaderChildProcess.php
 
 		-
 			message: "#^Instantiated class pmmp\\\\thread\\\\ThreadSafeArray not found\\.$#"
 			count: 1
-			path: ../../src/console/ConsoleReaderChildProcess.php
+			path: ../../../src/console/ConsoleReaderChildProcess.php
 
 		-
 			message: "#^PHPDoc tag @var for variable \\$channel contains unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 1
-			path: ../../src/console/ConsoleReaderChildProcess.php
+			path: ../../../src/console/ConsoleReaderChildProcess.php
 
 		-
 			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, pmmp\\\\thread\\\\ThreadSafeArray\\<int, string\\> given\\.$#"
 			count: 1
-			path: ../../src/console/ConsoleReaderChildProcess.php
+			path: ../../../src/console/ConsoleReaderChildProcess.php
 
 		-
-			message: "#^Parameter \\$channel of method class@anonymous/console/ConsoleReaderChildProcess\\.php\\:52\\:\\:__construct\\(\\) has invalid type pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
+			message: "#^Parameter \\$channel of method class@anonymous/src/console/ConsoleReaderChildProcess\\.php\\:52\\:\\:__construct\\(\\) has invalid type pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 2
-			path: ../../src/console/ConsoleReaderChildProcess.php
+			path: ../../../src/console/ConsoleReaderChildProcess.php
 
 		-
-			message: "#^Property class@anonymous/console/ConsoleReaderChildProcess\\.php\\:52\\:\\:\\$channel has unknown class pmmp\\\\thread\\\\ThreadSafeArray as its type\\.$#"
+			message: "#^Property class@anonymous/src/console/ConsoleReaderChildProcess\\.php\\:52\\:\\:\\$channel has unknown class pmmp\\\\thread\\\\ThreadSafeArray as its type\\.$#"
 			count: 2
-			path: ../../src/console/ConsoleReaderChildProcess.php
+			path: ../../../src/console/ConsoleReaderChildProcess.php
+
+		-
+			message: "#^Parameter \\#1 \\$path of static method pocketmine\\\\utils\\\\Filesystem\\:\\:cleanPath\\(\\) expects string, mixed given\\.$#"
+			count: 1
+			path: ../../../src/crash/CrashDump.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/entity/Living.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/entity/Living.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/entity/Living.php
+
+		-
+			message: "#^Parameter \\#2 \\$x of method pocketmine\\\\block\\\\Block\\:\\:position\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/entity/object/FallingBlock.php
+
+		-
+			message: "#^Parameter \\#3 \\$y of method pocketmine\\\\block\\\\Block\\:\\:position\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/entity/object/FallingBlock.php
+
+		-
+			message: "#^Parameter \\#4 \\$z of method pocketmine\\\\block\\\\Block\\:\\:position\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/entity/object/FallingBlock.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/entity/object/Painting.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/entity/object/Painting.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/entity/object/Painting.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/entity/projectile/Projectile.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/entity/projectile/Projectile.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/entity/projectile/Projectile.php
+
+		-
+			message: "#^Parameter \\#2 \\$recipe of class pocketmine\\\\event\\\\inventory\\\\CraftItemEvent constructor expects pocketmine\\\\crafting\\\\CraftingRecipe, pocketmine\\\\crafting\\\\CraftingRecipe\\|null given\\.$#"
+			count: 1
+			path: ../../../src/inventory/transaction/CraftingTransaction.php
+
+		-
+			message: "#^Parameter \\#3 \\$repetitions of class pocketmine\\\\event\\\\inventory\\\\CraftItemEvent constructor expects int, int\\|null given\\.$#"
+			count: 1
+			path: ../../../src/inventory/transaction/CraftingTransaction.php
+
+		-
+			message: "#^Cannot cast mixed to int\\.$#"
+			count: 2
+			path: ../../../src/item/Item.php
 
 		-
 			message: "#^Function morton2d_encode not found\\.$#"
 			count: 1
-			path: ../../src/item/Item.php
+			path: ../../../src/item/Item.php
+
+		-
+			message: "#^Parameter \\#1 \\$buffer of method pocketmine\\\\nbt\\\\BaseNbtSerializer\\:\\:read\\(\\) expects string, mixed given\\.$#"
+			count: 1
+			path: ../../../src/item/Item.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function base64_decode expects string, mixed given\\.$#"
+			count: 1
+			path: ../../../src/item/Item.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function hex2bin expects string, mixed given\\.$#"
+			count: 1
+			path: ../../../src/item/Item.php
 
 		-
 			message: "#^Used function morton2d_encode not found\\.$#"
 			count: 1
-			path: ../../src/item/Item.php
+			path: ../../../src/item/Item.php
+
+		-
+			message: "#^Parameter \\#1 \\$result of method pocketmine\\\\network\\\\mcpe\\\\compression\\\\CompressBatchPromise\\:\\:resolve\\(\\) expects string, mixed given\\.$#"
+			count: 1
+			path: ../../../src/network/mcpe/ChunkRequestTask.php
+
+		-
+			message: "#^Cannot call method doFirstSpawn\\(\\) on pocketmine\\\\player\\\\Player\\|null\\.$#"
+			count: 1
+			path: ../../../src/network/mcpe/NetworkSession.php
+
+		-
+			message: "#^Cannot call method getAttributeMap\\(\\) on pocketmine\\\\player\\\\Player\\|null\\.$#"
+			count: 1
+			path: ../../../src/network/mcpe/NetworkSession.php
+
+		-
+			message: "#^Cannot call method getLanguage\\(\\) on pocketmine\\\\player\\\\Player\\|null\\.$#"
+			count: 4
+			path: ../../../src/network/mcpe/NetworkSession.php
+
+		-
+			message: "#^Cannot call method getLocation\\(\\) on pocketmine\\\\player\\\\Player\\|null\\.$#"
+			count: 2
+			path: ../../../src/network/mcpe/NetworkSession.php
+
+		-
+			message: "#^Cannot call method getUsedChunkStatus\\(\\) on pocketmine\\\\player\\\\Player\\|null\\.$#"
+			count: 1
+			path: ../../../src/network/mcpe/NetworkSession.php
+
+		-
+			message: "#^Cannot call method getUsername\\(\\) on pocketmine\\\\player\\\\PlayerInfo\\|null\\.$#"
+			count: 2
+			path: ../../../src/network/mcpe/NetworkSession.php
+
+		-
+			message: "#^Cannot call method getUuid\\(\\) on pocketmine\\\\player\\\\PlayerInfo\\|null\\.$#"
+			count: 1
+			path: ../../../src/network/mcpe/NetworkSession.php
+
+		-
+			message: "#^Cannot call method sendData\\(\\) on pocketmine\\\\player\\\\Player\\|null\\.$#"
+			count: 1
+			path: ../../../src/network/mcpe/NetworkSession.php
+
+		-
+			message: "#^Cannot call method setNoClientPredictions\\(\\) on pocketmine\\\\player\\\\Player\\|null\\.$#"
+			count: 2
+			path: ../../../src/network/mcpe/NetworkSession.php
+
+		-
+			message: "#^Cannot call method syncAll\\(\\) on pocketmine\\\\network\\\\mcpe\\\\InventoryManager\\|null\\.$#"
+			count: 1
+			path: ../../../src/network/mcpe/NetworkSession.php
+
+		-
+			message: "#^Parameter \\#1 \\$clientPub of class pocketmine\\\\network\\\\mcpe\\\\encryption\\\\PrepareEncryptionTask constructor expects string, string\\|null given\\.$#"
+			count: 1
+			path: ../../../src/network/mcpe/NetworkSession.php
+
+		-
+			message: "#^Parameter \\#1 \\$for of method pocketmine\\\\network\\\\mcpe\\\\NetworkSession\\:\\:syncAbilities\\(\\) expects pocketmine\\\\player\\\\Player, pocketmine\\\\player\\\\Player\\|null given\\.$#"
+			count: 2
+			path: ../../../src/network/mcpe/NetworkSession.php
+
+		-
+			message: "#^Parameter \\#1 \\$player of class pocketmine\\\\network\\\\mcpe\\\\handler\\\\DeathPacketHandler constructor expects pocketmine\\\\player\\\\Player, pocketmine\\\\player\\\\Player\\|null given\\.$#"
+			count: 1
+			path: ../../../src/network/mcpe/NetworkSession.php
+
+		-
+			message: "#^Parameter \\#1 \\$player of class pocketmine\\\\network\\\\mcpe\\\\handler\\\\InGamePacketHandler constructor expects pocketmine\\\\player\\\\Player, pocketmine\\\\player\\\\Player\\|null given\\.$#"
+			count: 2
+			path: ../../../src/network/mcpe/NetworkSession.php
+
+		-
+			message: "#^Parameter \\#1 \\$playerInfo of class pocketmine\\\\event\\\\player\\\\PlayerResourcePackOfferEvent constructor expects pocketmine\\\\player\\\\PlayerInfo, pocketmine\\\\player\\\\PlayerInfo\\|null given\\.$#"
+			count: 1
+			path: ../../../src/network/mcpe/NetworkSession.php
+
+		-
+			message: "#^Parameter \\#1 \\$target of method pocketmine\\\\command\\\\Command\\:\\:testPermissionSilent\\(\\) expects pocketmine\\\\command\\\\CommandSender, pocketmine\\\\player\\\\Player\\|null given\\.$#"
+			count: 1
+			path: ../../../src/network/mcpe/NetworkSession.php
+
+		-
+			message: "#^Parameter \\#2 \\$entity of method pocketmine\\\\network\\\\mcpe\\\\EntityEventBroadcaster\\:\\:onEntityEffectAdded\\(\\) expects pocketmine\\\\entity\\\\Living, pocketmine\\\\player\\\\Player\\|null given\\.$#"
+			count: 1
+			path: ../../../src/network/mcpe/NetworkSession.php
+
+		-
+			message: "#^Parameter \\#2 \\$entity of method pocketmine\\\\network\\\\mcpe\\\\EntityEventBroadcaster\\:\\:onEntityEffectRemoved\\(\\) expects pocketmine\\\\entity\\\\Living, pocketmine\\\\player\\\\Player\\|null given\\.$#"
+			count: 1
+			path: ../../../src/network/mcpe/NetworkSession.php
+
+		-
+			message: "#^Parameter \\#2 \\$entity of method pocketmine\\\\network\\\\mcpe\\\\EntityEventBroadcaster\\:\\:syncAttributes\\(\\) expects pocketmine\\\\entity\\\\Living, pocketmine\\\\player\\\\Player\\|null given\\.$#"
+			count: 1
+			path: ../../../src/network/mcpe/NetworkSession.php
+
+		-
+			message: "#^Parameter \\#2 \\$player of class pocketmine\\\\network\\\\mcpe\\\\handler\\\\PreSpawnPacketHandler constructor expects pocketmine\\\\player\\\\Player, pocketmine\\\\player\\\\Player\\|null given\\.$#"
+			count: 1
+			path: ../../../src/network/mcpe/NetworkSession.php
+
+		-
+			message: "#^Parameter \\#2 \\$playerInfo of method pocketmine\\\\Server\\:\\:createPlayer\\(\\) expects pocketmine\\\\player\\\\PlayerInfo, pocketmine\\\\player\\\\PlayerInfo\\|null given\\.$#"
+			count: 1
+			path: ../../../src/network/mcpe/NetworkSession.php
+
+		-
+			message: "#^Parameter \\#3 \\$inventoryManager of class pocketmine\\\\network\\\\mcpe\\\\handler\\\\InGamePacketHandler constructor expects pocketmine\\\\network\\\\mcpe\\\\InventoryManager, pocketmine\\\\network\\\\mcpe\\\\InventoryManager\\|null given\\.$#"
+			count: 2
+			path: ../../../src/network/mcpe/NetworkSession.php
+
+		-
+			message: "#^Parameter \\#4 \\$inventoryManager of class pocketmine\\\\network\\\\mcpe\\\\handler\\\\PreSpawnPacketHandler constructor expects pocketmine\\\\network\\\\mcpe\\\\InventoryManager, pocketmine\\\\network\\\\mcpe\\\\InventoryManager\\|null given\\.$#"
+			count: 1
+			path: ../../../src/network/mcpe/NetworkSession.php
+
+		-
+			message: "#^Property pocketmine\\\\network\\\\mcpe\\\\auth\\\\ProcessLoginTask\\:\\:\\$chain \\(string\\) does not accept string\\|null\\.$#"
+			count: 1
+			path: ../../../src/network/mcpe/auth/ProcessLoginTask.php
+
+		-
+			message: "#^Parameter \\#1 \\$result of method pocketmine\\\\network\\\\mcpe\\\\compression\\\\CompressBatchPromise\\:\\:resolve\\(\\) expects string, mixed given\\.$#"
+			count: 1
+			path: ../../../src/network/mcpe/compression/CompressBatchTask.php
+
+		-
+			message: "#^Property pocketmine\\\\network\\\\mcpe\\\\encryption\\\\PrepareEncryptionTask\\:\\:\\$serverPrivateKey \\(string\\) does not accept string\\|null\\.$#"
+			count: 1
+			path: ../../../src/network/mcpe/encryption/PrepareEncryptionTask.php
 
 		-
 			message: "#^Call to method shift\\(\\) on an unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 1
-			path: ../../src/network/mcpe/raklib/PthreadsChannelReader.php
+			path: ../../../src/network/mcpe/raklib/PthreadsChannelReader.php
 
 		-
 			message: "#^Parameter \\$buffer of method pocketmine\\\\network\\\\mcpe\\\\raklib\\\\PthreadsChannelReader\\:\\:__construct\\(\\) has invalid type pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 2
-			path: ../../src/network/mcpe/raklib/PthreadsChannelReader.php
+			path: ../../../src/network/mcpe/raklib/PthreadsChannelReader.php
 
 		-
 			message: "#^Property pocketmine\\\\network\\\\mcpe\\\\raklib\\\\PthreadsChannelReader\\:\\:\\$buffer has unknown class pmmp\\\\thread\\\\ThreadSafeArray as its type\\.$#"
 			count: 2
-			path: ../../src/network/mcpe/raklib/PthreadsChannelReader.php
+			path: ../../../src/network/mcpe/raklib/PthreadsChannelReader.php
 
 		-
 			message: "#^Access to an offset on an unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 1
-			path: ../../src/network/mcpe/raklib/PthreadsChannelWriter.php
+			path: ../../../src/network/mcpe/raklib/PthreadsChannelWriter.php
 
 		-
 			message: "#^Parameter \\$buffer of method pocketmine\\\\network\\\\mcpe\\\\raklib\\\\PthreadsChannelWriter\\:\\:__construct\\(\\) has invalid type pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 2
-			path: ../../src/network/mcpe/raklib/PthreadsChannelWriter.php
+			path: ../../../src/network/mcpe/raklib/PthreadsChannelWriter.php
 
 		-
 			message: "#^Property pocketmine\\\\network\\\\mcpe\\\\raklib\\\\PthreadsChannelWriter\\:\\:\\$buffer has unknown class pmmp\\\\thread\\\\ThreadSafeArray as its type\\.$#"
 			count: 2
-			path: ../../src/network/mcpe/raklib/PthreadsChannelWriter.php
+			path: ../../../src/network/mcpe/raklib/PthreadsChannelWriter.php
 
 		-
 			message: "#^Call to an undefined method pocketmine\\\\network\\\\mcpe\\\\raklib\\\\RakLibServer\\:\\:isRunning\\(\\)\\.$#"
 			count: 1
-			path: ../../src/network/mcpe/raklib/RakLibInterface.php
+			path: ../../../src/network/mcpe/raklib/RakLibInterface.php
 
 		-
 			message: "#^Instantiated class pmmp\\\\thread\\\\ThreadSafeArray not found\\.$#"
 			count: 2
-			path: ../../src/network/mcpe/raklib/RakLibInterface.php
+			path: ../../../src/network/mcpe/raklib/RakLibInterface.php
 
 		-
 			message: "#^PHPDoc tag @var for variable \\$mainToThreadBuffer contains unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 1
-			path: ../../src/network/mcpe/raklib/RakLibInterface.php
+			path: ../../../src/network/mcpe/raklib/RakLibInterface.php
 
 		-
 			message: "#^PHPDoc tag @var for variable \\$threadToMainBuffer contains unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 1
-			path: ../../src/network/mcpe/raklib/RakLibInterface.php
+			path: ../../../src/network/mcpe/raklib/RakLibInterface.php
 
 		-
 			message: "#^Access to constant INHERIT_NONE on an unknown class pmmp\\\\thread\\\\Thread\\.$#"
 			count: 1
-			path: ../../src/network/mcpe/raklib/RakLibServer.php
+			path: ../../../src/network/mcpe/raklib/RakLibServer.php
 
 		-
 			message: "#^Call to an undefined method pocketmine\\\\network\\\\mcpe\\\\raklib\\\\RakLibServer\\:\\:notify\\(\\)\\.$#"
 			count: 1
-			path: ../../src/network/mcpe/raklib/RakLibServer.php
+			path: ../../../src/network/mcpe/raklib/RakLibServer.php
 
 		-
 			message: "#^Call to an undefined method pocketmine\\\\network\\\\mcpe\\\\raklib\\\\RakLibServer\\:\\:synchronized\\(\\)\\.$#"
 			count: 2
-			path: ../../src/network/mcpe/raklib/RakLibServer.php
+			path: ../../../src/network/mcpe/raklib/RakLibServer.php
 
 		-
 			message: "#^Call to an undefined method pocketmine\\\\network\\\\mcpe\\\\raklib\\\\RakLibServer\\:\\:wait\\(\\)\\.$#"
 			count: 1
-			path: ../../src/network/mcpe/raklib/RakLibServer.php
+			path: ../../../src/network/mcpe/raklib/RakLibServer.php
 
 		-
 			message: "#^Parameter \\$mainToThreadBuffer of method pocketmine\\\\network\\\\mcpe\\\\raklib\\\\RakLibServer\\:\\:__construct\\(\\) has invalid type pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 2
-			path: ../../src/network/mcpe/raklib/RakLibServer.php
+			path: ../../../src/network/mcpe/raklib/RakLibServer.php
 
 		-
 			message: "#^Parameter \\$threadToMainBuffer of method pocketmine\\\\network\\\\mcpe\\\\raklib\\\\RakLibServer\\:\\:__construct\\(\\) has invalid type pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 2
-			path: ../../src/network/mcpe/raklib/RakLibServer.php
+			path: ../../../src/network/mcpe/raklib/RakLibServer.php
 
 		-
 			message: "#^Property pocketmine\\\\network\\\\mcpe\\\\raklib\\\\RakLibServer\\:\\:\\$mainToThreadBuffer has unknown class pmmp\\\\thread\\\\ThreadSafeArray as its type\\.$#"
 			count: 2
-			path: ../../src/network/mcpe/raklib/RakLibServer.php
+			path: ../../../src/network/mcpe/raklib/RakLibServer.php
 
 		-
 			message: "#^Property pocketmine\\\\network\\\\mcpe\\\\raklib\\\\RakLibServer\\:\\:\\$threadToMainBuffer has unknown class pmmp\\\\thread\\\\ThreadSafeArray as its type\\.$#"
 			count: 2
-			path: ../../src/network/mcpe/raklib/RakLibServer.php
+			path: ../../../src/network/mcpe/raklib/RakLibServer.php
 
 		-
 			message: "#^Access to an offset on an unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 1
-			path: ../../src/network/mcpe/raklib/SnoozeAwarePthreadsChannelWriter.php
+			path: ../../../src/network/mcpe/raklib/SnoozeAwarePthreadsChannelWriter.php
 
 		-
 			message: "#^Parameter \\$buffer of method pocketmine\\\\network\\\\mcpe\\\\raklib\\\\SnoozeAwarePthreadsChannelWriter\\:\\:__construct\\(\\) has invalid type pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 2
-			path: ../../src/network/mcpe/raklib/SnoozeAwarePthreadsChannelWriter.php
+			path: ../../../src/network/mcpe/raklib/SnoozeAwarePthreadsChannelWriter.php
 
 		-
 			message: "#^Property pocketmine\\\\network\\\\mcpe\\\\raklib\\\\SnoozeAwarePthreadsChannelWriter\\:\\:\\$buffer has unknown class pmmp\\\\thread\\\\ThreadSafeArray as its type\\.$#"
 			count: 2
-			path: ../../src/network/mcpe/raklib/SnoozeAwarePthreadsChannelWriter.php
+			path: ../../../src/network/mcpe/raklib/SnoozeAwarePthreadsChannelWriter.php
 
 		-
 			message: "#^Call to method getBitsPerBlock\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 2
-			path: ../../src/network/mcpe/serializer/ChunkSerializer.php
+			path: ../../../src/network/mcpe/serializer/ChunkSerializer.php
 
 		-
 			message: "#^Call to method getPalette\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 2
-			path: ../../src/network/mcpe/serializer/ChunkSerializer.php
+			path: ../../../src/network/mcpe/serializer/ChunkSerializer.php
 
 		-
 			message: "#^Call to method getWordArray\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 2
-			path: ../../src/network/mcpe/serializer/ChunkSerializer.php
+			path: ../../../src/network/mcpe/serializer/ChunkSerializer.php
 
 		-
 			message: "#^Parameter \\$biomePalette of method pocketmine\\\\network\\\\mcpe\\\\serializer\\\\ChunkSerializer\\:\\:serializeBiomePalette\\(\\) has invalid type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/network/mcpe/serializer/ChunkSerializer.php
+			path: ../../../src/network/mcpe/serializer/ChunkSerializer.php
+
+		-
+			message: "#^Method pocketmine\\\\permission\\\\DefaultPermissions\\:\\:registerPermission\\(\\) should return pocketmine\\\\permission\\\\Permission but returns pocketmine\\\\permission\\\\Permission\\|null\\.$#"
+			count: 1
+			path: ../../../src/permission/DefaultPermissions.php
+
+		-
+			message: "#^Parameter \\#1 \\$value of static method pocketmine\\\\permission\\\\PermissionParser\\:\\:defaultFromString\\(\\) expects bool\\|string, mixed given\\.$#"
+			count: 1
+			path: ../../../src/permission/PermissionParser.php
+
+		-
+			message: "#^Parameter \\#2 \\$description of class pocketmine\\\\permission\\\\Permission constructor expects pocketmine\\\\lang\\\\Translatable\\|string\\|null, mixed given\\.$#"
+			count: 1
+			path: ../../../src/permission/PermissionParser.php
+
+		-
+			message: "#^Cannot call method getSpawnLocation\\(\\) on pocketmine\\\\world\\\\World\\|null\\.$#"
+			count: 1
+			path: ../../../src/player/Player.php
+
+		-
+			message: "#^Method pocketmine\\\\player\\\\Player\\:\\:getSpawn\\(\\) should return pocketmine\\\\world\\\\Position but returns pocketmine\\\\world\\\\Position\\|null\\.$#"
+			count: 1
+			path: ../../../src/player/Player.php
+
+		-
+			message: "#^Method pocketmine\\\\plugin\\\\PluginBase\\:\\:getConfig\\(\\) should return pocketmine\\\\utils\\\\Config but returns pocketmine\\\\utils\\\\Config\\|null\\.$#"
+			count: 1
+			path: ../../../src/plugin/PluginBase.php
+
+		-
+			message: "#^Cannot cast mixed to string\\.$#"
+			count: 1
+			path: ../../../src/plugin/PluginDescription.php
+
+		-
+			message: "#^Parameter \\#1 \\$haystack of function stripos expects string, mixed given\\.$#"
+			count: 1
+			path: ../../../src/plugin/PluginDescription.php
+
+		-
+			message: "#^Parameter \\#2 \\$subject of function preg_match expects string, mixed given\\.$#"
+			count: 1
+			path: ../../../src/plugin/PluginDescription.php
+
+		-
+			message: "#^Parameter \\#3 \\$subject of function str_replace expects array\\|string, mixed given\\.$#"
+			count: 1
+			path: ../../../src/plugin/PluginDescription.php
+
+		-
+			message: "#^Property pocketmine\\\\plugin\\\\PluginDescription\\:\\:\\$main \\(string\\) does not accept mixed\\.$#"
+			count: 1
+			path: ../../../src/plugin/PluginDescription.php
+
+		-
+			message: "#^Property pocketmine\\\\plugin\\\\PluginDescription\\:\\:\\$name \\(string\\) does not accept mixed\\.$#"
+			count: 1
+			path: ../../../src/plugin/PluginDescription.php
+
+		-
+			message: "#^Cannot call method addChild\\(\\) on pocketmine\\\\permission\\\\Permission\\|null\\.$#"
+			count: 4
+			path: ../../../src/plugin/PluginManager.php
+
+		-
+			message: "#^Method pocketmine\\\\resourcepacks\\\\ZippedResourcePack\\:\\:getPackSize\\(\\) should return int but returns int\\<0, max\\>\\|false\\.$#"
+			count: 1
+			path: ../../../src/resourcepacks/ZippedResourcePack.php
+
+		-
+			message: "#^Method pocketmine\\\\resourcepacks\\\\ZippedResourcePack\\:\\:getSha256\\(\\) should return string but returns string\\|false\\.$#"
+			count: 1
+			path: ../../../src/resourcepacks/ZippedResourcePack.php
+
+		-
+			message: "#^Parameter \\#2 \\$length of function fread expects int\\<0, max\\>, int given\\.$#"
+			count: 1
+			path: ../../../src/resourcepacks/ZippedResourcePack.php
+
+		-
+			message: "#^Property pocketmine\\\\resourcepacks\\\\ZippedResourcePack\\:\\:\\$fileResource \\(resource\\) does not accept resource\\|false\\.$#"
+			count: 1
+			path: ../../../src/resourcepacks/ZippedResourcePack.php
+
+		-
+			message: "#^Property pocketmine\\\\resourcepacks\\\\ZippedResourcePack\\:\\:\\$sha256 \\(string\\|null\\) does not accept string\\|false\\.$#"
+			count: 1
+			path: ../../../src/resourcepacks/ZippedResourcePack.php
 
 		-
 			message: "#^Access to constant INHERIT_COMMENTS on an unknown class pmmp\\\\thread\\\\Thread\\.$#"
 			count: 1
-			path: ../../src/scheduler/AsyncPool.php
+			path: ../../../src/scheduler/AsyncPool.php
 
 		-
 			message: "#^Access to constant INHERIT_INI on an unknown class pmmp\\\\thread\\\\Thread\\.$#"
 			count: 1
-			path: ../../src/scheduler/AsyncPool.php
+			path: ../../../src/scheduler/AsyncPool.php
 
 		-
 			message: "#^Call to an undefined method pocketmine\\\\scheduler\\\\AsyncTask\\:\\:isTerminated\\(\\)\\.$#"
 			count: 2
-			path: ../../src/scheduler/AsyncPool.php
+			path: ../../../src/scheduler/AsyncPool.php
 
 		-
 			message: "#^Call to an undefined method pocketmine\\\\scheduler\\\\AsyncWorker\\:\\:collect\\(\\)\\.$#"
 			count: 1
-			path: ../../src/scheduler/AsyncPool.php
+			path: ../../../src/scheduler/AsyncPool.php
 
 		-
 			message: "#^Call to an undefined method pocketmine\\\\scheduler\\\\AsyncWorker\\:\\:isTerminated\\(\\)\\.$#"
 			count: 1
-			path: ../../src/scheduler/AsyncPool.php
+			path: ../../../src/scheduler/AsyncPool.php
 
 		-
 			message: "#^Call to an undefined method pocketmine\\\\scheduler\\\\AsyncWorker\\:\\:stack\\(\\)\\.$#"
 			count: 1
-			path: ../../src/scheduler/AsyncPoolWorkerEntry.php
+			path: ../../../src/scheduler/AsyncPoolWorkerEntry.php
 
 		-
 			message: "#^Access to an offset on an unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 1
-			path: ../../src/scheduler/AsyncTask.php
+			path: ../../../src/scheduler/AsyncTask.php
 
 		-
 			message: "#^Call to an undefined method pocketmine\\\\scheduler\\\\AsyncTask\\:\\:isTerminated\\(\\)\\.$#"
 			count: 2
-			path: ../../src/scheduler/AsyncTask.php
+			path: ../../../src/scheduler/AsyncTask.php
 
 		-
 			message: "#^Call to method deserialize\\(\\) on an unknown class pmmp\\\\thread\\\\ThreadSafe\\.$#"
 			count: 1
-			path: ../../src/scheduler/AsyncTask.php
+			path: ../../../src/scheduler/AsyncTask.php
 
 		-
 			message: "#^Call to method shift\\(\\) on an unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 1
-			path: ../../src/scheduler/AsyncTask.php
+			path: ../../../src/scheduler/AsyncTask.php
 
 		-
 			message: "#^Class pmmp\\\\thread\\\\ThreadSafe not found\\.$#"
 			count: 1
-			path: ../../src/scheduler/AsyncTask.php
+			path: ../../../src/scheduler/AsyncTask.php
 
 		-
 			message: "#^Instantiated class pmmp\\\\thread\\\\ThreadSafeArray not found\\.$#"
 			count: 1
-			path: ../../src/scheduler/AsyncTask.php
+			path: ../../../src/scheduler/AsyncTask.php
 
 		-
 			message: "#^Property pocketmine\\\\scheduler\\\\AsyncTask\\:\\:\\$progressUpdates has unknown class pmmp\\\\thread\\\\ThreadSafeArray as its type\\.$#"
 			count: 2
-			path: ../../src/scheduler/AsyncTask.php
+			path: ../../../src/scheduler/AsyncTask.php
 
 		-
 			message: "#^Property pocketmine\\\\scheduler\\\\AsyncTask\\:\\:\\$result \\(bool\\|float\\|int\\|pmmp\\\\thread\\\\ThreadSafe\\|string\\|null\\) does not accept bool\\|float\\|int\\|pmmp\\\\thread\\\\ThreadSafe\\|pocketmine\\\\thread\\\\NonThreadSafeValue\\<mixed\\>\\|string\\|null\\.$#"
 			count: 1
-			path: ../../src/scheduler/AsyncTask.php
+			path: ../../../src/scheduler/AsyncTask.php
 
 		-
 			message: "#^Property pocketmine\\\\scheduler\\\\AsyncTask\\:\\:\\$result has unknown class pmmp\\\\thread\\\\ThreadSafe as its type\\.$#"
 			count: 1
-			path: ../../src/scheduler/AsyncTask.php
+			path: ../../../src/scheduler/AsyncTask.php
 
 		-
 			message: "#^Call to static method getCurrentThread\\(\\) on an unknown class pmmp\\\\thread\\\\Thread\\.$#"
 			count: 3
-			path: ../../src/scheduler/AsyncWorker.php
+			path: ../../../src/scheduler/AsyncWorker.php
+
+		-
+			message: "#^Property pocketmine\\\\scheduler\\\\BulkCurlTask\\:\\:\\$operations \\(string\\) does not accept string\\|null\\.$#"
+			count: 1
+			path: ../../../src/scheduler/BulkCurlTask.php
 
 		-
 			message: "#^Call to static method getCurrentThread\\(\\) on an unknown class pmmp\\\\thread\\\\Thread\\.$#"
 			count: 1
-			path: ../../src/scheduler/DumpWorkerMemoryTask.php
+			path: ../../../src/scheduler/DumpWorkerMemoryTask.php
+
+		-
+			message: "#^Cannot call method getNextRun\\(\\) on array\\<string, int\\|pocketmine\\\\scheduler\\\\TaskHandler\\>\\|int\\|pocketmine\\\\scheduler\\\\TaskHandler\\.$#"
+			count: 1
+			path: ../../../src/scheduler/TaskScheduler.php
 
 		-
 			message: "#^Access to an offset on an unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 1
-			path: ../../src/thread/Thread.php
+			path: ../../../src/thread/Thread.php
 
 		-
 			message: "#^Access to constant INHERIT_NONE on an unknown class pmmp\\\\thread\\\\Thread\\.$#"
 			count: 1
-			path: ../../src/thread/Thread.php
+			path: ../../../src/thread/Thread.php
 
 		-
 			message: "#^Access to offset mixed on an unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 1
-			path: ../../src/thread/Thread.php
+			path: ../../../src/thread/Thread.php
 
 		-
 			message: "#^Call to an undefined method pocketmine\\\\thread\\\\Thread\\:\\:isJoined\\(\\)\\.$#"
 			count: 1
-			path: ../../src/thread/Thread.php
+			path: ../../../src/thread/Thread.php
 
 		-
 			message: "#^Call to an undefined method pocketmine\\\\thread\\\\Thread\\:\\:isTerminated\\(\\)\\.$#"
 			count: 1
-			path: ../../src/thread/Thread.php
+			path: ../../../src/thread/Thread.php
 
 		-
 			message: "#^Call to an undefined method pocketmine\\\\thread\\\\Thread\\:\\:join\\(\\)\\.$#"
 			count: 1
-			path: ../../src/thread/Thread.php
+			path: ../../../src/thread/Thread.php
 
 		-
 			message: "#^Call to an undefined method pocketmine\\\\thread\\\\Thread\\:\\:notify\\(\\)\\.$#"
 			count: 1
-			path: ../../src/thread/Thread.php
+			path: ../../../src/thread/Thread.php
 
 		-
 			message: "#^Call to an undefined method pocketmine\\\\thread\\\\Thread\\:\\:synchronized\\(\\)\\.$#"
 			count: 2
-			path: ../../src/thread/Thread.php
+			path: ../../../src/thread/Thread.php
 
 		-
 			message: "#^Instantiated class pmmp\\\\thread\\\\ThreadSafeArray not found\\.$#"
 			count: 1
-			path: ../../src/thread/Thread.php
+			path: ../../../src/thread/Thread.php
 
 		-
 			message: "#^Iterating over an object of an unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 2
-			path: ../../src/thread/Thread.php
+			path: ../../../src/thread/Thread.php
 
 		-
 			message: "#^Property pocketmine\\\\thread\\\\Thread\\:\\:\\$classLoaders has unknown class pmmp\\\\thread\\\\ThreadSafeArray as its type\\.$#"
 			count: 2
-			path: ../../src/thread/Thread.php
+			path: ../../../src/thread/Thread.php
 
 		-
 			message: "#^pocketmine\\\\thread\\\\Thread\\:\\:start\\(\\) calls parent\\:\\:start\\(\\) but pocketmine\\\\thread\\\\Thread does not extend any class\\.$#"
 			count: 1
-			path: ../../src/thread/Thread.php
+			path: ../../../src/thread/Thread.php
 
 		-
 			message: "#^Call to static method fromArray\\(\\) on an unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 1
-			path: ../../src/thread/ThreadCrashInfo.php
+			path: ../../../src/thread/ThreadCrashInfo.php
 
 		-
 			message: "#^Property pocketmine\\\\thread\\\\ThreadCrashInfo\\:\\:\\$trace has unknown class pmmp\\\\thread\\\\ThreadSafeArray as its type\\.$#"
 			count: 2
-			path: ../../src/thread/ThreadCrashInfo.php
+			path: ../../../src/thread/ThreadCrashInfo.php
 
 		-
 			message: "#^Access to offset int on an unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 2
-			path: ../../src/thread/ThreadManager.php
+			path: ../../../src/thread/ThreadManager.php
 
 		-
 			message: "#^Instantiated class pmmp\\\\thread\\\\ThreadSafeArray not found\\.$#"
 			count: 1
-			path: ../../src/thread/ThreadManager.php
+			path: ../../../src/thread/ThreadManager.php
 
 		-
 			message: "#^Iterating over an object of an unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 1
-			path: ../../src/thread/ThreadManager.php
+			path: ../../../src/thread/ThreadManager.php
 
 		-
 			message: "#^Property pocketmine\\\\thread\\\\ThreadManager\\:\\:\\$threads has unknown class pmmp\\\\thread\\\\ThreadSafeArray as its type\\.$#"
 			count: 2
-			path: ../../src/thread/ThreadManager.php
+			path: ../../../src/thread/ThreadManager.php
 
 		-
 			message: "#^Access to an offset on an unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 3
-			path: ../../src/thread/ThreadSafeClassLoader.php
+			path: ../../../src/thread/ThreadSafeClassLoader.php
 
 		-
 			message: "#^Access to offset non\\-falsy\\-string on an unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 3
-			path: ../../src/thread/ThreadSafeClassLoader.php
+			path: ../../../src/thread/ThreadSafeClassLoader.php
 
 		-
 			message: "#^Call to method shift\\(\\) on an unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 1
-			path: ../../src/thread/ThreadSafeClassLoader.php
+			path: ../../../src/thread/ThreadSafeClassLoader.php
 
 		-
 			message: "#^Call to method synchronized\\(\\) on an unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 3
-			path: ../../src/thread/ThreadSafeClassLoader.php
+			path: ../../../src/thread/ThreadSafeClassLoader.php
 
 		-
 			message: "#^Instantiated class pmmp\\\\thread\\\\ThreadSafeArray not found\\.$#"
 			count: 3
-			path: ../../src/thread/ThreadSafeClassLoader.php
+			path: ../../../src/thread/ThreadSafeClassLoader.php
 
 		-
 			message: "#^Iterating over an object of an unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 1
-			path: ../../src/thread/ThreadSafeClassLoader.php
+			path: ../../../src/thread/ThreadSafeClassLoader.php
 
 		-
 			message: "#^Parameter \\$list of method pocketmine\\\\thread\\\\ThreadSafeClassLoader\\:\\:appendOrPrependLookupEntry\\(\\) has invalid type pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 2
-			path: ../../src/thread/ThreadSafeClassLoader.php
+			path: ../../../src/thread/ThreadSafeClassLoader.php
 
 		-
 			message: "#^Parameter \\$list of method pocketmine\\\\thread\\\\ThreadSafeClassLoader\\:\\:getAndRemoveLookupEntries\\(\\) has invalid type pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 2
-			path: ../../src/thread/ThreadSafeClassLoader.php
+			path: ../../../src/thread/ThreadSafeClassLoader.php
 
 		-
 			message: "#^Property pocketmine\\\\thread\\\\ThreadSafeClassLoader\\:\\:\\$fallbackLookup has unknown class pmmp\\\\thread\\\\ThreadSafeArray as its type\\.$#"
 			count: 2
-			path: ../../src/thread/ThreadSafeClassLoader.php
+			path: ../../../src/thread/ThreadSafeClassLoader.php
 
 		-
 			message: "#^Property pocketmine\\\\thread\\\\ThreadSafeClassLoader\\:\\:\\$psr4Lookup has unknown class pmmp\\\\thread\\\\ThreadSafeArray as its type\\.$#"
 			count: 3
-			path: ../../src/thread/ThreadSafeClassLoader.php
+			path: ../../../src/thread/ThreadSafeClassLoader.php
 
 		-
 			message: "#^Access to an offset on an unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 1
-			path: ../../src/thread/Worker.php
+			path: ../../../src/thread/Worker.php
 
 		-
 			message: "#^Access to constant INHERIT_NONE on an unknown class pmmp\\\\thread\\\\Thread\\.$#"
 			count: 1
-			path: ../../src/thread/Worker.php
+			path: ../../../src/thread/Worker.php
 
 		-
 			message: "#^Access to offset mixed on an unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 1
-			path: ../../src/thread/Worker.php
+			path: ../../../src/thread/Worker.php
 
 		-
 			message: "#^Call to an undefined method pocketmine\\\\thread\\\\Worker\\:\\:isJoined\\(\\)\\.$#"
 			count: 1
-			path: ../../src/thread/Worker.php
+			path: ../../../src/thread/Worker.php
 
 		-
 			message: "#^Call to an undefined method pocketmine\\\\thread\\\\Worker\\:\\:isTerminated\\(\\)\\.$#"
 			count: 1
-			path: ../../src/thread/Worker.php
+			path: ../../../src/thread/Worker.php
 
 		-
 			message: "#^Call to an undefined method pocketmine\\\\thread\\\\Worker\\:\\:join\\(\\)\\.$#"
 			count: 1
-			path: ../../src/thread/Worker.php
+			path: ../../../src/thread/Worker.php
 
 		-
 			message: "#^Call to an undefined method pocketmine\\\\thread\\\\Worker\\:\\:notify\\(\\)\\.$#"
 			count: 1
-			path: ../../src/thread/Worker.php
+			path: ../../../src/thread/Worker.php
 
 		-
 			message: "#^Call to an undefined method pocketmine\\\\thread\\\\Worker\\:\\:synchronized\\(\\)\\.$#"
 			count: 2
-			path: ../../src/thread/Worker.php
+			path: ../../../src/thread/Worker.php
 
 		-
 			message: "#^Instantiated class pmmp\\\\thread\\\\ThreadSafeArray not found\\.$#"
 			count: 1
-			path: ../../src/thread/Worker.php
+			path: ../../../src/thread/Worker.php
 
 		-
 			message: "#^Iterating over an object of an unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 2
-			path: ../../src/thread/Worker.php
+			path: ../../../src/thread/Worker.php
 
 		-
 			message: "#^Property pocketmine\\\\thread\\\\Worker\\:\\:\\$classLoaders has unknown class pmmp\\\\thread\\\\ThreadSafeArray as its type\\.$#"
 			count: 2
-			path: ../../src/thread/Worker.php
+			path: ../../../src/thread/Worker.php
 
 		-
 			message: "#^pocketmine\\\\thread\\\\Worker\\:\\:start\\(\\) calls parent\\:\\:start\\(\\) but pocketmine\\\\thread\\\\Worker does not extend any class\\.$#"
 			count: 1
-			path: ../../src/thread/Worker.php
+			path: ../../../src/thread/Worker.php
 
 		-
 			message: "#^Access to an offset on an unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 1
-			path: ../../src/thread/log/AttachableThreadSafeLogger.php
+			path: ../../../src/thread/log/AttachableThreadSafeLogger.php
 
 		-
 			message: "#^Access to offset mixed on an unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 2
-			path: ../../src/thread/log/AttachableThreadSafeLogger.php
+			path: ../../../src/thread/log/AttachableThreadSafeLogger.php
 
 		-
 			message: "#^Instantiated class pmmp\\\\thread\\\\ThreadSafeArray not found\\.$#"
 			count: 1
-			path: ../../src/thread/log/AttachableThreadSafeLogger.php
+			path: ../../../src/thread/log/AttachableThreadSafeLogger.php
 
 		-
 			message: "#^Iterating over an object of an unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 2
-			path: ../../src/thread/log/AttachableThreadSafeLogger.php
+			path: ../../../src/thread/log/AttachableThreadSafeLogger.php
 
 		-
 			message: "#^Property pocketmine\\\\thread\\\\log\\\\AttachableThreadSafeLogger\\:\\:\\$attachments has unknown class pmmp\\\\thread\\\\ThreadSafeArray as its type\\.$#"
 			count: 2
-			path: ../../src/thread/log/AttachableThreadSafeLogger.php
+			path: ../../../src/thread/log/AttachableThreadSafeLogger.php
+
+		-
+			message: "#^Cannot access offset string on mixed\\.$#"
+			count: 2
+			path: ../../../src/utils/Config.php
+
+		-
+			message: "#^Method pocketmine\\\\utils\\\\Config\\:\\:fixYAMLIndexes\\(\\) should return string but returns string\\|null\\.$#"
+			count: 1
+			path: ../../../src/utils/Config.php
+
+		-
+			message: "#^Parameter \\#1 \\$config of static method pocketmine\\\\utils\\\\Config\\:\\:writeProperties\\(\\) expects array\\<string, bool\\|float\\|int\\|string\\>, array\\<string, mixed\\> given\\.$#"
+			count: 1
+			path: ../../../src/utils/Config.php
 
 		-
 			message: "#^Access to constant INHERIT_NONE on an unknown class pmmp\\\\thread\\\\Thread\\.$#"
 			count: 1
-			path: ../../src/utils/MainLogger.php
+			path: ../../../src/utils/MainLogger.php
 
 		-
 			message: "#^Call to an undefined method pocketmine\\\\utils\\\\MainLogger\\:\\:synchronized\\(\\)\\.$#"
 			count: 2
-			path: ../../src/utils/MainLogger.php
+			path: ../../../src/utils/MainLogger.php
 
 		-
 			message: "#^Call to an undefined method pocketmine\\\\utils\\\\MainLoggerThread\\:\\:getCreatorId\\(\\)\\.$#"
 			count: 2
-			path: ../../src/utils/MainLogger.php
+			path: ../../../src/utils/MainLogger.php
 
 		-
 			message: "#^Call to an undefined method pocketmine\\\\utils\\\\MainLoggerThread\\:\\:isJoined\\(\\)\\.$#"
 			count: 1
-			path: ../../src/utils/MainLogger.php
+			path: ../../../src/utils/MainLogger.php
 
 		-
 			message: "#^Call to an undefined method pocketmine\\\\utils\\\\MainLoggerThread\\:\\:start\\(\\)\\.$#"
 			count: 1
-			path: ../../src/utils/MainLogger.php
+			path: ../../../src/utils/MainLogger.php
 
 		-
 			message: "#^Call to static method getCurrentThread\\(\\) on an unknown class pmmp\\\\thread\\\\Thread\\.$#"
 			count: 1
-			path: ../../src/utils/MainLogger.php
+			path: ../../../src/utils/MainLogger.php
 
 		-
 			message: "#^Call to static method getCurrentThreadId\\(\\) on an unknown class pmmp\\\\thread\\\\Thread\\.$#"
 			count: 2
-			path: ../../src/utils/MainLogger.php
+			path: ../../../src/utils/MainLogger.php
 
 		-
 			message: "#^Iterating over an object of an unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 1
-			path: ../../src/utils/MainLogger.php
+			path: ../../../src/utils/MainLogger.php
 
 		-
 			message: "#^Access to an offset on an unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 1
-			path: ../../src/utils/MainLoggerThread.php
+			path: ../../../src/utils/MainLoggerThread.php
 
 		-
 			message: "#^Call to an undefined method pocketmine\\\\utils\\\\MainLoggerThread\\:\\:join\\(\\)\\.$#"
 			count: 1
-			path: ../../src/utils/MainLoggerThread.php
+			path: ../../../src/utils/MainLoggerThread.php
 
 		-
 			message: "#^Call to an undefined method pocketmine\\\\utils\\\\MainLoggerThread\\:\\:notify\\(\\)\\.$#"
 			count: 4
-			path: ../../src/utils/MainLoggerThread.php
+			path: ../../../src/utils/MainLoggerThread.php
 
 		-
 			message: "#^Call to an undefined method pocketmine\\\\utils\\\\MainLoggerThread\\:\\:synchronized\\(\\)\\.$#"
 			count: 6
-			path: ../../src/utils/MainLoggerThread.php
+			path: ../../../src/utils/MainLoggerThread.php
 
 		-
 			message: "#^Call to an undefined method pocketmine\\\\utils\\\\MainLoggerThread\\:\\:wait\\(\\)\\.$#"
 			count: 2
-			path: ../../src/utils/MainLoggerThread.php
+			path: ../../../src/utils/MainLoggerThread.php
 
 		-
 			message: "#^Call to method shift\\(\\) on an unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
 			count: 1
-			path: ../../src/utils/MainLoggerThread.php
+			path: ../../../src/utils/MainLoggerThread.php
 
 		-
 			message: "#^Instantiated class pmmp\\\\thread\\\\ThreadSafeArray not found\\.$#"
 			count: 1
-			path: ../../src/utils/MainLoggerThread.php
+			path: ../../../src/utils/MainLoggerThread.php
 
 		-
 			message: "#^Property pocketmine\\\\utils\\\\MainLoggerThread\\:\\:\\$buffer has unknown class pmmp\\\\thread\\\\ThreadSafeArray as its type\\.$#"
 			count: 2
-			path: ../../src/utils/MainLoggerThread.php
+			path: ../../../src/utils/MainLoggerThread.php
 
 		-
 			message: "#^Call to an undefined method pocketmine\\\\utils\\\\ServerKiller\\:\\:notify\\(\\)\\.$#"
 			count: 1
-			path: ../../src/utils/ServerKiller.php
+			path: ../../../src/utils/ServerKiller.php
 
 		-
 			message: "#^Call to an undefined method pocketmine\\\\utils\\\\ServerKiller\\:\\:synchronized\\(\\)\\.$#"
 			count: 2
-			path: ../../src/utils/ServerKiller.php
+			path: ../../../src/utils/ServerKiller.php
 
 		-
 			message: "#^Call to an undefined method pocketmine\\\\utils\\\\ServerKiller\\:\\:wait\\(\\)\\.$#"
 			count: 1
-			path: ../../src/utils/ServerKiller.php
+			path: ../../../src/utils/ServerKiller.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function trim expects string, string\\|false given\\.$#"
+			count: 1
+			path: ../../../src/utils/Timezone.php
+
+		-
+			message: "#^Cannot cast mixed to string\\.$#"
+			count: 1
+			path: ../../../src/utils/Utils.php
+
+		-
+			message: "#^Method pocketmine\\\\utils\\\\Utils\\:\\:printable\\(\\) should return string but returns string\\|null\\.$#"
+			count: 1
+			path: ../../../src/utils/Utils.php
+
+		-
+			message: "#^Parameter \\#1 \\$path of static method pocketmine\\\\utils\\\\Filesystem\\:\\:cleanPath\\(\\) expects string, mixed given\\.$#"
+			count: 1
+			path: ../../../src/utils/Utils.php
+
+		-
+			message: "#^Parameter \\#1 \\$trace of static method pocketmine\\\\utils\\\\Utils\\:\\:printableTrace\\(\\) expects array\\<int, array\\<string, mixed\\>\\>, array given\\.$#"
+			count: 1
+			path: ../../../src/utils/Utils.php
+
+		-
+			message: "#^Parameter \\#2 \\$file of class pocketmine\\\\thread\\\\ThreadCrashInfoFrame constructor expects string\\|null, mixed given\\.$#"
+			count: 1
+			path: ../../../src/utils/Utils.php
+
+		-
+			message: "#^Parameter \\#3 \\$line of class pocketmine\\\\thread\\\\ThreadCrashInfoFrame constructor expects int, mixed given\\.$#"
+			count: 1
+			path: ../../../src/utils/Utils.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of method pocketmine\\\\world\\\\World\\:\\:getTileAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/world/Explosion.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of method pocketmine\\\\world\\\\World\\:\\:setBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/world/Explosion.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of static method pocketmine\\\\world\\\\World\\:\\:blockHash\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/world/Explosion.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\World\\:\\:getTileAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/world/Explosion.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\World\\:\\:setBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/world/Explosion.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of static method pocketmine\\\\world\\\\World\\:\\:blockHash\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/world/Explosion.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of method pocketmine\\\\world\\\\World\\:\\:getTileAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/world/Explosion.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of method pocketmine\\\\world\\\\World\\:\\:setBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/world/Explosion.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of static method pocketmine\\\\world\\\\World\\:\\:blockHash\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/world/Explosion.php
+
+		-
+			message: "#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\\.$#"
+			count: 1
+			path: ../../../src/world/World.php
 
 		-
 			message: "#^Call to method get\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\LightArray\\.$#"
 			count: 2
-			path: ../../src/world/World.php
+			path: ../../../src/world/World.php
+
+		-
+			message: "#^Cannot access offset 'data' on array\\{priority\\: int, data\\: pocketmine\\\\math\\\\Vector3\\}\\|int\\|pocketmine\\\\math\\\\Vector3\\.$#"
+			count: 1
+			path: ../../../src/world/World.php
+
+		-
+			message: "#^Cannot access offset 'priority' on array\\{priority\\: int, data\\: pocketmine\\\\math\\\\Vector3\\}\\|int\\|pocketmine\\\\math\\\\Vector3\\.$#"
+			count: 1
+			path: ../../../src/world/World.php
+
+		-
+			message: "#^Cannot cast mixed to string\\.$#"
+			count: 1
+			path: ../../../src/world/World.php
 
 		-
 			message: "#^Function morton2d_decode not found\\.$#"
 			count: 1
-			path: ../../src/world/World.php
+			path: ../../../src/world/World.php
 
 		-
 			message: "#^Function morton2d_encode not found\\.$#"
 			count: 1
-			path: ../../src/world/World.php
+			path: ../../../src/world/World.php
 
 		-
 			message: "#^Function morton3d_decode not found\\.$#"
 			count: 1
-			path: ../../src/world/World.php
+			path: ../../../src/world/World.php
 
 		-
 			message: "#^Function morton3d_encode not found\\.$#"
 			count: 2
-			path: ../../src/world/World.php
+			path: ../../../src/world/World.php
 
 		-
 			message: "#^PHPDoc tag @var for variable \\$blockLight contains unknown class pocketmine\\\\world\\\\format\\\\LightArray\\.$#"
 			count: 1
-			path: ../../src/world/World.php
+			path: ../../../src/world/World.php
 
 		-
 			message: "#^PHPDoc tag @var for variable \\$skyLight contains unknown class pocketmine\\\\world\\\\format\\\\LightArray\\.$#"
 			count: 1
-			path: ../../src/world/World.php
+			path: ../../../src/world/World.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/world/World.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of method pocketmine\\\\world\\\\World\\:\\:getTileAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/world/World.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of method pocketmine\\\\world\\\\World\\:\\:isInWorld\\(\\) expects int, float\\|int given\\.$#"
+			count: 2
+			path: ../../../src/world/World.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of static method pocketmine\\\\world\\\\World\\:\\:blockHash\\(\\) expects int, float\\|int given\\.$#"
+			count: 2
+			path: ../../../src/world/World.php
+
+		-
+			message: "#^Parameter \\#2 \\$x of method pocketmine\\\\block\\\\Block\\:\\:position\\(\\) expects int, float\\|int given\\.$#"
+			count: 2
+			path: ../../../src/world/World.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/world/World.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\World\\:\\:getTileAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/world/World.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\World\\:\\:isInWorld\\(\\) expects int, float\\|int given\\.$#"
+			count: 2
+			path: ../../../src/world/World.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of static method pocketmine\\\\world\\\\World\\:\\:blockHash\\(\\) expects int, float\\|int given\\.$#"
+			count: 2
+			path: ../../../src/world/World.php
+
+		-
+			message: "#^Parameter \\#3 \\$y of method pocketmine\\\\block\\\\Block\\:\\:position\\(\\) expects int, float\\|int given\\.$#"
+			count: 2
+			path: ../../../src/world/World.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of method pocketmine\\\\world\\\\World\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/world/World.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of method pocketmine\\\\world\\\\World\\:\\:getTileAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/world/World.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of method pocketmine\\\\world\\\\World\\:\\:isInWorld\\(\\) expects int, float\\|int given\\.$#"
+			count: 2
+			path: ../../../src/world/World.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of static method pocketmine\\\\world\\\\World\\:\\:blockHash\\(\\) expects int, float\\|int given\\.$#"
+			count: 2
+			path: ../../../src/world/World.php
+
+		-
+			message: "#^Parameter \\#4 \\$z of method pocketmine\\\\block\\\\Block\\:\\:position\\(\\) expects int, float\\|int given\\.$#"
+			count: 2
+			path: ../../../src/world/World.php
 
 		-
 			message: "#^Used function morton2d_decode not found\\.$#"
 			count: 1
-			path: ../../src/world/World.php
+			path: ../../../src/world/World.php
 
 		-
 			message: "#^Used function morton2d_encode not found\\.$#"
 			count: 1
-			path: ../../src/world/World.php
+			path: ../../../src/world/World.php
 
 		-
 			message: "#^Used function morton3d_decode not found\\.$#"
 			count: 1
-			path: ../../src/world/World.php
+			path: ../../../src/world/World.php
 
 		-
 			message: "#^Used function morton3d_encode not found\\.$#"
 			count: 1
-			path: ../../src/world/World.php
+			path: ../../../src/world/World.php
+
+		-
+			message: "#^Method pocketmine\\\\world\\\\biome\\\\BiomeRegistry\\:\\:getBiome\\(\\) should return pocketmine\\\\world\\\\biome\\\\Biome but returns pocketmine\\\\world\\\\biome\\\\Biome\\|null\\.$#"
+			count: 1
+			path: ../../../src/world/biome/BiomeRegistry.php
 
 		-
 			message: "#^Call to method get\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/Chunk.php
+			path: ../../../src/world/format/Chunk.php
 
 		-
 			message: "#^Call to method set\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/Chunk.php
+			path: ../../../src/world/format/Chunk.php
 
 		-
 			message: "#^Instantiated class pocketmine\\\\world\\\\format\\\\PalettedBlockArray not found\\.$#"
 			count: 2
-			path: ../../src/world/format/Chunk.php
+			path: ../../../src/world/format/Chunk.php
+
+		-
+			message: "#^Method pocketmine\\\\world\\\\format\\\\Chunk\\:\\:getSubChunk\\(\\) should return pocketmine\\\\world\\\\format\\\\SubChunk but returns pocketmine\\\\world\\\\format\\\\SubChunk\\|null\\.$#"
+			count: 1
+			path: ../../../src/world/format/Chunk.php
+
+		-
+			message: "#^Parameter \\#1 \\$x of static method pocketmine\\\\world\\\\format\\\\Chunk\\:\\:blockHash\\(\\) expects int, float\\|int given\\.$#"
+			count: 2
+			path: ../../../src/world/format/Chunk.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of static method pocketmine\\\\world\\\\format\\\\Chunk\\:\\:blockHash\\(\\) expects int, float\\|int given\\.$#"
+			count: 2
+			path: ../../../src/world/format/Chunk.php
+
+		-
+			message: "#^Parameter \\#3 \\$z of static method pocketmine\\\\world\\\\format\\\\Chunk\\:\\:blockHash\\(\\) expects int, float\\|int given\\.$#"
+			count: 2
+			path: ../../../src/world/format/Chunk.php
+
+		-
+			message: "#^Method pocketmine\\\\world\\\\format\\\\HeightArray\\:\\:get\\(\\) should return int but returns int\\|null\\.$#"
+			count: 1
+			path: ../../../src/world/format/HeightArray.php
 
 		-
 			message: "#^Anonymous function has invalid return type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/SubChunk.php
+			path: ../../../src/world/format/SubChunk.php
 
 		-
 			message: "#^Call to method collectGarbage\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 2
-			path: ../../src/world/format/SubChunk.php
+			path: ../../../src/world/format/SubChunk.php
 
 		-
 			message: "#^Call to method get\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 2
-			path: ../../src/world/format/SubChunk.php
+			path: ../../../src/world/format/SubChunk.php
 
 		-
 			message: "#^Call to method getPalette\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/SubChunk.php
+			path: ../../../src/world/format/SubChunk.php
 
 		-
 			message: "#^Call to method isUniform\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\LightArray\\.$#"
 			count: 2
-			path: ../../src/world/format/SubChunk.php
+			path: ../../../src/world/format/SubChunk.php
 
 		-
 			message: "#^Call to method set\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/SubChunk.php
+			path: ../../../src/world/format/SubChunk.php
 
 		-
 			message: "#^Call to static method fill\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\LightArray\\.$#"
 			count: 2
-			path: ../../src/world/format/SubChunk.php
+			path: ../../../src/world/format/SubChunk.php
 
 		-
 			message: "#^Cloning object of an unknown class pocketmine\\\\world\\\\format\\\\LightArray\\.$#"
 			count: 2
-			path: ../../src/world/format/SubChunk.php
+			path: ../../../src/world/format/SubChunk.php
 
 		-
 			message: "#^Cloning object of an unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 2
-			path: ../../src/world/format/SubChunk.php
+			path: ../../../src/world/format/SubChunk.php
 
 		-
 			message: "#^Instantiated class pocketmine\\\\world\\\\format\\\\PalettedBlockArray not found\\.$#"
 			count: 1
-			path: ../../src/world/format/SubChunk.php
+			path: ../../../src/world/format/SubChunk.php
 
 		-
 			message: "#^Method pocketmine\\\\world\\\\format\\\\SubChunk\\:\\:getBiomeArray\\(\\) has invalid return type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/SubChunk.php
+			path: ../../../src/world/format/SubChunk.php
 
 		-
 			message: "#^Method pocketmine\\\\world\\\\format\\\\SubChunk\\:\\:getBlockLayers\\(\\) has invalid return type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/SubChunk.php
+			path: ../../../src/world/format/SubChunk.php
 
 		-
 			message: "#^Method pocketmine\\\\world\\\\format\\\\SubChunk\\:\\:getBlockLightArray\\(\\) has invalid return type pocketmine\\\\world\\\\format\\\\LightArray\\.$#"
 			count: 1
-			path: ../../src/world/format/SubChunk.php
+			path: ../../../src/world/format/SubChunk.php
 
 		-
 			message: "#^Method pocketmine\\\\world\\\\format\\\\SubChunk\\:\\:getBlockSkyLightArray\\(\\) has invalid return type pocketmine\\\\world\\\\format\\\\LightArray\\.$#"
 			count: 1
-			path: ../../src/world/format/SubChunk.php
+			path: ../../../src/world/format/SubChunk.php
 
 		-
 			message: "#^Parameter \\$array of anonymous function has invalid type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/SubChunk.php
+			path: ../../../src/world/format/SubChunk.php
 
 		-
 			message: "#^Parameter \\$biomes of method pocketmine\\\\world\\\\format\\\\SubChunk\\:\\:__construct\\(\\) has invalid type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/SubChunk.php
+			path: ../../../src/world/format/SubChunk.php
 
 		-
 			message: "#^Parameter \\$blockLayers of method pocketmine\\\\world\\\\format\\\\SubChunk\\:\\:__construct\\(\\) has invalid type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/SubChunk.php
+			path: ../../../src/world/format/SubChunk.php
 
 		-
 			message: "#^Parameter \\$blockLight of method pocketmine\\\\world\\\\format\\\\SubChunk\\:\\:__construct\\(\\) has invalid type pocketmine\\\\world\\\\format\\\\LightArray\\.$#"
 			count: 1
-			path: ../../src/world/format/SubChunk.php
+			path: ../../../src/world/format/SubChunk.php
 
 		-
 			message: "#^Parameter \\$data of method pocketmine\\\\world\\\\format\\\\SubChunk\\:\\:setBlockLightArray\\(\\) has invalid type pocketmine\\\\world\\\\format\\\\LightArray\\.$#"
 			count: 1
-			path: ../../src/world/format/SubChunk.php
+			path: ../../../src/world/format/SubChunk.php
 
 		-
 			message: "#^Parameter \\$data of method pocketmine\\\\world\\\\format\\\\SubChunk\\:\\:setBlockSkyLightArray\\(\\) has invalid type pocketmine\\\\world\\\\format\\\\LightArray\\.$#"
 			count: 1
-			path: ../../src/world/format/SubChunk.php
+			path: ../../../src/world/format/SubChunk.php
 
 		-
 			message: "#^Parameter \\$skyLight of method pocketmine\\\\world\\\\format\\\\SubChunk\\:\\:__construct\\(\\) has invalid type pocketmine\\\\world\\\\format\\\\LightArray\\.$#"
 			count: 1
-			path: ../../src/world/format/SubChunk.php
+			path: ../../../src/world/format/SubChunk.php
 
 		-
 			message: "#^Property pocketmine\\\\world\\\\format\\\\SubChunk\\:\\:\\$biomes has unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray as its type\\.$#"
 			count: 1
-			path: ../../src/world/format/SubChunk.php
+			path: ../../../src/world/format/SubChunk.php
 
 		-
 			message: "#^Property pocketmine\\\\world\\\\format\\\\SubChunk\\:\\:\\$blockLayers has unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray as its type\\.$#"
 			count: 1
-			path: ../../src/world/format/SubChunk.php
+			path: ../../../src/world/format/SubChunk.php
 
 		-
 			message: "#^Property pocketmine\\\\world\\\\format\\\\SubChunk\\:\\:\\$blockLight has unknown class pocketmine\\\\world\\\\format\\\\LightArray as its type\\.$#"
 			count: 1
-			path: ../../src/world/format/SubChunk.php
+			path: ../../../src/world/format/SubChunk.php
 
 		-
 			message: "#^Property pocketmine\\\\world\\\\format\\\\SubChunk\\:\\:\\$skyLight has unknown class pocketmine\\\\world\\\\format\\\\LightArray as its type\\.$#"
 			count: 1
-			path: ../../src/world/format/SubChunk.php
+			path: ../../../src/world/format/SubChunk.php
 
 		-
 			message: "#^Call to method getBitsPerBlock\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/BaseWorldProvider.php
+			path: ../../../src/world/format/io/BaseWorldProvider.php
 
 		-
 			message: "#^Call to method getPalette\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/BaseWorldProvider.php
+			path: ../../../src/world/format/io/BaseWorldProvider.php
 
 		-
 			message: "#^Call to method getWordArray\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/BaseWorldProvider.php
+			path: ../../../src/world/format/io/BaseWorldProvider.php
 
 		-
 			message: "#^Call to static method convertSubChunkFromLegacyColumn\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\io\\\\SubChunkConverter\\.$#"
 			count: 1
-			path: ../../src/world/format/io/BaseWorldProvider.php
+			path: ../../../src/world/format/io/BaseWorldProvider.php
 
 		-
 			message: "#^Call to static method convertSubChunkXZY\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\io\\\\SubChunkConverter\\.$#"
 			count: 1
-			path: ../../src/world/format/io/BaseWorldProvider.php
+			path: ../../../src/world/format/io/BaseWorldProvider.php
 
 		-
 			message: "#^Call to static method convertSubChunkYZX\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\io\\\\SubChunkConverter\\.$#"
 			count: 1
-			path: ../../src/world/format/io/BaseWorldProvider.php
+			path: ../../../src/world/format/io/BaseWorldProvider.php
 
 		-
 			message: "#^Call to static method fromData\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/BaseWorldProvider.php
+			path: ../../../src/world/format/io/BaseWorldProvider.php
 
 		-
 			message: "#^Method pocketmine\\\\world\\\\format\\\\io\\\\BaseWorldProvider\\:\\:palettizeLegacySubChunkFromColumn\\(\\) has invalid return type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/BaseWorldProvider.php
+			path: ../../../src/world/format/io/BaseWorldProvider.php
 
 		-
 			message: "#^Method pocketmine\\\\world\\\\format\\\\io\\\\BaseWorldProvider\\:\\:palettizeLegacySubChunkXZY\\(\\) has invalid return type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/BaseWorldProvider.php
+			path: ../../../src/world/format/io/BaseWorldProvider.php
 
 		-
 			message: "#^Method pocketmine\\\\world\\\\format\\\\io\\\\BaseWorldProvider\\:\\:palettizeLegacySubChunkYZX\\(\\) has invalid return type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/BaseWorldProvider.php
+			path: ../../../src/world/format/io/BaseWorldProvider.php
 
 		-
 			message: "#^Method pocketmine\\\\world\\\\format\\\\io\\\\BaseWorldProvider\\:\\:translatePalette\\(\\) has invalid return type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/BaseWorldProvider.php
+			path: ../../../src/world/format/io/BaseWorldProvider.php
 
 		-
 			message: "#^Parameter \\$blockArray of method pocketmine\\\\world\\\\format\\\\io\\\\BaseWorldProvider\\:\\:translatePalette\\(\\) has invalid type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/BaseWorldProvider.php
+			path: ../../../src/world/format/io/BaseWorldProvider.php
 
 		-
 			message: "#^Call to method set\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/ChunkUtils.php
+			path: ../../../src/world/format/io/ChunkUtils.php
 
 		-
 			message: "#^Instantiated class pocketmine\\\\world\\\\format\\\\PalettedBlockArray not found\\.$#"
 			count: 1
-			path: ../../src/world/format/io/ChunkUtils.php
+			path: ../../../src/world/format/io/ChunkUtils.php
 
 		-
 			message: "#^Method pocketmine\\\\world\\\\format\\\\io\\\\ChunkUtils\\:\\:extrapolate3DBiomes\\(\\) has invalid return type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/ChunkUtils.php
+			path: ../../../src/world/format/io/ChunkUtils.php
 
 		-
 			message: "#^Call to method getBitsPerBlock\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/FastChunkSerializer.php
+			path: ../../../src/world/format/io/FastChunkSerializer.php
 
 		-
 			message: "#^Call to method getPalette\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/FastChunkSerializer.php
+			path: ../../../src/world/format/io/FastChunkSerializer.php
 
 		-
 			message: "#^Call to method getWordArray\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/FastChunkSerializer.php
+			path: ../../../src/world/format/io/FastChunkSerializer.php
 
 		-
 			message: "#^Call to static method fromData\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/FastChunkSerializer.php
+			path: ../../../src/world/format/io/FastChunkSerializer.php
 
 		-
 			message: "#^Call to static method getExpectedWordArraySize\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/FastChunkSerializer.php
+			path: ../../../src/world/format/io/FastChunkSerializer.php
 
 		-
 			message: "#^Method pocketmine\\\\world\\\\format\\\\io\\\\FastChunkSerializer\\:\\:deserializePalettedArray\\(\\) has invalid return type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/FastChunkSerializer.php
+			path: ../../../src/world/format/io/FastChunkSerializer.php
 
 		-
 			message: "#^PHPDoc tag @var for variable \\$layers contains unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/FastChunkSerializer.php
+			path: ../../../src/world/format/io/FastChunkSerializer.php
 
 		-
 			message: "#^Parameter \\$array of method pocketmine\\\\world\\\\format\\\\io\\\\FastChunkSerializer\\:\\:serializePalettedArray\\(\\) has invalid type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/FastChunkSerializer.php
+			path: ../../../src/world/format/io/FastChunkSerializer.php
 
 		-
 			message: "#^Call to method getBitsPerBlock\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 4
-			path: ../../src/world/format/io/leveldb/LevelDB.php
+			path: ../../../src/world/format/io/leveldb/LevelDB.php
 
 		-
 			message: "#^Call to method getPalette\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 2
-			path: ../../src/world/format/io/leveldb/LevelDB.php
+			path: ../../../src/world/format/io/leveldb/LevelDB.php
 
 		-
 			message: "#^Call to method getWordArray\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 2
-			path: ../../src/world/format/io/leveldb/LevelDB.php
+			path: ../../../src/world/format/io/leveldb/LevelDB.php
 
 		-
 			message: "#^Call to method set\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/leveldb/LevelDB.php
+			path: ../../../src/world/format/io/leveldb/LevelDB.php
 
 		-
 			message: "#^Call to static method fromData\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 2
-			path: ../../src/world/format/io/leveldb/LevelDB.php
+			path: ../../../src/world/format/io/leveldb/LevelDB.php
 
 		-
 			message: "#^Call to static method getExpectedWordArraySize\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 2
-			path: ../../src/world/format/io/leveldb/LevelDB.php
+			path: ../../../src/world/format/io/leveldb/LevelDB.php
 
 		-
 			message: "#^Cloning object of an unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 4
-			path: ../../src/world/format/io/leveldb/LevelDB.php
+			path: ../../../src/world/format/io/leveldb/LevelDB.php
 
 		-
 			message: "#^Instantiated class pocketmine\\\\world\\\\format\\\\PalettedBlockArray not found\\.$#"
 			count: 2
-			path: ../../src/world/format/io/leveldb/LevelDB.php
+			path: ../../../src/world/format/io/leveldb/LevelDB.php
 
 		-
 			message: "#^Method pocketmine\\\\world\\\\format\\\\io\\\\leveldb\\\\LevelDB\\:\\:deserialize3dBiomes\\(\\) has invalid return type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/leveldb/LevelDB.php
+			path: ../../../src/world/format/io/leveldb/LevelDB.php
 
 		-
 			message: "#^Method pocketmine\\\\world\\\\format\\\\io\\\\leveldb\\\\LevelDB\\:\\:deserializeBiomeData\\(\\) has invalid return type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/leveldb/LevelDB.php
+			path: ../../../src/world/format/io/leveldb/LevelDB.php
 
 		-
 			message: "#^Method pocketmine\\\\world\\\\format\\\\io\\\\leveldb\\\\LevelDB\\:\\:deserializeBiomePalette\\(\\) has invalid return type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/leveldb/LevelDB.php
+			path: ../../../src/world/format/io/leveldb/LevelDB.php
 
 		-
 			message: "#^Method pocketmine\\\\world\\\\format\\\\io\\\\leveldb\\\\LevelDB\\:\\:deserializeBlockPalette\\(\\) has invalid return type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/leveldb/LevelDB.php
+			path: ../../../src/world/format/io/leveldb/LevelDB.php
 
 		-
 			message: "#^Method pocketmine\\\\world\\\\format\\\\io\\\\leveldb\\\\LevelDB\\:\\:deserializeLegacyExtraData\\(\\) has invalid return type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/leveldb/LevelDB.php
+			path: ../../../src/world/format/io/leveldb/LevelDB.php
 
 		-
 			message: "#^PHPDoc tag @var for variable \\$extraDataLayers contains unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/leveldb/LevelDB.php
+			path: ../../../src/world/format/io/leveldb/LevelDB.php
 
 		-
 			message: "#^Parameter \\$biomeArrays of method pocketmine\\\\world\\\\format\\\\io\\\\leveldb\\\\LevelDB\\:\\:deserializeAllSubChunkData\\(\\) has invalid type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/leveldb/LevelDB.php
+			path: ../../../src/world/format/io/leveldb/LevelDB.php
 
 		-
 			message: "#^Parameter \\$biomePalette of method pocketmine\\\\world\\\\format\\\\io\\\\leveldb\\\\LevelDB\\:\\:deserializeNonPalettedSubChunkData\\(\\) has invalid type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/leveldb/LevelDB.php
+			path: ../../../src/world/format/io/leveldb/LevelDB.php
 
 		-
 			message: "#^Parameter \\$biomePalette of method pocketmine\\\\world\\\\format\\\\io\\\\leveldb\\\\LevelDB\\:\\:deserializeSubChunkData\\(\\) has invalid type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/leveldb/LevelDB.php
+			path: ../../../src/world/format/io/leveldb/LevelDB.php
 
 		-
 			message: "#^Parameter \\$biomes of method pocketmine\\\\world\\\\format\\\\io\\\\leveldb\\\\LevelDB\\:\\:serializeBiomePalette\\(\\) has invalid type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/leveldb/LevelDB.php
+			path: ../../../src/world/format/io/leveldb/LevelDB.php
 
 		-
 			message: "#^Parameter \\$blocks of method pocketmine\\\\world\\\\format\\\\io\\\\leveldb\\\\LevelDB\\:\\:serializeBlockPalette\\(\\) has invalid type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/leveldb/LevelDB.php
+			path: ../../../src/world/format/io/leveldb/LevelDB.php
 
 		-
 			message: "#^Parameter \\$convertedLegacyExtraData of method pocketmine\\\\world\\\\format\\\\io\\\\leveldb\\\\LevelDB\\:\\:deserializeAllSubChunkData\\(\\) has invalid type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/leveldb/LevelDB.php
+			path: ../../../src/world/format/io/leveldb/LevelDB.php
 
 		-
 			message: "#^Parameter \\$convertedLegacyExtraData of method pocketmine\\\\world\\\\format\\\\io\\\\leveldb\\\\LevelDB\\:\\:deserializeNonPalettedSubChunkData\\(\\) has invalid type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/leveldb/LevelDB.php
+			path: ../../../src/world/format/io/leveldb/LevelDB.php
 
 		-
 			message: "#^Parameter \\$convertedLegacyExtraData of method pocketmine\\\\world\\\\format\\\\io\\\\leveldb\\\\LevelDB\\:\\:deserializeSubChunkData\\(\\) has invalid type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/leveldb/LevelDB.php
+			path: ../../../src/world/format/io/leveldb/LevelDB.php
 
 		-
 			message: "#^Anonymous function has invalid return type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/region/Anvil.php
+			path: ../../../src/world/format/io/region/Anvil.php
 
 		-
 			message: "#^Cloning object of an unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 2
-			path: ../../src/world/format/io/region/Anvil.php
+			path: ../../../src/world/format/io/region/Anvil.php
 
 		-
 			message: "#^Instantiated class pocketmine\\\\world\\\\format\\\\PalettedBlockArray not found\\.$#"
 			count: 1
-			path: ../../src/world/format/io/region/Anvil.php
+			path: ../../../src/world/format/io/region/Anvil.php
 
 		-
 			message: "#^Parameter \\$biomes3d of method pocketmine\\\\world\\\\format\\\\io\\\\region\\\\Anvil\\:\\:deserializeSubChunk\\(\\) has invalid type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/region/Anvil.php
+			path: ../../../src/world/format/io/region/Anvil.php
 
 		-
 			message: "#^Anonymous function has invalid return type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/region/McRegion.php
+			path: ../../../src/world/format/io/region/McRegion.php
 
 		-
 			message: "#^Cloning object of an unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 2
-			path: ../../src/world/format/io/region/McRegion.php
+			path: ../../../src/world/format/io/region/McRegion.php
 
 		-
 			message: "#^Instantiated class pocketmine\\\\world\\\\format\\\\PalettedBlockArray not found\\.$#"
 			count: 1
-			path: ../../src/world/format/io/region/McRegion.php
+			path: ../../../src/world/format/io/region/McRegion.php
 
 		-
 			message: "#^Anonymous function has invalid return type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/region/PMAnvil.php
+			path: ../../../src/world/format/io/region/PMAnvil.php
 
 		-
 			message: "#^Cloning object of an unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 2
-			path: ../../src/world/format/io/region/PMAnvil.php
+			path: ../../../src/world/format/io/region/PMAnvil.php
 
 		-
 			message: "#^Instantiated class pocketmine\\\\world\\\\format\\\\PalettedBlockArray not found\\.$#"
 			count: 1
-			path: ../../src/world/format/io/region/PMAnvil.php
+			path: ../../../src/world/format/io/region/PMAnvil.php
 
 		-
 			message: "#^Parameter \\$biomes3d of method pocketmine\\\\world\\\\format\\\\io\\\\region\\\\PMAnvil\\:\\:deserializeSubChunk\\(\\) has invalid type pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/format/io/region/PMAnvil.php
+			path: ../../../src/world/format/io/region/PMAnvil.php
+
+		-
+			message: "#^Only numeric types are allowed in %%, int\\<0, max\\>\\|false given on the left side\\.$#"
+			count: 1
+			path: ../../../src/world/format/io/region/RegionLoader.php
+
+		-
+			message: "#^Parameter \\#2 \\$length of function fread expects int\\<0, max\\>, int given\\.$#"
+			count: 1
+			path: ../../../src/world/format/io/region/RegionLoader.php
+
+		-
+			message: "#^Parameter \\#2 \\$size of function ftruncate expects int\\<0, max\\>, int given\\.$#"
+			count: 1
+			path: ../../../src/world/format/io/region/RegionLoader.php
+
+		-
+			message: "#^Argument of an invalid type array\\<int, string\\>\\|false supplied for foreach, only iterables are supported\\.$#"
+			count: 1
+			path: ../../../src/world/format/io/region/RegionWorldProvider.php
+
+		-
+			message: "#^Cannot access offset 1 on mixed\\.$#"
+			count: 2
+			path: ../../../src/world/format/io/region/RegionWorldProvider.php
+
+		-
+			message: "#^Cannot access offset 2 on mixed\\.$#"
+			count: 2
+			path: ../../../src/world/format/io/region/RegionWorldProvider.php
+
+		-
+			message: "#^Cannot cast mixed to int\\.$#"
+			count: 4
+			path: ../../../src/world/format/io/region/RegionWorldProvider.php
 
 		-
 			message: "#^Function morton2d_encode not found\\.$#"
 			count: 3
-			path: ../../src/world/format/io/region/RegionWorldProvider.php
+			path: ../../../src/world/format/io/region/RegionWorldProvider.php
 
 		-
 			message: "#^Used function morton2d_encode not found\\.$#"
 			count: 1
-			path: ../../src/world/format/io/region/RegionWorldProvider.php
+			path: ../../../src/world/format/io/region/RegionWorldProvider.php
+
+		-
+			message: "#^Method pocketmine\\\\world\\\\generator\\\\biome\\\\BiomeSelector\\:\\:pickBiome\\(\\) should return pocketmine\\\\world\\\\biome\\\\Biome but returns pocketmine\\\\world\\\\biome\\\\Biome\\|null\\.$#"
+			count: 1
+			path: ../../../src/world/generator/biome/BiomeSelector.php
+
+		-
+			message: "#^Cannot call method getBiomeId\\(\\) on pocketmine\\\\world\\\\format\\\\Chunk\\|null\\.$#"
+			count: 1
+			path: ../../../src/world/generator/hell/Nether.php
+
+		-
+			message: "#^Offset int does not exist on SplFixedArray\\<float\\>\\|null\\.$#"
+			count: 4
+			path: ../../../src/world/generator/noise/Noise.php
+
+		-
+			message: "#^Parameter \\$q0 of static method pocketmine\\\\world\\\\generator\\\\noise\\\\Noise\\:\\:linearLerp\\(\\) expects float, float\\|null given\\.$#"
+			count: 1
+			path: ../../../src/world/generator/noise/Noise.php
+
+		-
+			message: "#^Parameter \\$q1 of static method pocketmine\\\\world\\\\generator\\\\noise\\\\Noise\\:\\:linearLerp\\(\\) expects float, float\\|null given\\.$#"
+			count: 1
+			path: ../../../src/world/generator/noise/Noise.php
+
+		-
+			message: "#^Cannot call method getBiomeId\\(\\) on pocketmine\\\\world\\\\format\\\\Chunk\\|null\\.$#"
+			count: 1
+			path: ../../../src/world/generator/normal/Normal.php
+
+		-
+			message: "#^Parameter \\#1 \\$start of method pocketmine\\\\utils\\\\Random\\:\\:nextRange\\(\\) expects int, float\\|int given\\.$#"
+			count: 2
+			path: ../../../src/world/generator/object/TallGrass.php
+
+		-
+			message: "#^Parameter \\#2 \\$end of method pocketmine\\\\utils\\\\Random\\:\\:nextRange\\(\\) expects int, float\\|int given\\.$#"
+			count: 2
+			path: ../../../src/world/generator/object/TallGrass.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\ChunkManager\\:\\:getBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 2
+			path: ../../../src/world/generator/object/TallGrass.php
+
+		-
+			message: "#^Parameter \\#2 \\$y of method pocketmine\\\\world\\\\ChunkManager\\:\\:setBlockAt\\(\\) expects int, float\\|int given\\.$#"
+			count: 1
+			path: ../../../src/world/generator/object/TallGrass.php
 
 		-
 			message: "#^Call to method getPalette\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\PalettedBlockArray\\.$#"
 			count: 1
-			path: ../../src/world/light/BlockLightUpdate.php
+			path: ../../../src/world/light/BlockLightUpdate.php
 
 		-
 			message: "#^Call to static method fill\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\LightArray\\.$#"
 			count: 1
-			path: ../../src/world/light/BlockLightUpdate.php
+			path: ../../../src/world/light/BlockLightUpdate.php
+
+		-
+			message: "#^Cannot call method getBlockLightArray\\(\\) on pocketmine\\\\world\\\\format\\\\SubChunk\\|null\\.$#"
+			count: 1
+			path: ../../../src/world/light/BlockLightUpdate.php
+
+		-
+			message: "#^Cannot call method getBlockStateId\\(\\) on pocketmine\\\\world\\\\format\\\\SubChunk\\|null\\.$#"
+			count: 1
+			path: ../../../src/world/light/BlockLightUpdate.php
+
+		-
+			message: "#^Cannot call method getSubChunks\\(\\) on pocketmine\\\\world\\\\format\\\\Chunk\\|null\\.$#"
+			count: 1
+			path: ../../../src/world/light/BlockLightUpdate.php
 
 		-
 			message: "#^Method pocketmine\\\\world\\\\light\\\\BlockLightUpdate\\:\\:getCurrentLightArray\\(\\) has invalid return type pocketmine\\\\world\\\\format\\\\LightArray\\.$#"
 			count: 1
-			path: ../../src/world/light/BlockLightUpdate.php
+			path: ../../../src/world/light/BlockLightUpdate.php
 
 		-
 			message: "#^PHPDoc tag @var for variable \\$blockLightArrays contains unknown class pocketmine\\\\world\\\\format\\\\LightArray\\.$#"
 			count: 1
-			path: ../../src/world/light/LightPopulationTask.php
+			path: ../../../src/world/light/LightPopulationTask.php
 
 		-
 			message: "#^PHPDoc tag @var for variable \\$skyLightArrays contains unknown class pocketmine\\\\world\\\\format\\\\LightArray\\.$#"
 			count: 1
-			path: ../../src/world/light/LightPopulationTask.php
+			path: ../../../src/world/light/LightPopulationTask.php
 
 		-
 			message: "#^Parameter \\$onCompletion of method pocketmine\\\\world\\\\light\\\\LightPopulationTask\\:\\:__construct\\(\\) has invalid type pocketmine\\\\world\\\\format\\\\LightArray\\.$#"
 			count: 2
-			path: ../../src/world/light/LightPopulationTask.php
+			path: ../../../src/world/light/LightPopulationTask.php
+
+		-
+			message: "#^Property pocketmine\\\\world\\\\light\\\\LightPopulationTask\\:\\:\\$resultBlockLightArrays \\(string\\) does not accept string\\|null\\.$#"
+			count: 1
+			path: ../../../src/world/light/LightPopulationTask.php
+
+		-
+			message: "#^Property pocketmine\\\\world\\\\light\\\\LightPopulationTask\\:\\:\\$resultHeightMap \\(string\\) does not accept string\\|null\\.$#"
+			count: 1
+			path: ../../../src/world/light/LightPopulationTask.php
+
+		-
+			message: "#^Property pocketmine\\\\world\\\\light\\\\LightPopulationTask\\:\\:\\$resultSkyLightArrays \\(string\\) does not accept string\\|null\\.$#"
+			count: 1
+			path: ../../../src/world/light/LightPopulationTask.php
 
 		-
 			message: "#^Call to method get\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\LightArray\\.$#"
 			count: 5
-			path: ../../src/world/light/LightUpdate.php
+			path: ../../../src/world/light/LightUpdate.php
 
 		-
 			message: "#^Call to method set\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\LightArray\\.$#"
 			count: 3
-			path: ../../src/world/light/LightUpdate.php
+			path: ../../../src/world/light/LightUpdate.php
 
 		-
 			message: "#^Method pocketmine\\\\world\\\\light\\\\LightUpdate\\:\\:getCurrentLightArray\\(\\) has invalid return type pocketmine\\\\world\\\\format\\\\LightArray\\.$#"
 			count: 1
-			path: ../../src/world/light/LightUpdate.php
+			path: ../../../src/world/light/LightUpdate.php
 
 		-
 			message: "#^Parameter \\$lightArray of method pocketmine\\\\world\\\\light\\\\LightUpdate\\:\\:computeRemoveLight\\(\\) has invalid type pocketmine\\\\world\\\\format\\\\LightArray\\.$#"
 			count: 1
-			path: ../../src/world/light/LightUpdate.php
+			path: ../../../src/world/light/LightUpdate.php
 
 		-
 			message: "#^Parameter \\$lightArray of method pocketmine\\\\world\\\\light\\\\LightUpdate\\:\\:computeSpreadLight\\(\\) has invalid type pocketmine\\\\world\\\\format\\\\LightArray\\.$#"
 			count: 1
-			path: ../../src/world/light/LightUpdate.php
+			path: ../../../src/world/light/LightUpdate.php
 
 		-
 			message: "#^Call to method set\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\LightArray\\.$#"
 			count: 1
-			path: ../../src/world/light/SkyLightUpdate.php
+			path: ../../../src/world/light/SkyLightUpdate.php
 
 		-
 			message: "#^Call to static method fill\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\LightArray\\.$#"
 			count: 2
-			path: ../../src/world/light/SkyLightUpdate.php
+			path: ../../../src/world/light/SkyLightUpdate.php
+
+		-
+			message: "#^Cannot call method getBlockSkyLightArray\\(\\) on pocketmine\\\\world\\\\format\\\\SubChunk\\|null\\.$#"
+			count: 1
+			path: ../../../src/world/light/SkyLightUpdate.php
+
+		-
+			message: "#^Cannot call method getBlockStateId\\(\\) on pocketmine\\\\world\\\\format\\\\SubChunk\\|null\\.$#"
+			count: 2
+			path: ../../../src/world/light/SkyLightUpdate.php
+
+		-
+			message: "#^Cannot call method getHeightMap\\(\\) on pocketmine\\\\world\\\\format\\\\Chunk\\|null\\.$#"
+			count: 6
+			path: ../../../src/world/light/SkyLightUpdate.php
+
+		-
+			message: "#^Cannot call method getHeightMapArray\\(\\) on pocketmine\\\\world\\\\format\\\\Chunk\\|null\\.$#"
+			count: 1
+			path: ../../../src/world/light/SkyLightUpdate.php
+
+		-
+			message: "#^Cannot call method getSubChunk\\(\\) on pocketmine\\\\world\\\\format\\\\Chunk\\|null\\.$#"
+			count: 2
+			path: ../../../src/world/light/SkyLightUpdate.php
+
+		-
+			message: "#^Cannot call method setHeightMap\\(\\) on pocketmine\\\\world\\\\format\\\\Chunk\\|null\\.$#"
+			count: 2
+			path: ../../../src/world/light/SkyLightUpdate.php
+
+		-
+			message: "#^Cannot call method setHeightMapArray\\(\\) on pocketmine\\\\world\\\\format\\\\Chunk\\|null\\.$#"
+			count: 1
+			path: ../../../src/world/light/SkyLightUpdate.php
 
 		-
 			message: "#^Method pocketmine\\\\world\\\\light\\\\SkyLightUpdate\\:\\:getCurrentLightArray\\(\\) has invalid return type pocketmine\\\\world\\\\format\\\\LightArray\\.$#"
 			count: 1
-			path: ../../src/world/light/SkyLightUpdate.php
+			path: ../../../src/world/light/SkyLightUpdate.php
+
+		-
+			message: "#^Parameter \\#1 \\$chunk of static method pocketmine\\\\world\\\\light\\\\SkyLightUpdate\\:\\:recalculateHeightMap\\(\\) expects pocketmine\\\\world\\\\format\\\\Chunk, pocketmine\\\\world\\\\format\\\\Chunk\\|null given\\.$#"
+			count: 1
+			path: ../../../src/world/light/SkyLightUpdate.php
+
+		-
+			message: "#^Parameter \\#1 \\$chunk of static method pocketmine\\\\world\\\\light\\\\SkyLightUpdate\\:\\:recalculateHeightMapColumn\\(\\) expects pocketmine\\\\world\\\\format\\\\Chunk, pocketmine\\\\world\\\\format\\\\Chunk\\|null given\\.$#"
+			count: 1
+			path: ../../../src/world/light/SkyLightUpdate.php
+
+		-
+			message: "#^Parameter \\#1 \\$json of function json_decode expects string, string\\|false given\\.$#"
+			count: 1
+			path: ../../phpunit/block/BlockTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$json of function json_decode expects string, string\\|false given\\.$#"
+			count: 1
+			path: ../../phpunit/block/regenerate_consistency_check.php
+
+		-
+			message: "#^Parameter \\#2 \\$haystack of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertCount\\(\\) expects Countable\\|iterable, pmmp\\\\thread\\\\ThreadSafeArray given\\.$#"
+			count: 1
+			path: ../../phpunit/scheduler/AsyncPoolTest.php
+
+		-
+			message: "#^Parameter \\$result of anonymous function has invalid type pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
+			count: 1
+			path: ../../phpunit/scheduler/AsyncPoolTest.php
+
+		-
+			message: "#^Access to an offset on an unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
+			count: 1
+			path: ../../phpunit/scheduler/ThreadSafeResultAsyncTask.php
+
+		-
+			message: "#^Instantiated class pmmp\\\\thread\\\\ThreadSafeArray not found\\.$#"
+			count: 1
+			path: ../../phpunit/scheduler/ThreadSafeResultAsyncTask.php
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$promise contains unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
+			count: 1
+			path: ../../phpunit/scheduler/ThreadSafeResultAsyncTask.php
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$result contains unknown class pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
+			count: 1
+			path: ../../phpunit/scheduler/ThreadSafeResultAsyncTask.php
+
+		-
+			message: "#^Parameter \\$promise of method pocketmine\\\\scheduler\\\\ThreadSafeResultAsyncTask\\:\\:__construct\\(\\) has invalid type pmmp\\\\thread\\\\ThreadSafeArray\\.$#"
+			count: 1
+			path: ../../phpunit/scheduler/ThreadSafeResultAsyncTask.php
+
+		-
+			message: "#^Call to method get\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\LightArray\\.$#"
+			count: 4
+			path: ../../phpunit/world/format/SubChunkTest.php
+
+		-
+			message: "#^Call to method set\\(\\) on an unknown class pocketmine\\\\world\\\\format\\\\LightArray\\.$#"
+			count: 4
+			path: ../../phpunit/world/format/SubChunkTest.php
+
+		-
+			message: "#^Instantiated class pocketmine\\\\world\\\\format\\\\PalettedBlockArray not found\\.$#"
+			count: 1
+			path: ../../phpunit/world/format/SubChunkTest.php
+
