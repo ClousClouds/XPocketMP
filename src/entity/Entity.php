@@ -658,6 +658,15 @@ abstract class Entity{
 			$ev = new EntityDamageEvent($this, EntityDamageEvent::CAUSE_VOID, 10);
 			$this->attack($ev);
 			$hasUpdate = true;
+		}elseif($this->isOnGround()){
+			$block = $this->getWorld()->getBlock($this->getLocation()->subtract(0, 1, 0));
+			$entityBox = $this->getBoundingBox()->addCoord(0, -0.00001, 0);
+			foreach ($block->getCollisionBoxes() as $blockBox) {
+				if ($entityBox->intersectsWith($blockBox)) {
+					$block->onEntityCollide($this);
+					break;
+				}
+			}
 		}
 
 		if($this->isOnFire() && $this->doOnFireTick($tickDiff)){
