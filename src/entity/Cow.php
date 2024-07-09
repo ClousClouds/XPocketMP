@@ -11,7 +11,6 @@ use pocketmine\network\mcpe\protocol\AddActorPacket;
 use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
 use pocketmine\player\Player;
 use pocketmine\scheduler\ClosureTask;
-use pocketmine\scheduler\Scheduler;
 use pocketmine\Server;
 use pocketmine\world\World;
 use function mt_rand;
@@ -70,9 +69,9 @@ class Cow extends Living
 
     private function scheduleAI() : void
     {
-        Scheduler::scheduleRepeatingTask(new ClosureTask(function (): void {
-            $this->performAI();
-        }), 20); // 20 ticks = 1 second
+    Server::getInstance()->getAsyncPool()->getScheduler()->scheduleRepeatingTask(new ClosureTask(function (): void {
+        $this->performAI();
+    }), 20); // 20 ticks = 1 second
     }
 
     public function performAI() : void
