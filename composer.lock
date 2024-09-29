@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b09a926aa69976109446339e84f40a0b",
+    "content-hash": "8fa111fb126d6c6953655e1366bbb018",
     "packages": [
         {
             "name": "adhocore/json-comment",
@@ -1148,94 +1148,6 @@
                 }
             ],
             "time": "2024-09-09T11:45:10+00:00"
-        },
-        {
-            "name": "xpocketmc/bedrockprotocol",
-            "version": "1.0.0+1.21.30",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/xpocketmc/BedrockProtocol-Minecraft.git",
-                "reference": "3945f017a2ca9f3cbd45f4f1cef1cf54d644203b"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/xpocketmc/BedrockProtocol-Minecraft/zipball/3945f017a2ca9f3cbd45f4f1cef1cf54d644203b",
-                "reference": "3945f017a2ca9f3cbd45f4f1cef1cf54d644203b",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "php": "^8.1",
-                "pocketmine/binaryutils": "^0.2.0",
-                "pocketmine/color": "^0.2.0 || ^0.3.0",
-                "pocketmine/math": "^0.3.0 || ^0.4.0 || ^1.0.0",
-                "pocketmine/nbt": "^1.0.0",
-                "ramsey/uuid": "^4.1"
-            },
-            "require-dev": {
-                "phpstan/phpstan": "1.11.9",
-                "phpstan/phpstan-phpunit": "^1.0.0",
-                "phpstan/phpstan-strict-rules": "^1.0.0",
-                "phpunit/phpunit": "^9.5 || ^10.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "pocketmine\\network\\mcpe\\protocol\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "LGPL-3.0"
-            ],
-            "description": "An implementation of the Minecraft: Bedrock Edition protocol in PHP",
-            "support": {
-                "source": "https://github.com/xpocketmc/BedrockProtocol-Minecraft/tree/1.0.0+1.21.30"
-            },
-            "time": "2024-09-18T05:56:10+00:00"
-        },
-        {
-            "name": "xpocketmc/xpocketmprotocols",
-            "version": "1.1.0+1.21.30",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/xpocketmc/XPocketMProtocols.git",
-                "reference": "dbf634ae4fbbdadb634df31ca8e0cfd4b8194f62"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/xpocketmc/XPocketMProtocols/zipball/dbf634ae4fbbdadb634df31ca8e0cfd4b8194f62",
-                "reference": "dbf634ae4fbbdadb634df31ca8e0cfd4b8194f62",
-                "shasum": ""
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.59.3",
-                "php": "^8.1",
-                "phpstan/phpstan": "^1.11.5",
-                "phpstan/phpstan-strict-rules": "^1.6.0",
-                "pocketmine/nbt": "^1.0.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "xpocketmc\\xpocketmprotocols\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "lgpl-3.0-only"
-            ],
-            "authors": [
-                {
-                    "name": "SketchProX",
-                    "email": "123lah123lah@gmail.com"
-                }
-            ],
-            "support": {
-                "issues": "https://github.com/xpocketmc/XPocketMProtocols/issues",
-                "source": "https://github.com/xpocketmc/XPocketMProtocols/tree/1.21.0-685"
-            },
-            "time": "2024-06-26T15:09:48+00:00"
         }
     ],
     "packages-dev": [
@@ -1513,16 +1425,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.11.4",
+            "version": "1.12.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "9100a76ce8015b9aa7125b9171ae3a76887b6c82"
+                "reference": "7e6c6cb7cecb0a6254009a1a8a7d54ec99812b17"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/9100a76ce8015b9aa7125b9171ae3a76887b6c82",
-                "reference": "9100a76ce8015b9aa7125b9171ae3a76887b6c82",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/7e6c6cb7cecb0a6254009a1a8a7d54ec99812b17",
+                "reference": "7e6c6cb7cecb0a6254009a1a8a7d54ec99812b17",
                 "shasum": ""
             },
             "require": {
@@ -1567,7 +1479,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-06-06T12:19:22+00:00"
+            "time": "2024-09-26T12:45:22+00:00"
         },
         {
             "name": "phpstan/phpstan-phpunit",
