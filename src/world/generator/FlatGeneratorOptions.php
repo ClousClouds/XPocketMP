@@ -119,7 +119,7 @@ final class FlatGeneratorOptions{
 					}
 				}
 			}
-			$options[(string) $option] = $params;
+			$options[$option] = $params;
 		}
 		return new self($structure, $biomeId, $options);
 	}
