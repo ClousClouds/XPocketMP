@@ -74,9 +74,10 @@ final class FlatGeneratorOptions{
 		$split = array_map('\trim', explode(',', $layers));
 		$y = 0;
 		$itemParser = LegacyStringToItemParser::getInstance();
-		foreach($split as $line){
-			preg_match('#^(?:(\d+)[x|*])?(.+)$#', $line, $matches);
-			if(count($matches) !== 3){
+
+		foreach($split as $line){    
+			preg_match('#^(?:(\d+)[x|*])?(.+)$#', $line, $matches);   
+			if(count($matches) !== 3 || !isset($matches[2])){
 				throw new InvalidGeneratorOptionsException("Invalid preset layer \"$line\"");
 			}
 
@@ -86,11 +87,11 @@ final class FlatGeneratorOptions{
 			}catch(LegacyStringToItemParserException $e){
 				throw new InvalidGeneratorOptionsException("Invalid preset layer \"$line\": " . $e->getMessage(), 0, $e);
 			}
+
 			for($cY = $y, $y += $cnt; $cY < $y; ++$cY){
-				$result[$cY] = $b->getStateId();
+				$result[$cY] = $b->getStateId(); 
 			}
 		}
-
 		return $result;
 	}
 
