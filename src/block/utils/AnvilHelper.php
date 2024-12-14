@@ -23,10 +23,10 @@ declare(strict_types=1);
 
 namespace pocketmine\block\utils;
 
-use pocketmine\block\anvil\AnvilActionsFactory;
+use pocketmine\crafting\AnvilCraftResult;
 use pocketmine\item\Item;
 use pocketmine\player\Player;
-use function max;
+use pocketmine\Server;
 
 final class AnvilHelper{
 	private const COST_LIMIT = 39;
@@ -36,31 +36,29 @@ final class AnvilHelper{
 	 *
 	 * Returns null if the operation can't do anything.
 	 */
-	public static function calculateResult(Player $player, Item $base, Item $material, ?string $customName = null) : ?AnvilResult {
-		$xpCost = 0;
-		$resultItem = clone $base;
+	public static function calculateResult(Player $player, Item $base, Item $material, ?string $customName = null) : ?AnvilCraftResult {
 
-		$additionnalRepairCost = 0;
-		foreach(AnvilActionsFactory::getInstance()->getActions($base, $material, $customName) as $action){
-			$action->process($resultItem);
-			if(!$action->isFreeOfRepairCost() && $action->getXpCost() > 0){
-				// Repair cost increment if the item has been processed
-				// and any of the action is not free of repair cost
-				$additionnalRepairCost = 1;
+		$recipe = Server::getInstance()->getCraftingManager()->matchAnvilRecipe($base, $material);
+		$result = $recipe->getResultFor($base, $material);
+
+		if($result !== null){
+			$resultItem = $result->getResult();
+			$xpCost = $result->getXpCost();
+			if(($customName === null || $customName === "") && $resultItem->hasCustomName()){
+				$xpCost++;
+				$resultItem->clearCustomName();
+			}elseif($resultItem->getCustomName() !== $customName){
+				$xpCost++;
+				$resultItem->setCustomName($customName);
 			}
-			$xpCost += $action->getXpCost();
+
+			$result = new AnvilCraftResult($xpCost, $resultItem);
 		}
 
-		$xpCost += 2 ** $resultItem->getAnvilRepairCost() - 1;
-		$xpCost += 2 ** $material->getAnvilRepairCost() - 1;
-		$resultItem->setAnvilRepairCost(
-			max($resultItem->getAnvilRepairCost(), $material->getAnvilRepairCost()) + $additionnalRepairCost
-		);
-
-		if($xpCost <= 0 || ($xpCost > self::COST_LIMIT && !$player->isCreative())){
+		if($result === null || $result->getXpCost() <= 0 || ($result->getXpCost() > self::COST_LIMIT && !$player->isCreative())){
 			return null;
 		}
 
-		return new AnvilResult($xpCost, $resultItem);
+		return $result;
 	}
 }

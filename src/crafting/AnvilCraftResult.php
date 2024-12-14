@@ -21,21 +21,21 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\block\utils;
+namespace pocketmine\crafting;
 
 use pocketmine\item\Item;
 
-class AnvilResult{
+class AnvilCraftResult{
 	public function __construct(
-		private int $repairCost,
-		private ?Item $result,
+		private int $xpCost,
+		private Item $result,
 	){}
 
-	public function getRepairCost() : int{
-		return $this->repairCost;
+	public function getXpCost() : int{
+		return $this->xpCost;
 	}
 
-	public function getResult() : ?Item{
+	public function getResult() : Item{
 		return $this->result;
 	}
 }

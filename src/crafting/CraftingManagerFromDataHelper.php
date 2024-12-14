@@ -38,6 +38,7 @@ use pocketmine\data\bedrock\item\SavedItemStackData;
 use pocketmine\data\SavedDataLoadingException;
 use pocketmine\errorhandler\ErrorToExceptionHandler;
 use pocketmine\item\Item;
+use pocketmine\item\VanillaItems;
 use pocketmine\nbt\LittleEndianNbtSerializer;
 use pocketmine\utils\Filesystem;
 use pocketmine\utils\Utils;
@@ -332,6 +333,18 @@ final class CraftingManagerFromDataHelper{
 				$outputId
 			));
 		}
+
+		$result->registerAnvilRecipe(new MaterialRepairRecipe(
+			new ExactRecipeIngredient(VanillaItems::DIAMOND_PICKAXE()),
+			new ExactRecipeIngredient(VanillaItems::DIAMOND()),
+			VanillaItems::DIAMOND_PICKAXE()
+		));
+
+		$result->registerAnvilRecipe(new ItemCombineRecipe(
+			new ExactRecipeIngredient(VanillaItems::DIAMOND_PICKAXE()),
+			new ExactRecipeIngredient(VanillaItems::DIAMOND_PICKAXE()),
+			VanillaItems::DIAMOND_PICKAXE()
+		));
 
 		//TODO: smithing
 

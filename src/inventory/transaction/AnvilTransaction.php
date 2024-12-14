@@ -26,8 +26,8 @@ namespace pocketmine\inventory\transaction;
 use pocketmine\block\Anvil;
 use pocketmine\block\inventory\AnvilInventory;
 use pocketmine\block\utils\AnvilHelper;
-use pocketmine\block\utils\AnvilResult;
 use pocketmine\block\VanillaBlocks;
+use pocketmine\crafting\AnvilCraftResult;
 use pocketmine\event\player\PlayerUseAnvilEvent;
 use pocketmine\item\Item;
 use pocketmine\item\VanillaItems;
@@ -44,14 +44,14 @@ class AnvilTransaction extends InventoryTransaction{
 
 	public function __construct(
 		Player $source,
-		private readonly AnvilResult $expectedResult,
+		private readonly AnvilCraftResult $expectedResult,
 		private readonly ?string $customName
 	) {
 		parent::__construct($source);
 	}
 
 	private function validateFiniteResources(int $xpSpent) : void{
-		$expectedXpCost = $this->expectedResult->getRepairCost();
+		$expectedXpCost = $this->expectedResult->getXpCost();
 		if($xpSpent !== $expectedXpCost){
 			throw new TransactionValidationException("Expected the amount of xp spent to be $expectedXpCost, but received $xpSpent");
 		}
@@ -62,20 +62,20 @@ class AnvilTransaction extends InventoryTransaction{
 		}
 	}
 
-	private function validateInputs(Item $base, Item $material, Item $expectedOutput) : ?AnvilResult {
+	private function validateInputs(Item $base, Item $material, Item $expectedOutput) : ?int {
 		$calculAttempt = AnvilHelper::calculateResult($this->source, $base, $material, $this->customName);
 		if($calculAttempt === null){
 			return null;
 		}
 		$result = $calculAttempt->getResult();
-		if($result === null || !$result->equalsExact($expectedOutput)){
+		if(!$result->equalsExact($expectedOutput)){
 			return null;
 		}
 
 		$this->baseItem = $base;
 		$this->materialItem = $material;
 
-		return $calculAttempt;
+		return $calculAttempt->getXpCost();
 	}
 
 	public function validate() : void{
@@ -102,16 +102,16 @@ class AnvilTransaction extends InventoryTransaction{
 		}
 
 		if(count($inputs) < 2){
-			$attempt = $this->validateInputs($inputs[0], VanillaItems::AIR(), $outputItem) ??
+			$xpCost = $this->validateInputs($inputs[0], VanillaItems::AIR(), $outputItem) ??
 				throw new TransactionValidationException("Inputs do not match expected result");
 		}else{
-			$attempt = $this->validateInputs($inputs[0], $inputs[1], $outputItem) ??
+			$xpCost = $this->validateInputs($inputs[0], $inputs[1], $outputItem) ??
 				$this->validateInputs($inputs[1], $inputs[0], $outputItem) ??
 				throw new TransactionValidationException("Inputs do not match expected result");
 		}
 
 		if($this->source->hasFiniteResources()){
-			$this->validateFiniteResources($attempt->getRepairCost());
+			$this->validateFiniteResources($xpCost);
 		}
 	}
 
@@ -150,7 +150,7 @@ class AnvilTransaction extends InventoryTransaction{
 
 		$ev = new PlayerUseAnvilEvent($this->source, $this->baseItem, $this->materialItem, $this->expectedResult->getResult() ?? throw new \AssertionError(
 			"Expected that the expected result is not null"
-		), $this->customName, $this->expectedResult->getRepairCost());
+		), $this->customName, $this->expectedResult->getXpCost());
 		$ev->call();
 		return !$ev->isCancelled();
 	}
