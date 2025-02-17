@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace pocketmine\build\update_registry_annotations;
 
+use pocketmine\utils\OverloadedRegistryMember;
 use pocketmine\utils\Utils;
 use function basename;
 use function class_exists;
@@ -47,11 +48,16 @@ if(count($argv) !== 2){
 	exit(1);
 }
 
+function makeTypehint(string $namespaceName, \ReflectionClass $class) : string{
+	return $class->getNamespaceName() === $namespaceName ? $class->getShortName() : '\\' . $class->getName();
+}
+
 /**
  * @param object[] $members
  * @phpstan-param array<string, object> $members
+ * @phpstan-param array<string, OverloadedRegistryMember> $overloadedMembers
  */
-function generateMethodAnnotations(string $namespaceName, array $members) : string{
+function generateMethodAnnotations(string $namespaceName, array $members, array $overloadedMembers) : string{
 	$selfName = basename(__FILE__);
 	$lines = ["/**"];
 	$lines[] = " * This doc-block is generated automatically, do not modify it manually.";
@@ -69,13 +75,18 @@ function generateMethodAnnotations(string $namespaceName, array $members) : stri
 		}
 		if($reflect === false){
 			$typehint = "object";
-		}elseif($reflect->getNamespaceName() === $namespaceName){
-			$typehint = $reflect->getShortName();
 		}else{
-			$typehint = '\\' . $reflect->getName();
+			$typehint = makeTypehint($namespaceName, $reflect);
 		}
 		$accessor = mb_strtoupper($name);
 		$memberLines[$accessor] = sprintf($lineTmpl, $accessor, $typehint);
+	}
+	foreach(Utils::stringifyKeys($overloadedMembers) as $baseName => $member){
+		$accessor = mb_strtoupper($baseName);
+		$returnTypehint = makeTypehint($namespaceName, new \ReflectionClass($member->memberClass));
+		$paramTypehint = makeTypehint($namespaceName, new \ReflectionClass($member->enumClass));
+
+		$memberLines[] = sprintf(" * @method static %s %s(%s)", $returnTypehint, $accessor, $paramTypehint);
 	}
 	ksort($memberLines, SORT_STRING);
 
@@ -107,7 +118,7 @@ function processFile(string $file) : void{
 	}
 	echo "Found registry in $file\n";
 
-	$replacement = generateMethodAnnotations($matches[1], $className::getAll());
+	$replacement = generateMethodAnnotations($matches[1], $className::getAll(), $className::getAllOverloaded());
 
 	$newContents = str_replace($docComment, $replacement, $contents);
 	if($newContents !== $contents){

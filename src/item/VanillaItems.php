@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace pocketmine\item;
 
 use pocketmine\block\utils\RecordType;
+use pocketmine\block\utils\WoodType;
 use pocketmine\block\VanillaBlocks as Blocks;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Location;
@@ -47,6 +48,8 @@ use function strtolower;
  * @see build/generate-registry-annotations.php
  * @generate-registry-docblock
  *
+ * @method static Boat BOAT(BoatType)
+ * @method static ItemBlockWallOrFloor SIGN(\pocketmine\block\utils\WoodType)
  * @method static Boat ACACIA_BOAT()
  * @method static ItemBlockWallOrFloor ACACIA_SIGN()
  * @method static ItemBlock AIR()
@@ -396,7 +399,6 @@ final class VanillaItems{
 		//in the future we'll probably want to dissociate this from the air block and make a proper null item
 		self::_registryRegister("air", Blocks::AIR()->asItem()->setCount(0));
 
-		self::register("acacia_sign", fn(IID $id) => new ItemBlockWallOrFloor($id, Blocks::ACACIA_SIGN(), Blocks::ACACIA_WALL_SIGN()));
 		self::register("amethyst_shard", fn(IID $id) => new Item($id, "Amethyst Shard"));
 		self::register("apple", fn(IID $id) => new Apple($id, "Apple"));
 		self::register("arrow", fn(IID $id) => new Arrow($id, "Arrow"));
@@ -406,7 +408,6 @@ final class VanillaItems{
 		self::register("beetroot", fn(IID $id) => new Beetroot($id, "Beetroot"));
 		self::register("beetroot_seeds", fn(IID $id) => new BeetrootSeeds($id, "Beetroot Seeds"));
 		self::register("beetroot_soup", fn(IID $id) => new BeetrootSoup($id, "Beetroot Soup"));
-		self::register("birch_sign", fn(IID $id) => new ItemBlockWallOrFloor($id, Blocks::BIRCH_SIGN(), Blocks::BIRCH_WALL_SIGN()));
 		self::register("blaze_powder", fn(IID $id) => new Item($id, "Blaze Powder"));
 		self::register("blaze_rod", fn(IID $id) => new BlazeRod($id, "Blaze Rod"));
 		self::register("bleach", fn(IID $id) => new Item($id, "Bleach"));
@@ -420,7 +421,6 @@ final class VanillaItems{
 		self::register("bucket", fn(IID $id) => new Bucket($id, "Bucket"));
 		self::register("carrot", fn(IID $id) => new Carrot($id, "Carrot"));
 		self::register("charcoal", fn(IID $id) => new Coal($id, "Charcoal"));
-		self::register("cherry_sign", fn(IID $id) => new ItemBlockWallOrFloor($id, Blocks::CHERRY_SIGN(), Blocks::CHERRY_WALL_SIGN()));
 		self::register("chemical_aluminium_oxide", fn(IID $id) => new Item($id, "Aluminium Oxide"));
 		self::register("chemical_ammonia", fn(IID $id) => new Item($id, "Ammonia"));
 		self::register("chemical_barium_sulphate", fn(IID $id) => new Item($id, "Barium Sulphate"));
@@ -475,8 +475,6 @@ final class VanillaItems{
 		self::register("cookie", fn(IID $id) => new Cookie($id, "Cookie"));
 		self::register("copper_ingot", fn(IID $id) => new Item($id, "Copper Ingot"));
 		self::register("coral_fan", fn(IID $id) => new CoralFan($id));
-		self::register("crimson_sign", fn(IID $id) => new ItemBlockWallOrFloor($id, Blocks::CRIMSON_SIGN(), Blocks::CRIMSON_WALL_SIGN()));
-		self::register("dark_oak_sign", fn(IID $id) => new ItemBlockWallOrFloor($id, Blocks::DARK_OAK_SIGN(), Blocks::DARK_OAK_WALL_SIGN()));
 		self::register("diamond", fn(IID $id) => new Item($id, "Diamond"));
 		self::register("disc_fragment_5", fn(IID $id) => new Item($id, "Disc Fragment (5)"));
 		self::register("dragon_breath", fn(IID $id) => new Item($id, "Dragon's Breath"));
@@ -516,12 +514,10 @@ final class VanillaItems{
 		self::register("ink_sac", fn(IID $id) => new Item($id, "Ink Sac"));
 		self::register("iron_ingot", fn(IID $id) => new Item($id, "Iron Ingot"));
 		self::register("iron_nugget", fn(IID $id) => new Item($id, "Iron Nugget"));
-		self::register("jungle_sign", fn(IID $id) => new ItemBlockWallOrFloor($id, Blocks::JUNGLE_SIGN(), Blocks::JUNGLE_WALL_SIGN()));
 		self::register("lapis_lazuli", fn(IID $id) => new Item($id, "Lapis Lazuli"));
 		self::register("lava_bucket", fn(IID $id) => new LiquidBucket($id, "Lava Bucket", Blocks::LAVA()));
 		self::register("leather", fn(IID $id) => new Item($id, "Leather"));
 		self::register("magma_cream", fn(IID $id) => new Item($id, "Magma Cream"));
-		self::register("mangrove_sign", fn(IID $id) => new ItemBlockWallOrFloor($id, Blocks::MANGROVE_SIGN(), Blocks::MANGROVE_WALL_SIGN()));
 		self::register("medicine", fn(IID $id) => new Medicine($id, "Medicine"));
 		self::register("melon", fn(IID $id) => new Melon($id, "Melon"));
 		self::register("melon_seeds", fn(IID $id) => new MelonSeeds($id, "Melon Seeds"));
@@ -539,9 +535,7 @@ final class VanillaItems{
 		self::register("netherite_scrap", fn(IID $id) => new class($id, "Netherite Scrap") extends Item{
 			public function isFireProof() : bool{ return true; }
 		});
-		self::register("oak_sign", fn(IID $id) => new ItemBlockWallOrFloor($id, Blocks::OAK_SIGN(), Blocks::OAK_WALL_SIGN()));
 		self::register("painting", fn(IID $id) => new PaintingItem($id, "Painting"));
-		self::register("pale_oak_sign", fn(IID $id) => new ItemBlockWallOrFloor($id, Blocks::PALE_OAK_SIGN(), Blocks::PALE_OAK_WALL_SIGN()));
 		self::register("paper", fn(IID $id) => new Item($id, "Paper"));
 		self::register("phantom_membrane", fn(IID $id) => new Item($id, "Phantom Membrane"));
 		self::register("pitcher_pod", fn(IID $id) => new PitcherPod($id, "Pitcher Pod"));
@@ -597,7 +591,6 @@ final class VanillaItems{
 		self::register("snowball", fn(IID $id) => new Snowball($id, "Snowball"));
 		self::register("spider_eye", fn(IID $id) => new SpiderEye($id, "Spider Eye"));
 		self::register("splash_potion", fn(IID $id) => new SplashPotion($id, "Splash Potion"));
-		self::register("spruce_sign", fn(IID $id) => new ItemBlockWallOrFloor($id, Blocks::SPRUCE_SIGN(), Blocks::SPRUCE_WALL_SIGN()));
 		self::register("spyglass", fn(IID $id) => new Spyglass($id, "Spyglass"));
 		self::register("steak", fn(IID $id) => new Steak($id, "Steak"));
 		self::register("stick", fn(IID $id) => new Stick($id, "Stick"));
@@ -607,7 +600,6 @@ final class VanillaItems{
 		self::register("sweet_berries", fn(IID $id) => new SweetBerries($id, "Sweet Berries"));
 		self::register("torchflower_seeds", fn(IID $id) => new TorchflowerSeeds($id, "Torchflower Seeds"));
 		self::register("totem", fn(IID $id) => new Totem($id, "Totem of Undying"));
-		self::register("warped_sign", fn(IID $id) => new ItemBlockWallOrFloor($id, Blocks::WARPED_SIGN(), Blocks::WARPED_WALL_SIGN()));
 		self::register("water_bucket", fn(IID $id) => new LiquidBucket($id, "Water Bucket", Blocks::WATER()));
 		self::register("wheat", fn(IID $id) => new Item($id, "Wheat"));
 		self::register("wheat_seeds", fn(IID $id) => new WheatSeeds($id, "Wheat Seeds"));
@@ -618,6 +610,12 @@ final class VanillaItems{
 			//boat type is static, because different types of wood may have different properties
 			self::register(strtolower($type->name) . "_boat", fn(IID $id) => new Boat($id, $type->getDisplayName() . " Boat", $type));
 		}
+		self::registerOverloaded("boat", BoatType::class, Boat::class);
+
+		foreach(WoodType::cases() as $woodType){
+			self::register("{$woodType->name}_sign", fn(IID $id) => new ItemBlockWallOrFloor($id, Blocks::SIGN($woodType), Blocks::WALL_SIGN($woodType)));
+		}
+		self::registerOverloaded("sign", WoodType::class, ItemBlockWallOrFloor::class);
 	}
 
 	private static function registerSpawnEggs() : void{

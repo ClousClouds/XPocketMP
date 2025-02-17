@@ -79,6 +79,10 @@ use function strtolower;
  * @see build/generate-registry-annotations.php
  * @generate-registry-docblock
  *
+ * @method static Sapling SAPLING(\pocketmine\block\utils\SaplingType)
+ * @method static Leaves LEAVES(\pocketmine\block\utils\LeavesType)
+ * @method static FloorSign SIGN(\pocketmine\block\utils\WoodType)
+ * @method static WallSign WALL_SIGN(\pocketmine\block\utils\WoodType)
  * @method static WoodenButton ACACIA_BUTTON()
  * @method static WoodenDoor ACACIA_DOOR()
  * @method static WoodenFence ACACIA_FENCE()
@@ -1231,10 +1235,12 @@ final class VanillaBlocks{
 			$name = $saplingType->getDisplayName();
 			self::register(strtolower($saplingType->name) . "_sapling", fn(BID $id) => new Sapling($id, $name . " Sapling", $saplingTypeInfo, $saplingType));
 		}
+		self::registerOverloaded("sapling", SaplingType::class, Sapling::class);
 		foreach(LeavesType::cases() as $leavesType){
 			$name = $leavesType->getDisplayName();
 			self::register(strtolower($leavesType->name) . "_leaves", fn(BID $id) => new Leaves($id, $name . " Leaves", $leavesBreakInfo, $leavesType));
 		}
+		self::registerOverloaded("leaves", LeavesType::class, Leaves::class);
 
 		$sandstoneBreakInfo = new Info(BreakInfo::pickaxe(0.8, ToolTier::WOOD));
 		self::register("red_sandstone_stairs", fn(BID $id) => new Stair($id, "Red Sandstone Stairs", $sandstoneBreakInfo));
@@ -1370,22 +1376,12 @@ final class VanillaBlocks{
 			self::register($idName("pressure_plate"), fn(BID $id) => new WoodenPressurePlate($id, $name . " Pressure Plate", $woodenPressurePlateBreakInfo, $woodType, 20));
 			self::register($idName("trapdoor"), fn(BID $id) => new WoodenTrapdoor($id, $name . " Trapdoor", $woodenDoorBreakInfo, $woodType));
 
-			$signAsItem = match($woodType){
-				WoodType::OAK => VanillaItems::OAK_SIGN(...),
-				WoodType::SPRUCE => VanillaItems::SPRUCE_SIGN(...),
-				WoodType::BIRCH => VanillaItems::BIRCH_SIGN(...),
-				WoodType::JUNGLE => VanillaItems::JUNGLE_SIGN(...),
-				WoodType::ACACIA => VanillaItems::ACACIA_SIGN(...),
-				WoodType::DARK_OAK => VanillaItems::DARK_OAK_SIGN(...),
-				WoodType::MANGROVE => VanillaItems::MANGROVE_SIGN(...),
-				WoodType::CRIMSON => VanillaItems::CRIMSON_SIGN(...),
-				WoodType::WARPED => VanillaItems::WARPED_SIGN(...),
-				WoodType::CHERRY => VanillaItems::CHERRY_SIGN(...),
-				WoodType::PALE_OAK => VanillaItems::PALE_OAK_SIGN(...),
-			};
+			$signAsItem = fn() => VanillaItems::SIGN($woodType);
 			self::register($idName("sign"), fn(BID $id) => new FloorSign($id, $name . " Sign", $signBreakInfo, $woodType, $signAsItem), TileSign::class);
 			self::register($idName("wall_sign"), fn(BID $id) => new WallSign($id, $name . " Wall Sign", $signBreakInfo, $woodType, $signAsItem), TileSign::class);
 		}
+		self::registerOverloaded("sign", WoodType::class, FloorSign::class);
+		self::registerOverloaded("wall_sign", WoodType::class, WallSign::class);
 	}
 
 	private static function registerMushroomBlocks() : void{
