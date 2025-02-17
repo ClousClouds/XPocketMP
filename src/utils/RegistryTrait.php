@@ -166,6 +166,7 @@ trait RegistryTrait{
 					throw new \Error("Wrong enum type for overloaded registry member " . self::class . "::" . mb_strtoupper($name) . "($overloadInfo->enumClass)");
 				}
 				$memberName = $overloadInfo->enumToMemberMap[$enum->name];
+				assert(self::$members !== null);
 				return self::preprocessMember(self::$members[$memberName]);
 			}
 

@@ -49,6 +49,9 @@ if(count($argv) !== 2){
 	exit(1);
 }
 
+/**
+ * @phpstan-param \ReflectionClass<*> $class
+ */
 function makeTypehint(string $namespaceName, \ReflectionClass $class) : string{
 	return $class->getNamespaceName() === $namespaceName ? $class->getShortName() : '\\' . $class->getName();
 }
