@@ -66,7 +66,7 @@ trait RegistryTrait{
 		}
 		self::verifyName($name);
 		$upperName = mb_strtoupper($name);
-		if(isset(self::$members[$upperName])){
+		if(isset(self::$members[$upperName]) || isset(self::$overloadedMembers[$upperName])){
 			throw new \InvalidArgumentException("\"$upperName\" is already reserved");
 		}
 		self::$members[$upperName] = $member;
@@ -80,8 +80,8 @@ trait RegistryTrait{
 	private static function registerOverloaded(string $baseName, string $enumClass, string $returnClass) : void{
 		self::verifyName($baseName);
 		$upperName = mb_strtoupper($baseName);
-		if(isset(self::$overloadedMembers[$upperName])){
-			throw new \InvalidArgumentException("Overloaded member name \"$upperName\" is already reserved");
+		if(isset(self::$members[$upperName]) || isset(self::$overloadedMembers[$upperName])){
+			throw new \InvalidArgumentException("\"$upperName\" is already reserved");
 		}
 		$enumToMemberMap = [];
 		foreach($enumClass::cases() as $case){
