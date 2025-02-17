@@ -87,7 +87,7 @@ trait RegistryTrait{
 		foreach($enumClass::cases() as $case){
 			$memberName = mb_strtoupper($case->name . "_" . $baseName);
 			if(!isset(self::$members[$memberName])){
-				throw new \LogicException("\"$memberName\" needs to be registered to defined overloaded member with enum $enumClass");
+				throw new \LogicException("\"$memberName\" needs to be registered to define overloaded member with enum $enumClass");
 			}
 			if(!self::$members[$memberName] instanceof $returnClass){
 				throw new \LogicException("\"$memberName\" doesn't satisfy the desired type $returnClass");
