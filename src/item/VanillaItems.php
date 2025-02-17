@@ -48,8 +48,8 @@ use function strtolower;
  * @see build/generate-registry-annotations.php
  * @generate-registry-docblock
  *
- * @method static Boat BOAT(BoatType)
- * @method static ItemBlockWallOrFloor SIGN(\pocketmine\block\utils\WoodType)
+ * @method static Boat BOAT(BoatType $boatType)
+ * @method static ItemBlockWallOrFloor SIGN(\pocketmine\block\utils\WoodType $woodType)
  * @method static Boat ACACIA_BOAT()
  * @method static ItemBlockWallOrFloor ACACIA_SIGN()
  * @method static ItemBlock AIR()

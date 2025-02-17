@@ -79,10 +79,10 @@ use function strtolower;
  * @see build/generate-registry-annotations.php
  * @generate-registry-docblock
  *
- * @method static Sapling SAPLING(\pocketmine\block\utils\SaplingType)
- * @method static Leaves LEAVES(\pocketmine\block\utils\LeavesType)
- * @method static FloorSign SIGN(\pocketmine\block\utils\WoodType)
- * @method static WallSign WALL_SIGN(\pocketmine\block\utils\WoodType)
+ * @method static Sapling SAPLING(\pocketmine\block\utils\SaplingType $saplingType)
+ * @method static Leaves LEAVES(\pocketmine\block\utils\LeavesType $leavesType)
+ * @method static FloorSign SIGN(\pocketmine\block\utils\WoodType $woodType)
+ * @method static WallSign WALL_SIGN(\pocketmine\block\utils\WoodType $woodType)
  * @method static WoodenButton ACACIA_BUTTON()
  * @method static WoodenDoor ACACIA_DOOR()
  * @method static WoodenFence ACACIA_FENCE()

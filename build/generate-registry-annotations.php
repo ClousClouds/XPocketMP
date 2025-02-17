@@ -35,6 +35,7 @@ use function fwrite;
 use function implode;
 use function is_dir;
 use function ksort;
+use function lcfirst;
 use function mb_strtoupper;
 use function preg_match;
 use function sprintf;
@@ -84,9 +85,10 @@ function generateMethodAnnotations(string $namespaceName, array $members, array 
 	foreach(Utils::stringifyKeys($overloadedMembers) as $baseName => $member){
 		$accessor = mb_strtoupper($baseName);
 		$returnTypehint = makeTypehint($namespaceName, new \ReflectionClass($member->memberClass));
-		$paramTypehint = makeTypehint($namespaceName, new \ReflectionClass($member->enumClass));
+		$enumReflect = new \ReflectionClass($member->enumClass);
+		$paramTypehint = makeTypehint($namespaceName, $enumReflect);
 
-		$memberLines[] = sprintf(" * @method static %s %s(%s)", $returnTypehint, $accessor, $paramTypehint);
+		$memberLines[] = sprintf(" * @method static %s %s(%s \$%s)", $returnTypehint, $accessor, $paramTypehint, lcfirst($enumReflect->getShortName()));
 	}
 	ksort($memberLines, SORT_STRING);
 
