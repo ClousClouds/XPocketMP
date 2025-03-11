@@ -113,6 +113,7 @@ use pocketmine\utils\BinaryDataException;
 use pocketmine\utils\BinaryStream;
 use pocketmine\utils\ObjectSet;
 use pocketmine\utils\TextFormat;
+use pocketmine\utils\Utils;
 use pocketmine\world\format\io\GlobalItemDataHandlers;
 use pocketmine\world\Position;
 use pocketmine\world\World;
@@ -122,10 +123,12 @@ use function base64_encode;
 use function bin2hex;
 use function count;
 use function get_class;
+use function hrtime;
 use function implode;
 use function in_array;
 use function is_string;
 use function json_encode;
+use function microtime;
 use function ord;
 use function random_bytes;
 use function str_split;
@@ -135,7 +138,9 @@ use function strtolower;
 use function substr;
 use function time;
 use function ucfirst;
+use const JSON_PRETTY_PRINT;
 use const JSON_THROW_ON_ERROR;
+use const PHP_INT_MAX;
 
 class NetworkSession{
 	private const INCOMING_PACKET_BATCH_PER_TICK = 2; //usually max 1 per tick, but transactions arrive separately
@@ -194,6 +199,29 @@ class NetworkSession{
 	 */
 	private ObjectSet $disposeHooks;
 
+	/**
+	 * @var int[]
+	 * @phpstan-var array<string, int>
+	 */
+	private array $packetCostsMin = [];
+	/**
+	 * @var int[]
+	 * @phpstan-var array<string, int>
+	 */
+	private array $packetCostsMax = [];
+	/**
+	 * @var int[]
+	 * @phpstan-var array<string, int>
+	 */
+	private array $packetCostsTotal = [];
+	/**
+	 * @var int[]
+	 * @phpstan-var array<string, int>
+	 */
+	private array $packetCounts = [];
+	private int $decodeCostTotal = 0;
+	private int $sessionStartHrtime;
+
 	public function __construct(
 		private Server $server,
 		private NetworkSessionManager $manager,
@@ -223,6 +251,8 @@ class NetworkSession{
 
 		$this->manager->add($this);
 		$this->logger->info($this->server->getLanguage()->translate(KnownTranslationFactory::pocketmine_network_session_open()));
+
+		$this->sessionStartHrtime = hrtime(true);
 	}
 
 	private function getLogPrefix() : string{
@@ -450,7 +480,17 @@ class NetworkSession{
 			try{
 				$stream = PacketSerializer::decoder($buffer, 0);
 				try{
+					$stream->setReadOpsLimit(PHP_INT_MAX); //just for stats collection
 					$packet->decode($stream);
+
+					$readOps = $stream->getReadOps();
+
+					$this->decodeCostTotal += $readOps;
+					$key = $packet->getName();
+					$this->packetCostsTotal[$key] = ($this->packetCostsTotal[$key] ?? 0) + $readOps;
+					$this->packetCostsMin[$key] = min($this->packetCostsMin[$key] ?? PHP_INT_MAX, $readOps);
+					$this->packetCostsMax[$key] = max($this->packetCostsMax[$key] ?? 0, $readOps);
+					$this->packetCounts[$key] = ($this->packetCounts[$key] ?? 0) + 1;
 				}catch(PacketDecodeException $e){
 					throw PacketHandlingException::wrap($e);
 				}
@@ -481,6 +521,27 @@ class NetworkSession{
 		}finally{
 			$timings->stopTiming();
 		}
+	}
+
+	/**
+	 * @return int[]|float[]
+	 * @phpstan-return array<string, int|float|array<string, int|float>>
+	 */
+	public function dumpDecodeCostStats() : array{
+		$sessionTime = ((hrtime(true) - $this->sessionStartHrtime) / 1_000_000_000);
+		$packetDecodeAverages = [];
+		$packetCostsPerSecondAverages = [];
+		foreach(Utils::stringifyKeys($this->packetCostsTotal) as $packet => $total){
+			$packetDecodeAverages[$packet] = $total / $this->packetCounts[$packet];
+			$packetCostsPerSecondAverages[$packet] = $total / $sessionTime;
+		}
+		return [
+			"decodeCostAvgPerSecond" => $this->decodeCostTotal / $sessionTime,
+			"decodeCostAvgPerPacketPerSecond" => $packetCostsPerSecondAverages,
+			"decodeCostAvgPerPacket" => $packetDecodeAverages,
+			"decodeCostMinPerPacket" => $this->packetCostsMin,
+			"decodeCostMaxPerPacket" => $this->packetCostsMax
+		];
 	}
 
 	public function handleAckReceipt(int $receiptId) : void{
@@ -1346,5 +1407,13 @@ class NetworkSession{
 		}
 
 		$this->flushSendBuffer();
+
+		$now = microtime(true);
+		if($now - $this->lastStatsReportTime > 10){
+			$this->logger->debug("Decode cost stats: " . json_encode($this->dumpDecodeCostStats(), JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));
+			$this->lastStatsReportTime = $now;
+		}
 	}
+
+	private float $lastStatsReportTime = 0;
 }
