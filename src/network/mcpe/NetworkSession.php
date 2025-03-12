@@ -117,13 +117,12 @@ use pocketmine\utils\Utils;
 use pocketmine\world\format\io\GlobalItemDataHandlers;
 use pocketmine\world\Position;
 use pocketmine\world\World;
-use pocketmine\YmlServerProperties;
+use pocketmine\YmlServerProperties as Yml;
 use function array_map;
 use function base64_encode;
 use function bin2hex;
 use function count;
 use function get_class;
-use function hrtime;
 use function implode;
 use function in_array;
 use function is_string;
@@ -140,7 +139,6 @@ use function strtolower;
 use function substr;
 use function time;
 use function ucfirst;
-use const JSON_PRETTY_PRINT;
 use const JSON_THROW_ON_ERROR;
 use const PHP_INT_MAX;
 
@@ -151,8 +149,16 @@ class NetworkSession{
 	private const INCOMING_GAME_PACKETS_PER_TICK = 2;
 	private const INCOMING_GAME_PACKETS_BUFFER_TICKS = 100;
 
+	private const READ_OPS_PER_TICK = 100; //subject to change
+	private const READ_OPS_BUFFER_TICKS = 200; //subject to change
+
 	private PacketRateLimiter $packetBatchLimiter;
 	private PacketRateLimiter $gamePacketLimiter;
+
+	private PacketRateLimiter $readOpsLimiter;
+	private PacketRateLimiterAction $readOpsLimiterAction;
+
+	private bool $readOpsStats;
 
 	private \PrefixedLogger $logger;
 	private ?Player $player = null;
@@ -205,24 +211,23 @@ class NetworkSession{
 	 * @var int[]
 	 * @phpstan-var array<string, int>
 	 */
-	private array $packetCostsMin = [];
+	private array $readOpsPerPacketMin = [];
 	/**
 	 * @var int[]
 	 * @phpstan-var array<string, int>
 	 */
-	private array $packetCostsMax = [];
+	private array $readOpsPerPacketMax = [];
 	/**
 	 * @var int[]
 	 * @phpstan-var array<string, int>
 	 */
-	private array $packetCostsTotal = [];
+	private array $readOpsPerPacketTotal = [];
 	/**
 	 * @var int[]
 	 * @phpstan-var array<string, int>
 	 */
-	private array $packetCounts = [];
-	private int $decodeCostTotal = 0;
-	private int $sessionStartHrtime;
+	private array $receivedPacketCounts = [];
+	private int $totalReadOpsUsed = 0;
 
 	public function __construct(
 		private Server $server,
@@ -246,6 +251,15 @@ class NetworkSession{
 		$this->packetBatchLimiter = new PacketRateLimiter("Packet Batches", self::INCOMING_PACKET_BATCH_PER_TICK, self::INCOMING_PACKET_BATCH_BUFFER_TICKS);
 		$this->gamePacketLimiter = new PacketRateLimiter("Game Packets", self::INCOMING_GAME_PACKETS_PER_TICK, self::INCOMING_GAME_PACKETS_BUFFER_TICKS);
 
+		$serverConfigGroup = $this->server->getConfigGroup();
+		$this->readOpsLimiter = new PacketRateLimiter(
+			"Packet Read Operations",
+			$serverConfigGroup->getPropertyInt(Yml::NETWORK_PACKET_READ_OPS_LIMIT_SESSION_BUDGET_PER_TICK, self::READ_OPS_PER_TICK),
+			$serverConfigGroup->getPropertyInt(Yml::NETWORK_PACKET_READ_OPS_LIMIT_SESSION_BUDGET_TICKS, self::READ_OPS_BUFFER_TICKS),
+		);
+		$this->readOpsLimiterAction = PacketRateLimiterAction::from($serverConfigGroup->getPropertyString(Yml::NETWORK_PACKET_READ_OPS_LIMIT_DEPLETE_ACTION, PacketRateLimiterAction::WARN->value));
+		$this->readOpsStats = $serverConfigGroup->getPropertyBool(Yml::NETWORK_PACKET_READ_OPS_LIMIT_COLLECT_STATS, false);
+
 		$this->setHandler(new SessionStartPacketHandler(
 			$this,
 			$this->onSessionStartSuccess(...)
@@ -253,8 +267,6 @@ class NetworkSession{
 
 		$this->manager->add($this);
 		$this->logger->info($this->server->getLanguage()->translate(KnownTranslationFactory::pocketmine_network_session_open()));
-
-		$this->sessionStartHrtime = hrtime(true);
 	}
 
 	private function getLogPrefix() : string{
@@ -482,17 +494,36 @@ class NetworkSession{
 			try{
 				$stream = PacketSerializer::decoder($buffer, 0);
 				try{
-					$stream->setReadOpsLimit(PHP_INT_MAX); //just for stats collection
-					$packet->decode($stream);
+					if($this->readOpsLimiterAction === PacketRateLimiterAction::NONE){
+						$packet->decode($stream);
+					}else{
+						$this->readOpsLimiter->update();
+						$stream->setReadOpsLimit(
+							$this->readOpsLimiterAction === PacketRateLimiterAction::KICK ?
+								$this->readOpsLimiter->getBudget() :
+								PHP_INT_MAX //don't bail out of decoding if we're only warning
+						);
 
-					$readOps = $stream->getReadOps();
+						$packet->decode($stream);
+						$readOps = $stream->getReadOps();
+						//If we exceeded the budget, a PacketDecodeException has already been thrown if we're in KICK
+						//mode, so we can assume we're in WARN mode here
+						if($this->readOpsLimiter->getBudget() < $readOps){
+							$this->getLogger()->warning("Decoding " . $packet->getName() . " exceeded read ops budget! $readOps > " . $this->readOpsLimiter->getBudget());
+							$this->readOpsLimiter->reset();
+						}else{
+							$this->readOpsLimiter->decrement($readOps);
+						}
 
-					$this->decodeCostTotal += $readOps;
-					$key = $packet->getName();
-					$this->packetCostsTotal[$key] = ($this->packetCostsTotal[$key] ?? 0) + $readOps;
-					$this->packetCostsMin[$key] = min($this->packetCostsMin[$key] ?? PHP_INT_MAX, $readOps);
-					$this->packetCostsMax[$key] = max($this->packetCostsMax[$key] ?? 0, $readOps);
-					$this->packetCounts[$key] = ($this->packetCounts[$key] ?? 0) + 1;
+						if($this->readOpsStats){
+							$this->totalReadOpsUsed += $readOps;
+							$key = $packet->getName();
+							$this->readOpsPerPacketTotal[$key] = ($this->readOpsPerPacketTotal[$key] ?? 0) + $readOps;
+							$this->readOpsPerPacketMin[$key] = min($this->readOpsPerPacketMin[$key] ?? PHP_INT_MAX, $readOps);
+							$this->readOpsPerPacketMax[$key] = max($this->readOpsPerPacketMax[$key] ?? 0, $readOps);
+							$this->receivedPacketCounts[$key] = ($this->receivedPacketCounts[$key] ?? 0) + 1;
+						}
+					}
 				}catch(PacketDecodeException $e){
 					throw PacketHandlingException::wrap($e);
 				}
@@ -530,19 +561,22 @@ class NetworkSession{
 	 * @phpstan-return array<string, int|float|array<string, int|float>>
 	 */
 	public function dumpDecodeCostStats() : array{
-		$sessionTime = ((hrtime(true) - $this->sessionStartHrtime) / 1_000_000_000);
+		if(!$this->readOpsStats){
+			throw new \LogicException("Not collecting stats for this session");
+		}
+		$sessionTime = microtime(true) - $this->connectTime;
 		$packetDecodeAverages = [];
 		$packetCostsPerSecondAverages = [];
-		foreach(Utils::stringifyKeys($this->packetCostsTotal) as $packet => $total){
-			$packetDecodeAverages[$packet] = $total / $this->packetCounts[$packet];
+		foreach(Utils::stringifyKeys($this->readOpsPerPacketTotal) as $packet => $total){
+			$packetDecodeAverages[$packet] = $total / $this->receivedPacketCounts[$packet];
 			$packetCostsPerSecondAverages[$packet] = $total / $sessionTime;
 		}
 		return [
-			"decodeCostAvgPerSecond" => $this->decodeCostTotal / $sessionTime,
-			"decodeCostAvgPerPacketPerSecond" => $packetCostsPerSecondAverages,
-			"decodeCostAvgPerPacket" => $packetDecodeAverages,
-			"decodeCostMinPerPacket" => $this->packetCostsMin,
-			"decodeCostMaxPerPacket" => $this->packetCostsMax
+			"readOpsAvgPerSecondTotal" => $this->totalReadOpsUsed / $sessionTime,
+			"readOpsAvgPerPacketPerSecond" => $packetCostsPerSecondAverages,
+			"readOpsAvgPerPacket" => $packetDecodeAverages,
+			"readOpsMinPerPacket" => $this->readOpsPerPacketMin,
+			"readOpsMaxPerPacket" => $this->readOpsPerPacketMax
 		];
 	}
 
@@ -920,7 +954,7 @@ class NetworkSession{
 		}
 		$this->logger->debug("Xbox Live authenticated: " . ($this->authenticated ? "YES" : "NO"));
 
-		$checkXUID = $this->server->getConfigGroup()->getPropertyBool(YmlServerProperties::PLAYER_VERIFY_XUID, true);
+		$checkXUID = $this->server->getConfigGroup()->getPropertyBool(Yml::PLAYER_VERIFY_XUID, true);
 		$myXUID = $this->info instanceof XboxLivePlayerInfo ? $this->info->getXuid() : "";
 		$kickForXUIDMismatch = function(string $xuid) use ($checkXUID, $myXUID) : bool{
 			if($checkXUID && $myXUID !== $xuid){
@@ -1409,13 +1443,5 @@ class NetworkSession{
 		}
 
 		$this->flushSendBuffer();
-
-		$now = microtime(true);
-		if($now - $this->lastStatsReportTime > 10){
-			$this->logger->debug("Decode cost stats: " . json_encode($this->dumpDecodeCostStats(), JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));
-			$this->lastStatsReportTime = $now;
-		}
 	}
-
-	private float $lastStatsReportTime = 0;
 }
