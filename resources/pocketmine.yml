@@ -94,13 +94,13 @@ network:
 
     #How many backlog ticks to budget for. 200 allows for a 10-second network lag spike, or a small number of complex
     #packets.
-    session-budget-ticks: 100
+    session-budget-ticks: 200
 
     #How much to top up each session's read operations budget per tick. Recommended to set this to about 2x the
     #average number of read operations per tick per session.
     #Exceeding this value won't cause any action to be taken. However, consistently exceeding it will cause the
     #session's budget to be depleted, resulting in action being taken.
-    session-budget-per-tick: 250
+    session-budget-per-tick: 100
 
     #Whether to collect stats for debugging. This might impact performance.
     #See NetworkSession::dumpDecodeCostStats() if you want to visualize the stats yourself.
