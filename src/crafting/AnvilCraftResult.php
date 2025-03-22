@@ -28,10 +28,8 @@ use pocketmine\item\Item;
 /**
  * This class is here to hold the result of an anvil crafting process.
  */
-class AnvilCraftResult{
+final class AnvilCraftResult{
 	/**
-	 * @param int       $xpCost
-	 * @param Item      $output
 	 * @param Item|null $sacrificeResult If the given item is considered as null (count <= 0), the value will be set to null.
 	 */
 	public function __construct(

@@ -25,12 +25,10 @@ namespace pocketmine\crafting;
 
 use pocketmine\item\Durable;
 use pocketmine\item\Item;
-use pocketmine\item\Tool;
 use function ceil;
 use function floor;
 use function max;
 use function min;
-use function var_dump;
 
 /**
  * Represent a recipe that repair an item with a material in an anvil.
@@ -39,7 +37,8 @@ class MaterialRepairRecipe implements AnvilRecipe{
 	public function __construct(
 		private RecipeIngredient $input,
 		private RecipeIngredient $material
-	){ }
+	){
+	}
 
 	public function getInput() : RecipeIngredient{
 		return $this->input;
@@ -55,10 +54,8 @@ class MaterialRepairRecipe implements AnvilRecipe{
 			if($damage !== 0){
 				$quarter = min($damage, (int) floor($input->getMaxDurability() / 4));
 				$numberRepair = min($material->getCount(), (int) ceil($damage / $quarter));
-				if($numberRepair > 0){
-					// TODO: remove the material
-					$damage -= $quarter * $numberRepair;
-				}
+				$damage -= $quarter * $numberRepair;
+
 				return new AnvilCraftResult(
 					$numberRepair,
 					(clone $input)->setDamage(max(0, $damage)),
