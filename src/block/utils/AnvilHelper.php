@@ -39,20 +39,23 @@ final class AnvilHelper{
 	public static function calculateResult(Player $player, Item $base, Item $material, ?string $customName = null) : ?AnvilCraftResult {
 
 		$recipe = Server::getInstance()->getCraftingManager()->matchAnvilRecipe($base, $material);
+		if($recipe === null){
+			return null;
+		}
 		$result = $recipe->getResultFor($base, $material);
 
 		if($result !== null){
-			$resultItem = $result->getResult();
+			$resultItem = $result->getOutput();
 			$xpCost = $result->getXpCost();
 			if(($customName === null || $customName === "") && $resultItem->hasCustomName()){
 				$xpCost++;
 				$resultItem->clearCustomName();
-			}elseif($resultItem->getCustomName() !== $customName){
+			}elseif($customName !== null && $resultItem->getCustomName() !== $customName){
 				$xpCost++;
 				$resultItem->setCustomName($customName);
 			}
 
-			$result = new AnvilCraftResult($xpCost, $resultItem);
+			$result = new AnvilCraftResult($xpCost, $resultItem, $result->getSacrificeResult());
 		}
 
 		if($result === null || $result->getXpCost() <= 0 || ($result->getXpCost() > self::COST_LIMIT && !$player->isCreative())){

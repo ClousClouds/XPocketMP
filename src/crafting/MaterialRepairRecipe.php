@@ -23,11 +23,14 @@ declare(strict_types=1);
 
 namespace pocketmine\crafting;
 
+use pocketmine\item\Durable;
 use pocketmine\item\Item;
+use pocketmine\item\Tool;
 use function ceil;
 use function floor;
 use function max;
 use function min;
+use function var_dump;
 
 /**
  * Represent a recipe that repair an item with a material in an anvil.
@@ -35,8 +38,7 @@ use function min;
 class MaterialRepairRecipe implements AnvilRecipe{
 	public function __construct(
 		private RecipeIngredient $input,
-		private RecipeIngredient $material,
-		private Item $result
+		private RecipeIngredient $material
 	){ }
 
 	public function getInput() : RecipeIngredient{
@@ -47,16 +49,8 @@ class MaterialRepairRecipe implements AnvilRecipe{
 		return $this->material;
 	}
 
-	public function getResult() : Item{
-		return clone $this->result;
-	}
-
-	public function getXpCost() : int{
-		return 1;
-	}
-
-	public function getResultFor(Item $input, Item $material) : ?Item{
-		if($this->input->accepts($input) && $this->material->accepts($material)){
+	public function getResultFor(Item $input, Item $material) : ?AnvilCraftResult{
+		if($this->input->accepts($input) && $this->material->accepts($material) && $input instanceof Durable){
 			$damage = $input->getDamage();
 			if($damage !== 0){
 				$quarter = min($damage, (int) floor($input->getMaxDurability() / 4));
@@ -65,7 +59,11 @@ class MaterialRepairRecipe implements AnvilRecipe{
 					// TODO: remove the material
 					$damage -= $quarter * $numberRepair;
 				}
-				return $this->getResult()->setDamage(max(0, $damage));
+				return new AnvilCraftResult(
+					$numberRepair,
+					(clone $input)->setDamage(max(0, $damage)),
+					$material->pop($numberRepair)
+				);
 			}
 		}
 

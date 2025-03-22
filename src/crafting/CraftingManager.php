@@ -34,6 +34,7 @@ use function count;
 use function implode;
 use function ksort;
 use function spl_object_id;
+use function var_dump;
 use const SORT_STRING;
 
 class CraftingManager{

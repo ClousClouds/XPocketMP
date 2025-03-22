@@ -26,7 +26,5 @@ namespace pocketmine\crafting;
 use pocketmine\item\Item;
 
 interface AnvilRecipe{
-	public function getXpCost() : int;
-
 	public function getResultFor(Item $input, Item $material) : ?AnvilCraftResult;
 }

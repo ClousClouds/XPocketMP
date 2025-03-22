@@ -36,7 +36,7 @@ use pocketmine\utils\LegacyEnumShimTrait;
  * @method static ToolTier STONE()
  * @method static ToolTier WOOD()
  *
- * @phpstan-type TMetadata array{0: int, 1: int, 2: int, 3: int, 4: int, 5: int[]}
+ * @phpstan-type TMetadata array{0: int, 1: int, 2: int, 3: int, 4: int}
  */
 enum ToolTier{
 	use LegacyEnumShimTrait;

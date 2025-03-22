@@ -67,7 +67,7 @@ class AnvilTransaction extends InventoryTransaction{
 		if($calculAttempt === null){
 			return null;
 		}
-		$result = $calculAttempt->getResult();
+		$result = $calculAttempt->getOutput();
 		if(!$result->equalsExact($expectedOutput)){
 			return null;
 		}
@@ -119,7 +119,7 @@ class AnvilTransaction extends InventoryTransaction{
 		parent::execute();
 
 		if($this->source->hasFiniteResources()){
-			$this->source->getXpManager()->subtractXpLevels($this->expectedResult->getRepairCost());
+			$this->source->getXpManager()->subtractXpLevels($this->expectedResult->getXpCost());
 		}
 
 		$inventory = $this->source->getCurrentWindow();
@@ -148,9 +148,7 @@ class AnvilTransaction extends InventoryTransaction{
 			throw new AssumptionFailedError("Expected that baseItem are not null before executing the event");
 		}
 
-		$ev = new PlayerUseAnvilEvent($this->source, $this->baseItem, $this->materialItem, $this->expectedResult->getResult() ?? throw new \AssertionError(
-			"Expected that the expected result is not null"
-		), $this->customName, $this->expectedResult->getXpCost());
+		$ev = new PlayerUseAnvilEvent($this->source, $this->baseItem, $this->materialItem, $this->expectedResult->getOutput(), $this->customName, $this->expectedResult->getXpCost());
 		$ev->call();
 		return !$ev->isCancelled();
 	}

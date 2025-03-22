@@ -358,7 +358,7 @@ class ItemStackRequestExecutor{
 				$result = AnvilHelper::calculateResult($this->player, $window->getInput(), $window->getMaterial(), $this->request->getFilterStrings()[0] ?? null);
 				if($result !== null){
 					$this->specialTransaction = new AnvilTransaction($this->player, $result, $this->request->getFilterStrings()[0] ?? null);
-					$this->setNextCreatedItem($result->getResult());
+					$this->setNextCreatedItem($result->getOutput());
 				}
 			}
 		}elseif($action instanceof CraftingConsumeInputStackRequestAction){

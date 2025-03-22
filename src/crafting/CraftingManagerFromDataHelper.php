@@ -31,8 +31,10 @@ use pocketmine\crafting\json\RecipeIngredientData;
 use pocketmine\crafting\json\ShapedRecipeData;
 use pocketmine\crafting\json\ShapelessRecipeData;
 use pocketmine\data\bedrock\block\BlockStateData;
+use pocketmine\data\bedrock\block\BlockTypeNames;
 use pocketmine\data\bedrock\item\BlockItemIdMap;
 use pocketmine\data\bedrock\item\ItemTypeDeserializeException;
+use pocketmine\data\bedrock\item\ItemTypeNames;
 use pocketmine\data\bedrock\item\SavedItemData;
 use pocketmine\data\bedrock\item\SavedItemStackData;
 use pocketmine\data\SavedDataLoadingException;
@@ -335,15 +337,13 @@ final class CraftingManagerFromDataHelper{
 		}
 
 		$result->registerAnvilRecipe(new MaterialRepairRecipe(
-			new ExactRecipeIngredient(VanillaItems::DIAMOND_PICKAXE()),
-			new ExactRecipeIngredient(VanillaItems::DIAMOND()),
-			VanillaItems::DIAMOND_PICKAXE()
+			new MetaWildcardRecipeIngredient(ItemTypeNames::DIAMOND_PICKAXE),
+			new ExactRecipeIngredient(VanillaItems::DIAMOND())
 		));
 
 		$result->registerAnvilRecipe(new ItemCombineRecipe(
-			new ExactRecipeIngredient(VanillaItems::DIAMOND_PICKAXE()),
-			new ExactRecipeIngredient(VanillaItems::DIAMOND_PICKAXE()),
-			VanillaItems::DIAMOND_PICKAXE()
+			new MetaWildcardRecipeIngredient(ItemTypeNames::DIAMOND_PICKAXE),
+			new MetaWildcardRecipeIngredient(ItemTypeNames::DIAMOND_PICKAXE)
 		));
 
 		//TODO: smithing

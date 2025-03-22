@@ -40,8 +40,7 @@ use function min;
 class ItemCombineRecipe implements AnvilRecipe{
 	public function __construct(
 		private RecipeIngredient $input,
-		private RecipeIngredient $material,
-		private Item $result
+		private RecipeIngredient $material
 	){ }
 
 	public function getInput() : RecipeIngredient{
@@ -52,22 +51,14 @@ class ItemCombineRecipe implements AnvilRecipe{
 		return $this->material;
 	}
 
-	public function getResult() : Item{
-		return clone $this->result;
-	}
-
-	public function getXpCost() : int{
-		return 2;
-	}
-
 	public function getResultFor(Item $input, Item $material) : ?AnvilCraftResult{
-		if($input->equals($this->input->getItem()) && $material->equals($this->material->getItem())){
-			$result = $this->getResult();
+		if($this->input->accepts($input) && $this->material->accepts($material)){
+			$result = (clone $input);
 			$xpCost = 0;
-			if($input instanceof Durable && $material instanceof Durable){
-				$damage = $input->getDamage();
+			if($result instanceof Durable && $material instanceof Durable){
+				$damage = $result->getDamage();
 				if($damage !== 0){
-					$baseMaxDurability = $input->getMaxDurability();
+					$baseMaxDurability = $result->getMaxDurability();
 					$baseDurability = $baseMaxDurability - $damage;
 					$materialDurability = $material->getMaxDurability() - $material->getDamage();
 					$addDurability = (int) ($baseMaxDurability * 12 / 100);
@@ -76,11 +67,6 @@ class ItemCombineRecipe implements AnvilRecipe{
 				}
 
 				$xpCost = 2;
-			}
-
-			// setting base enchantments to result
-			foreach($input->getEnchantments() as $enchantment){
-				$result->addEnchantment($enchantment);
 			}
 
 			// combining enchantments
@@ -131,7 +117,7 @@ class ItemCombineRecipe implements AnvilRecipe{
 				);
 			}
 
-			return new AnvilCraftResult($xpCost, $result);
+			return new AnvilCraftResult($xpCost, $result, null);
 		}
 
 		return null;
