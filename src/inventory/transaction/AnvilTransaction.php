@@ -46,7 +46,7 @@ class AnvilTransaction extends InventoryTransaction{
 		Player $source,
 		private readonly AnvilCraftResult $expectedResult,
 		private readonly ?string $customName
-	) {
+	){
 		parent::__construct($source);
 	}
 
@@ -62,8 +62,8 @@ class AnvilTransaction extends InventoryTransaction{
 		}
 	}
 
-	private function validateInputs(Item $base, Item $material, Item $expectedOutput) : ?int {
-		$calculAttempt = AnvilHelper::calculateResult($this->source, $base, $material, $this->customName);
+	private function validateInputs(Item $base, Item $material, Item $expectedOutput) : ?int{
+		$calculAttempt = AnvilHelper::calculateResult($base, $material, $this->customName, $this->source->isCreative());
 		if($calculAttempt === null){
 			return null;
 		}

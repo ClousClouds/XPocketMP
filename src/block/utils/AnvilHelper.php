@@ -25,7 +25,6 @@ namespace pocketmine\block\utils;
 
 use pocketmine\crafting\AnvilCraftResult;
 use pocketmine\item\Item;
-use pocketmine\player\Player;
 use pocketmine\Server;
 
 final class AnvilHelper{
@@ -36,7 +35,7 @@ final class AnvilHelper{
 	 *
 	 * Returns null if the operation can't do anything.
 	 */
-	public static function calculateResult(Player $player, Item $base, Item $material, ?string $customName = null) : ?AnvilCraftResult{
+	public static function calculateResult(Item $base, Item $material, ?string $customName, bool $isCreative) : ?AnvilCraftResult{
 
 		$recipe = Server::getInstance()->getCraftingManager()->matchAnvilRecipe($base, $material);
 		if($recipe === null){
@@ -58,7 +57,7 @@ final class AnvilHelper{
 			$result = new AnvilCraftResult($xpCost, $resultItem, $result->getSacrificeResult());
 		}
 
-		if($result === null || $result->getXpCost() <= 0 || ($result->getXpCost() > self::COST_LIMIT && !$player->isCreative())){
+		if($result === null || $result->getXpCost() <= 0 || ($result->getXpCost() > self::COST_LIMIT && !$isCreative)){
 			return null;
 		}
 
