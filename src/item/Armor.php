@@ -34,6 +34,7 @@ use pocketmine\nbt\tag\IntTag;
 use pocketmine\player\Player;
 use pocketmine\utils\Binary;
 use pocketmine\utils\Utils;
+use function in_array;
 use function mt_rand;
 
 class Armor extends Durable{
@@ -171,5 +172,9 @@ class Armor extends Durable{
 		$this->customColor !== null ?
 			$tag->setInt(self::TAG_CUSTOM_COLOR, Binary::signInt($this->customColor->toARGB())) :
 			$tag->removeTag(self::TAG_CUSTOM_COLOR);
+	}
+
+	public function isValidRepairMaterial(Item $material) : bool{
+		return in_array($material->getTypeId(), $this->armorInfo->getMaterial()->getRepairMaterials(), true);
 	}
 }
