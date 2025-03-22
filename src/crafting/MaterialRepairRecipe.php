@@ -59,7 +59,7 @@ class MaterialRepairRecipe implements AnvilRecipe{
 				return new AnvilCraftResult(
 					$numberRepair,
 					(clone $input)->setDamage(max(0, $damage)),
-					$material->pop($numberRepair)
+					(clone $material)->pop($numberRepair)
 				);
 			}
 		}

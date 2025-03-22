@@ -31,16 +31,13 @@ use pocketmine\crafting\json\RecipeIngredientData;
 use pocketmine\crafting\json\ShapedRecipeData;
 use pocketmine\crafting\json\ShapelessRecipeData;
 use pocketmine\data\bedrock\block\BlockStateData;
-use pocketmine\data\bedrock\block\BlockTypeNames;
 use pocketmine\data\bedrock\item\BlockItemIdMap;
 use pocketmine\data\bedrock\item\ItemTypeDeserializeException;
-use pocketmine\data\bedrock\item\ItemTypeNames;
 use pocketmine\data\bedrock\item\SavedItemData;
 use pocketmine\data\bedrock\item\SavedItemStackData;
 use pocketmine\data\SavedDataLoadingException;
 use pocketmine\errorhandler\ErrorToExceptionHandler;
 use pocketmine\item\Item;
-use pocketmine\item\VanillaItems;
 use pocketmine\nbt\LittleEndianNbtSerializer;
 use pocketmine\utils\Filesystem;
 use pocketmine\utils\Utils;
@@ -188,6 +185,7 @@ final class CraftingManagerFromDataHelper{
 
 	/**
 	 * @param mixed[] $data
+	 *
 	 * @return object[]
 	 *
 	 * @phpstan-template TRecipeData of object
@@ -213,7 +211,7 @@ final class CraftingManagerFromDataHelper{
 		$result = new CraftingManager();
 
 		foreach(self::loadJsonArrayOfObjectsFile(Path::join($directoryPath, 'shapeless_crafting.json'), ShapelessRecipeData::class) as $recipe){
-			$recipeType = match($recipe->block){
+			$recipeType = match ($recipe->block) {
 				"crafting_table" => ShapelessRecipeType::CRAFTING,
 				"stonecutter" => ShapelessRecipeType::STONECUTTER,
 				"smithing_table" => ShapelessRecipeType::SMITHING,
@@ -274,7 +272,7 @@ final class CraftingManagerFromDataHelper{
 			));
 		}
 		foreach(self::loadJsonArrayOfObjectsFile(Path::join($directoryPath, 'smelting.json'), FurnaceRecipeData::class) as $recipe){
-			$furnaceType = match ($recipe->block){
+			$furnaceType = match ($recipe->block) {
 				"furnace" => FurnaceType::FURNACE,
 				"blast_furnace" => FurnaceType::BLAST_FURNACE,
 				"smoker" => FurnaceType::SMOKER,
@@ -336,15 +334,7 @@ final class CraftingManagerFromDataHelper{
 			));
 		}
 
-		$result->registerAnvilRecipe(new MaterialRepairRecipe(
-			new MetaWildcardRecipeIngredient(ItemTypeNames::DIAMOND_PICKAXE),
-			new ExactRecipeIngredient(VanillaItems::DIAMOND())
-		));
-
-		$result->registerAnvilRecipe(new ItemCombineRecipe(
-			new MetaWildcardRecipeIngredient(ItemTypeNames::DIAMOND_PICKAXE),
-			new MetaWildcardRecipeIngredient(ItemTypeNames::DIAMOND_PICKAXE)
-		));
+		$result = AnvilCraftingManagerDataFiller::fillData($result);
 
 		//TODO: smithing
 
