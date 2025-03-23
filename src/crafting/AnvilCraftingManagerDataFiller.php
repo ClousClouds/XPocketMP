@@ -67,8 +67,7 @@ final class AnvilCraftingManagerDataFiller{
 		foreach(VanillaItems::getAll() as $item){
 			if($item instanceof Durable){
 				$itemId = GlobalItemDataHandlers::getSerializer()->serializeType($item)->getName();
-				$manager->registerAnvilRecipe(new ItemCombineRecipe(
-					new MetaWildcardRecipeIngredient($itemId),
+				$manager->registerAnvilRecipe(new ItemSelfCombineRecipe(
 					new MetaWildcardRecipeIngredient($itemId)
 				));
 			}

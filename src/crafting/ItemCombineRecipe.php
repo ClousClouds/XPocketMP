@@ -34,38 +34,15 @@ use function floor;
 use function max;
 use function min;
 
-/**
- * Represent a recipe that repair an item with a material in an anvil.
- */
-class ItemCombineRecipe implements AnvilRecipe{
-	public function __construct(
-		private RecipeIngredient $input,
-		private RecipeIngredient $material
-	){ }
-
-	public function getInput() : RecipeIngredient{
-		return $this->input;
-	}
-
-	public function getMaterial() : RecipeIngredient{
-		return $this->material;
-	}
+abstract class ItemCombineRecipe implements AnvilRecipe{
+	abstract protected function validate(Item $input, Item $material) : bool;
 
 	public function getResultFor(Item $input, Item $material) : ?AnvilCraftResult{
-		if($this->input->accepts($input) && $this->material->accepts($material)){
+		if($this->validate($input, $material)){
 			$result = (clone $input);
 			$xpCost = 0;
-			if($result instanceof Durable && $material instanceof Durable){
-				$damage = $result->getDamage();
-				if($damage !== 0){
-					$baseMaxDurability = $result->getMaxDurability();
-					$baseDurability = $baseMaxDurability - $damage;
-					$materialDurability = $material->getMaxDurability() - $material->getDamage();
-					$addDurability = (int) ($baseMaxDurability * 12 / 100);
-
-					$result->setDamage($baseMaxDurability - min($baseMaxDurability, $baseDurability + $materialDurability + $addDurability));
-				}
-
+			if($result instanceof Durable && $material instanceof Durable && $this->repair($result, $material)){
+				// The two items are compatible for repair
 				$xpCost = 2;
 			}
 
@@ -94,7 +71,7 @@ class ItemCombineRecipe implements AnvilRecipe{
 					}
 				}
 
-				$costAddition = match($enchantment->getRarity()){
+				$costAddition = match ($enchantment->getRarity()) {
 					Rarity::COMMON => 1,
 					Rarity::UNCOMMON => 2,
 					Rarity::RARE => 4,
@@ -117,9 +94,30 @@ class ItemCombineRecipe implements AnvilRecipe{
 				);
 			}
 
-			return new AnvilCraftResult($xpCost, $result, null);
+			if($xpCost !== 0){
+				return new AnvilCraftResult($xpCost, $result, null);
+			}
 		}
 
 		return null;
+	}
+
+	private function repair(Durable $result, Durable $material) : bool{
+		$damage = $result->getDamage();
+		if($damage === 0){
+			return false;
+		}
+
+		$baseMaxDurability = $result->getMaxDurability();
+		$baseDurability = $baseMaxDurability - $damage;
+		$materialDurability = $material->getMaxDurability() - $material->getDamage();
+		$addDurability = (int) ($baseMaxDurability * 12 / 100);
+
+		$result->setDamage($baseMaxDurability - min(
+				$baseMaxDurability,
+				$baseDurability + $materialDurability + $addDurability
+			));
+
+		return true;
 	}
 }
