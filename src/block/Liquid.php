@@ -31,12 +31,11 @@ use pocketmine\data\runtime\RuntimeDataDescriber;
 use pocketmine\entity\Entity;
 use pocketmine\event\block\BlockSpreadEvent;
 use pocketmine\item\Item;
-use pocketmine\math\AxisAlignedBB;
 use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
+use pocketmine\utils\Utils;
 use pocketmine\world\sound\FizzSound;
 use pocketmine\world\sound\Sound;
-use function lcg_value;
 
 abstract class Liquid extends Transparent{
 	public const MAX_DECAY = 7;
@@ -90,9 +89,6 @@ abstract class Liquid extends Transparent{
 		return false;
 	}
 
-	/**
-	 * @return AxisAlignedBB[]
-	 */
 	protected function recalculateCollisionBoxes() : array{
 		return [];
 	}
@@ -389,7 +385,7 @@ abstract class Liquid extends Transparent{
 
 	protected function liquidCollide(Block $cause, Block $result) : bool{
 		if(BlockEventHelper::form($this, $result, $cause)){
-			$this->position->getWorld()->addSound($this->position->add(0.5, 0.5, 0.5), new FizzSound(2.6 + (lcg_value() - lcg_value()) * 0.8));
+			$this->position->getWorld()->addSound($this->position->add(0.5, 0.5, 0.5), new FizzSound(2.6 + (Utils::getRandomFloat() - Utils::getRandomFloat()) * 0.8));
 		}
 		return true;
 	}

@@ -57,7 +57,10 @@ class Chunk{
 	 */
 	protected \SplFixedArray $subChunks;
 
-	/** @var Tile[] */
+	/**
+	 * @var Tile[]
+	 * @phpstan-var array<int, Tile>
+	 */
 	protected array $tiles = [];
 
 	protected HeightArray $heightMap;
@@ -219,6 +222,7 @@ class Chunk{
 
 	/**
 	 * @return Tile[]
+	 * @phpstan-return array<int, Tile>
 	 */
 	public function getTiles() : array{
 		return $this->tiles;
@@ -246,6 +250,7 @@ class Chunk{
 
 	/**
 	 * @return int[]
+	 * @phpstan-return non-empty-list<int>
 	 */
 	public function getHeightMapArray() : array{
 		return $this->heightMap->getValues();
@@ -253,6 +258,7 @@ class Chunk{
 
 	/**
 	 * @param int[] $values
+	 * @phpstan-param non-empty-list<int> $values
 	 */
 	public function setHeightMapArray(array $values) : void{
 		$this->heightMap = new HeightArray($values);

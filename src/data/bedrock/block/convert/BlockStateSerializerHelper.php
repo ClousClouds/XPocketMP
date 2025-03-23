@@ -68,9 +68,8 @@ final class BlockStateSerializerHelper{
 			->writeInt(StateNames::CANDLES, $block->getCount() - 1);
 	}
 
-	public static function encodeChemistryTable(ChemistryTable $block, string $chemistryTableType, Writer $out) : Writer{
+	public static function encodeChemistryTable(ChemistryTable $block, Writer $out) : Writer{
 		return $out
-			->writeString(BlockStateNames::CHEMISTRY_TABLE_TYPE, $chemistryTableType)
 			->writeLegacyHorizontalFacing(Facing::opposite($block->getFacing()));
 	}
 
@@ -78,9 +77,8 @@ final class BlockStateSerializerHelper{
 		return $out->writeInt(BlockStateNames::GROWTH, $block->getAge());
 	}
 
-	public static function encodeColoredTorch(Torch $block, bool $highBit, Writer $out) : Writer{
+	public static function encodeTorch(Torch $block, Writer $out) : Writer{
 		return $out
-			->writeBool(BlockStateNames::COLOR_BIT, $highBit)
 			->writeTorchFacing($block->getFacing());
 	}
 
@@ -102,7 +100,8 @@ final class BlockStateSerializerHelper{
 	public static function encodeDoor(Door $block, Writer $out) : Writer{
 		return $out
 			->writeBool(BlockStateNames::UPPER_BLOCK_BIT, $block->isTop())
-			->writeLegacyHorizontalFacing(Facing::rotateY($block->getFacing(), true))
+			//a door facing north is encoded as "east"
+			->writeCardinalHorizontalFacing(Facing::rotateY($block->getFacing(), clockwise: true))
 			->writeBool(BlockStateNames::DOOR_HINGE_BIT, $block->isHingeRight())
 			->writeBool(BlockStateNames::OPEN_BIT, $block->isOpen());
 	}
@@ -114,7 +113,7 @@ final class BlockStateSerializerHelper{
 
 	public static function encodeFenceGate(FenceGate $block, Writer $out) : Writer{
 		return $out
-			->writeLegacyHorizontalFacing($block->getFacing())
+			->writeCardinalHorizontalFacing($block->getFacing())
 			->writeBool(BlockStateNames::IN_WALL_BIT, $block->isInWall())
 			->writeBool(BlockStateNames::OPEN_BIT, $block->isOpen());
 	}
@@ -160,14 +159,9 @@ final class BlockStateSerializerHelper{
 			->writeInt(BlockStateNames::HUGE_MUSHROOM_BITS, MushroomBlockTypeIdMap::getInstance()->toId($block->getMushroomBlockType()));
 	}
 
-	public static function encodeQuartz(string $type, int $axis) : Writer{
-		return Writer::create(Ids::QUARTZ_BLOCK)
-			->writeString(BlockStateNames::CHISEL_TYPE, $type)
+	public static function encodeQuartz(int $axis, Writer $out) : Writer{
+		return $out
 			->writePillarAxis($axis); //this isn't needed for all types, but we have to write it anyway
-	}
-
-	public static function encodeSandstone(string $id, string $type) : Writer{
-		return Writer::create($id)->writeString(BlockStateNames::SAND_STONE_TYPE, $type);
 	}
 
 	public static function encodeSapling(Sapling $block, Writer $out) : Writer{
@@ -214,36 +208,6 @@ final class BlockStateSerializerHelper{
 			->writeFacingWithoutUp($facing === Facing::UP ? Facing::DOWN : $facing);
 	}
 
-	public static function encodeStoneBricks(string $type) : Writer{
-		return Writer::create(Ids::STONEBRICK)
-			->writeString(BlockStateNames::STONE_BRICK_TYPE, $type);
-	}
-
-	private static function encodeStoneSlab(Slab $block, string $singleId, string $doubleId, string $typeKey, string $typeValue) : Writer{
-		return self::encodeSlab($block, $singleId, $doubleId)
-			->writeString($typeKey, $typeValue);
-	}
-
-	public static function encodeStoneSlab1(Slab $block, string $singleId, string $doubleTypeValue) : Writer{
-		//1.21 made this a mess by flattening single slab IDs but not double ones
-		return $block->getSlabType() === SlabType::DOUBLE ?
-			self::encodeDoubleSlab($block, Ids::DOUBLE_STONE_BLOCK_SLAB)
-				->writeString(BlockStateNames::STONE_SLAB_TYPE, $doubleTypeValue) :
-			self::encodeSingleSlab($block, $singleId);
-	}
-
-	public static function encodeStoneSlab2(Slab $block, string $typeValue) : Writer{
-		return self::encodeStoneSlab($block, Ids::STONE_BLOCK_SLAB2, Ids::DOUBLE_STONE_BLOCK_SLAB2, BlockStateNames::STONE_SLAB_TYPE_2, $typeValue);
-	}
-
-	public static function encodeStoneSlab3(Slab $block, string $typeValue) : Writer{
-		return self::encodeStoneSlab($block, Ids::STONE_BLOCK_SLAB3, Ids::DOUBLE_STONE_BLOCK_SLAB3, BlockStateNames::STONE_SLAB_TYPE_3, $typeValue);
-	}
-
-	public static function encodeStoneSlab4(Slab $block, string $typeValue) : Writer{
-		return self::encodeStoneSlab($block, Ids::STONE_BLOCK_SLAB4, Ids::DOUBLE_STONE_BLOCK_SLAB4, BlockStateNames::STONE_SLAB_TYPE_4, $typeValue);
-	}
-
 	public static function encodeTrapdoor(Trapdoor $block, Writer $out) : Writer{
 		return $out
 			->write5MinusHorizontalFacing($block->getFacing())
@@ -258,11 +222,6 @@ final class BlockStateSerializerHelper{
 			->writeWallConnectionType(BlockStateNames::WALL_CONNECTION_TYPE_NORTH, $block->getConnection(Facing::NORTH))
 			->writeWallConnectionType(BlockStateNames::WALL_CONNECTION_TYPE_SOUTH, $block->getConnection(Facing::SOUTH))
 			->writeWallConnectionType(BlockStateNames::WALL_CONNECTION_TYPE_WEST, $block->getConnection(Facing::WEST));
-	}
-
-	public static function encodeLegacyWall(Wall $block, string $type) : Writer{
-		return self::encodeWall($block, Writer::create(Ids::COBBLESTONE_WALL))
-			->writeString(BlockStateNames::WALL_BLOCK_TYPE, $type);
 	}
 
 	public static function encodeWallSign(WallSign $block, Writer $out) : Writer{

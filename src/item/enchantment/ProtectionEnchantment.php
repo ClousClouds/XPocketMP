@@ -25,18 +25,22 @@ namespace pocketmine\item\enchantment;
 
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\lang\Translatable;
-use function array_flip;
+use function array_fill_keys;
 use function floor;
 
 class ProtectionEnchantment extends Enchantment{
 	protected float $typeModifier;
-	/** @var int[]|null */
+	/**
+	 * @var true[]|null
+	 * @phpstan-var array<int, true>
+	 */
 	protected ?array $applicableDamageTypes = null;
 
 	/**
 	 * ProtectionEnchantment constructor.
 	 *
 	 * @phpstan-param null|(\Closure(int $level) : int) $minEnchantingPower
+	 * @phpstan-param list<int>|null $applicableDamageTypes
 	 *
 	 * @param int[]|null $applicableDamageTypes EntityDamageEvent::CAUSE_* constants which this enchantment type applies to, or null if it applies to all types of damage.
 	 * @param int        $enchantingPowerRange  Value used to calculate the maximum enchanting power (minEnchantingPower + enchantingPowerRange)
@@ -46,7 +50,7 @@ class ProtectionEnchantment extends Enchantment{
 
 		$this->typeModifier = $typeModifier;
 		if($applicableDamageTypes !== null){
-			$this->applicableDamageTypes = array_flip($applicableDamageTypes);
+			$this->applicableDamageTypes = array_fill_keys($applicableDamageTypes, true);
 		}
 	}
 

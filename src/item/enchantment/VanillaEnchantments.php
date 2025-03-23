@@ -41,6 +41,7 @@ use pocketmine\utils\RegistryTrait;
  * @method static ProtectionEnchantment FIRE_PROTECTION()
  * @method static Enchantment FLAME()
  * @method static Enchantment FORTUNE()
+ * @method static Enchantment FROST_WALKER()
  * @method static Enchantment INFINITY()
  * @method static KnockbackEnchantment KNOCKBACK()
  * @method static Enchantment MENDING()
@@ -130,6 +131,14 @@ final class VanillaEnchantments{
 			3,
 			fn(int $level) : int => 10 * $level,
 			30
+		));
+
+		self::register("FROST_WALKER", new Enchantment(
+			KnownTranslationFactory::enchantment_frostwalker(),
+			Rarity::RARE,
+			2,
+			fn(int $level) : int => 10 * $level,
+			15
 		));
 		self::register("AQUA_AFFINITY", new Enchantment(
 			KnownTranslationFactory::enchantment_waterWorker(),
