@@ -59,7 +59,6 @@ abstract class PluginBase implements Plugin, CommandExecutor{
 	private TaskScheduler $scheduler;
 
 	public function __construct(
-		private PluginLoader $loader,
 		private Server $server,
 		private PluginDescription $description,
 		private string $dataFolder,
@@ -311,12 +310,8 @@ abstract class PluginBase implements Plugin, CommandExecutor{
 		return $this->description->getFullName();
 	}
 
-	protected function getFile() : string{
+	public function getFile() : string{
 		return $this->file;
-	}
-
-	public function getPluginLoader() : PluginLoader{
-		return $this->loader;
 	}
 
 	public function getScheduler() : TaskScheduler{

@@ -259,10 +259,8 @@ class CrashDump{
 			}
 
 			if(file_exists($filePath)){
-				$reflection = new \ReflectionClass(PluginBase::class);
-				$file = $reflection->getProperty("file");
 				foreach($this->server->getPluginManager()->getPlugins() as $plugin){
-					$filePath = Filesystem::cleanPath($file->getValue($plugin));
+					$filePath = Filesystem::cleanPath($plugin->getFile());
 					if(str_starts_with($frameCleanPath, $filePath)){
 						$this->data->plugin = $plugin->getName();
 						break;
