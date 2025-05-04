@@ -26,7 +26,6 @@ namespace pocketmine\crash;
 use Composer\InstalledVersions;
 use pocketmine\errorhandler\ErrorTypeToStringMap;
 use pocketmine\network\mcpe\protocol\ProtocolInfo;
-use pocketmine\plugin\PluginBase;
 use pocketmine\plugin\PluginManager;
 use pocketmine\Server;
 use pocketmine\thread\ThreadCrashInfoFrame;
