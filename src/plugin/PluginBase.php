@@ -66,7 +66,6 @@ abstract class PluginBase implements Plugin, CommandExecutor{
 		private string $resourceFolder,
 	){
 		$this->dataFolder = rtrim($dataFolder, "/" . DIRECTORY_SEPARATOR) . "/";
-		//TODO: this is accessed externally via reflection, not unused
 		$this->file = rtrim($file, "/" . DIRECTORY_SEPARATOR) . "/";
 		$this->resourceFolder = rtrim(str_replace(DIRECTORY_SEPARATOR, "/", $resourceFolder), "/") . "/";
 
