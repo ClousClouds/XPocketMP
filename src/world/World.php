@@ -290,6 +290,12 @@ class World implements ChunkManager{
 	private array $chunks = [];
 
 	/**
+	 * @var true[]
+	 * @phpstan-var array<ChunkPosHash, true>
+	 */
+	private array $knownUngeneratedChunks = [];
+
+	/**
 	 * @var Vector3[][] chunkHash => [relativeBlockHash => Vector3]
 	 * @phpstan-var array<ChunkPosHash, array<ChunkBlockPosHash, Vector3>>
 	 */
@@ -625,6 +631,7 @@ class World implements ChunkManager{
 			self::getXZ($chunkHash, $chunkX, $chunkZ);
 			$this->unloadChunk($chunkX, $chunkZ, false);
 		}
+		$this->knownUngeneratedChunks = [];
 		foreach($this->entitiesByChunk as $chunkHash => $entities){
 			self::getXZ($chunkHash, $chunkX, $chunkZ);
 
@@ -2648,6 +2655,7 @@ class World implements ChunkManager{
 		}
 
 		$this->chunks[$chunkHash] = $chunk;
+		unset($this->knownUngeneratedChunks[$chunkHash]);
 
 		$this->blockCacheSize -= count($this->blockCache[$chunkHash] ?? []);
 		unset($this->blockCache[$chunkHash]);
@@ -2912,6 +2920,9 @@ class World implements ChunkManager{
 		if(isset($this->chunks[$chunkHash = World::chunkHash($x, $z)])){
 			return $this->chunks[$chunkHash];
 		}
+		if(isset($this->knownUngeneratedChunks[$chunkHash])){
+			return null;
+		}
 
 		$this->timings->syncChunkLoad->startTiming();
 
@@ -2931,6 +2942,7 @@ class World implements ChunkManager{
 
 		if($loadedChunkData === null){
 			$this->timings->syncChunkLoad->stopTiming();
+			$this->knownUngeneratedChunks[$chunkHash] = true;
 			return null;
 		}
 
