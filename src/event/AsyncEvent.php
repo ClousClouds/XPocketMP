@@ -26,6 +26,7 @@ namespace pocketmine\event;
 use pocketmine\promise\Promise;
 use pocketmine\promise\PromiseResolver;
 use pocketmine\timings\Timings;
+use pocketmine\utils\Utils;
 use function count;
 
 /**
@@ -35,27 +36,17 @@ use function count;
  * When all the promises of a priority level have been resolved, the next priority level is called.
  */
 abstract class AsyncEvent{
-	/** @var array<class-string<AsyncEvent>, int> $delegatesCallDepth */
-	private static array $delegatesCallDepth = [];
-	private const MAX_EVENT_CALL_DEPTH = 50;
+	/** @var array<int, int> $handlersCallState */
+	private static array $handlersCallState = [];
+	private const MAX_CONCURRENT_CALLS = 1000; //max number of concurrent calls to a single handler
 
 	/**
 	 * @phpstan-return Promise<static>
 	 */
 	final public function call() : Promise{
-		if(!isset(self::$delegatesCallDepth[$class = static::class])){
-			self::$delegatesCallDepth[$class] = 0;
-		}
-
-		if(self::$delegatesCallDepth[$class] >= self::MAX_EVENT_CALL_DEPTH){
-			//this exception will be caught by the parent event call if all else fails
-			throw new \RuntimeException("Recursive event call detected (reached max depth of " . self::MAX_EVENT_CALL_DEPTH . " calls)");
-		}
-
 		$timings = Timings::getAsyncEventTimings($this);
 		$timings->startTiming();
 
-		++self::$delegatesCallDepth[$class];
 		try{
 			/** @phpstan-var PromiseResolver<static> $globalResolver */
 			$globalResolver = new PromiseResolver();
@@ -69,7 +60,6 @@ abstract class AsyncEvent{
 
 			return $globalResolver->getPromise();
 		}finally{
-			--self::$delegatesCallDepth[$class];
 			$timings->stopTiming();
 		}
 	}
@@ -91,11 +81,25 @@ abstract class AsyncEvent{
 			}
 
 			$currentPriority = $priority;
+			$handlerId = spl_object_id($handler) << 3 | $priority;
+			if(!isset(self::$handlersCallState[$handlerId])){
+				self::$handlersCallState[$handlerId] = 0;
+			}
+			if(self::$handlersCallState[$handlerId] >= self::MAX_CONCURRENT_CALLS){
+				throw new \RuntimeException("Concurrent call limit reached for handler " .
+					Utils::getNiceClosureName($handler->getHandler()) . "(" . Utils::getNiceClassName($this) . ")" .
+					" (max: " . self::MAX_CONCURRENT_CALLS . ")");
+			}
+			$removeCallback = static fn() => --self::$handlersCallState[$handlerId];
 			if($handler->canBeCalledConcurrently()){
 				unset($handlers[$k]);
+				++self::$handlersCallState[$handlerId];
 				$promise = $handler->callAsync($this);
 				if($promise !== null){
+					$promise->onCompletion($removeCallback, $removeCallback);
 					$awaitPromises[] = $promise;
+				}else{
+					$removeCallback();
 				}
 			}else{
 				if(count($awaitPromises) > 0){
@@ -104,14 +108,17 @@ abstract class AsyncEvent{
 				}
 
 				unset($handlers[$k]);
+				++self::$handlersCallState[$handlerId];
 				$promise = $handler->callAsync($this);
 				if($promise !== null){
+					$promise->onCompletion($removeCallback, $removeCallback);
 					$promise->onCompletion(
 						onSuccess: fn() => $this->processRemainingHandlers($handlers, $resolve, $reject),
 						onFailure: $reject
 					);
 					return;
 				}
+				$removeCallback();
 			}
 		}
 
