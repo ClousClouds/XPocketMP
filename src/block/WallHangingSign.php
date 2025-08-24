@@ -32,22 +32,32 @@ use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 use pocketmine\world\BlockTransaction;
 
-final class WallBanner extends BaseBanner implements HorizontalFacing{
+final class WallHangingSign extends BaseSign implements HorizontalFacing{
 	use HorizontalFacingTrait;
 
-	protected function getOminousVersion() : Block{
-		return VanillaBlocks::OMINOUS_WALL_BANNER()->setFacing($this->facing);
+	protected function getSupportingFace() : int{
+		return Facing::rotateY($this->facing, clockwise: true);
 	}
 
-	protected function getSupportingFace() : int{
-		return Facing::opposite($this->facing);
+	protected function getSupportingFaceOptions() : array{
+		//wall hanging signs can be supported from either end of the post
+		return [
+			Facing::rotateY($this->facing, clockwise: true),
+			Facing::rotateY($this->facing, clockwise: false)
+		];
 	}
 
 	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, ?Player $player = null) : bool{
 		if(Facing::axis($face) === Axis::Y){
 			return false;
 		}
-		$this->facing = $face;
+
+		$this->facing = Facing::rotateY($face, clockwise: true);
+		//the front should always face the player if possible
+		if($player !== null && $this->facing === $player->getHorizontalFacing()){
+			$this->facing = Facing::opposite($this->facing);
+		}
+
 		return parent::place($tx, $item, $blockReplace, $blockClicked, $face, $clickVector, $player);
 	}
 }

@@ -488,6 +488,10 @@ class Item implements \JsonSerializable{
 		return $this->getBlock()->canBePlaced();
 	}
 
+	public function getPlacementBlock(Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector) : Block{
+		return $this->getBlock($face);
+	}
+
 	/**
 	 * Returns the block corresponding to this Item.
 	 */

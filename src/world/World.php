@@ -2279,7 +2279,7 @@ class World implements ChunkManager{
 		if($item->isNull() || !$item->canBePlaced()){
 			return false;
 		}
-		$hand = $item->getBlock($face);
+		$hand = $item->getPlacementBlock($blockReplace, $blockClicked, $face, $clickVector);
 		$hand->position($this, $blockReplace->getPosition()->x, $blockReplace->getPosition()->y, $blockReplace->getPosition()->z);
 
 		if($hand->canBePlacedAt($blockClicked, $clickVector, $face, true)){
@@ -2959,7 +2959,7 @@ class World implements ChunkManager{
 		unset($this->blockCache[$chunkHash]);
 		unset($this->blockCollisionBoxCache[$chunkHash]);
 
-		$this->initChunk($x, $z, $chunkData);
+		$this->initChunk($x, $z, $chunkData, $chunk);
 
 		if(ChunkLoadEvent::hasHandlers()){
 			(new ChunkLoadEvent($this, $x, $z, $this->chunks[$chunkHash], false))->call();
@@ -2979,7 +2979,7 @@ class World implements ChunkManager{
 		return $this->chunks[$chunkHash];
 	}
 
-	private function initChunk(int $chunkX, int $chunkZ, ChunkData $chunkData) : void{
+	private function initChunk(int $chunkX, int $chunkZ, ChunkData $chunkData, Chunk $chunk) : void{
 		$logger = new \PrefixedLogger($this->logger, "Loading chunk $chunkX $chunkZ");
 
 		if(count($chunkData->getEntityNBT()) !== 0){
@@ -3043,6 +3043,16 @@ class World implements ChunkManager{
 					$logger->error("Cannot add tile at x=$tilePosition->x,y=$tilePosition->y,z=$tilePosition->z: Another tile is already at that position");
 				}else{
 					$this->addTile($tile);
+				}
+				$expectedStateId = $chunk->getBlockStateId($tilePosition->getFloorX() & Chunk::COORD_MASK, $tilePosition->getFloorY(), $tilePosition->getFloorZ() & Chunk::COORD_MASK);
+				$actualStateId = $this->getBlock($tilePosition)->getStateId();
+				if($expectedStateId !== $actualStateId){
+					//state ID was updated by readStateFromWorld - typically because the block pulled some data from the tile
+					//make sure this is synced to the chunk
+					//TODO: in the future we should pull tile reading logic out of readStateFromWorld() and do it only
+					//when the tile is loaded - this would be cleaner and faster
+					$chunk->setBlockStateId($tilePosition->getFloorX() & Chunk::COORD_MASK, $tilePosition->getFloorY(), $tilePosition->getFloorZ() & Chunk::COORD_MASK, $actualStateId);
+					$this->logger->debug("Tile " . $tile::class . " at x=$tilePosition->x,y=$tilePosition->y,z=$tilePosition->z updated block state ID from $expectedStateId to $actualStateId");
 				}
 			}
 

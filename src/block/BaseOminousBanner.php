@@ -24,51 +24,24 @@ declare(strict_types=1);
 namespace pocketmine\block;
 
 use pocketmine\block\tile\Banner as TileBanner;
-use pocketmine\block\utils\BannerPatternLayer;
-use pocketmine\block\utils\Colored;
-use pocketmine\block\utils\ColoredTrait;
+use pocketmine\block\utils\DyeColor;
 use pocketmine\block\utils\SupportType;
-use pocketmine\item\Banner as ItemBanner;
 use pocketmine\item\Item;
 use pocketmine\item\VanillaItems;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 use pocketmine\world\BlockTransaction;
 use function assert;
-use function count;
 
-abstract class BaseBanner extends Transparent implements Colored{
-	use ColoredTrait;
-
-	/**
-	 * @var BannerPatternLayer[]
-	 * @phpstan-var list<BannerPatternLayer>
-	 */
-	protected array $patterns = [];
-
-	public function readStateFromWorld() : Block{
-		parent::readStateFromWorld();
-		$tile = $this->position->getWorld()->getTile($this->position);
-		if($tile instanceof TileBanner){
-			if($tile->getType() === TileBanner::TYPE_OMINOUS){
-				//illager banner is implemented as a separate block, as it doesn't support base color or custom patterns
-				return $this->getOminousVersion();
-			}
-			$this->color = $tile->getBaseColor();
-			$this->setPatterns($tile->getPatterns());
-		}
-
-		return $this;
-	}
-
-	abstract protected function getOminousVersion() : Block;
+abstract class BaseOminousBanner extends Transparent{
 
 	public function writeStateToWorld() : void{
 		parent::writeStateToWorld();
 		$tile = $this->position->getWorld()->getTile($this->position);
 		assert($tile instanceof TileBanner);
-		$tile->setBaseColor($this->color);
-		$tile->setPatterns($this->patterns);
+		$tile->setBaseColor(DyeColor::WHITE);
+		$tile->setPatterns([]);
+		$tile->setType(TileBanner::TYPE_OMINOUS);
 	}
 
 	public function isSolid() : bool{
@@ -79,28 +52,8 @@ abstract class BaseBanner extends Transparent implements Colored{
 		return 16;
 	}
 
-	/**
-	 * @return BannerPatternLayer[]
-	 * @phpstan-return list<BannerPatternLayer>
-	 */
-	public function getPatterns() : array{
-		return $this->patterns;
-	}
-
-	/**
-	 * @param BannerPatternLayer[] $patterns
-	 *
-	 * @phpstan-param list<BannerPatternLayer> $patterns
-	 * @return $this
-	 */
-	public function setPatterns(array $patterns) : self{
-		foreach($patterns as $pattern){
-			if(!$pattern instanceof BannerPatternLayer){
-				throw new \TypeError("Array must only contain " . BannerPatternLayer::class . " objects");
-			}
-		}
-		$this->patterns = $patterns;
-		return $this;
+	public function getFuelTime() : int{
+		return 300;
 	}
 
 	protected function recalculateCollisionBoxes() : array{
@@ -119,10 +72,6 @@ abstract class BaseBanner extends Transparent implements Colored{
 		if(!$this->canBeSupportedBy($blockReplace->getSide($this->getSupportingFace()))){
 			return false;
 		}
-		if($item instanceof ItemBanner){
-			$this->color = $item->getColor();
-			$this->setPatterns($item->getPatterns());
-		}
 
 		return parent::place($tx, $item, $blockReplace, $blockClicked, $face, $clickVector, $player);
 	}
@@ -135,24 +84,7 @@ abstract class BaseBanner extends Transparent implements Colored{
 		}
 	}
 
-	public function getDropsForCompatibleTool(Item $item) : array{
-		$drop = $this->asItem();
-		if($drop instanceof ItemBanner && count($this->patterns) > 0){
-			$drop->setPatterns($this->patterns);
-		}
-
-		return [$drop];
-	}
-
-	public function getPickedItem(bool $addUserData = false) : Item{
-		$result = $this->asItem();
-		if($addUserData && $result instanceof ItemBanner && count($this->patterns) > 0){
-			$result->setPatterns($this->patterns);
-		}
-		return $result;
-	}
-
 	public function asItem() : Item{
-		return VanillaItems::BANNER()->setColor($this->color);
+		return VanillaItems::OMINOUS_BANNER();
 	}
 }

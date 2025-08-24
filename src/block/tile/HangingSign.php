@@ -21,24 +21,11 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\data\bedrock;
-
-use pocketmine\block\utils\MushroomBlockType;
-use pocketmine\data\bedrock\block\convert\property\ValueMappings;
-use pocketmine\utils\SingletonTrait;
+namespace pocketmine\block\tile;
 
 /**
  * @deprecated
  */
-final class MushroomBlockTypeIdMap{
-	use SingletonTrait;
-	/** @phpstan-use IntSaveIdMapTrait<MushroomBlockType> */
-	use IntSaveIdMapTrait;
+final class HangingSign extends Sign{
 
-	public function __construct(){
-		$newMapping = ValueMappings::getInstance()->mushroomBlockType;
-		foreach(MushroomBlockType::cases() as $case){
-			$this->register($newMapping->valueToRaw($case), $case);
-		}
-	}
 }
