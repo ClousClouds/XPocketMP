@@ -97,6 +97,7 @@ class CraftingManager{
 				}
 			});
 		}
+		gc_ignore($this);
 	}
 
 	/** @phpstan-return ObjectSet<\Closure() : void> */

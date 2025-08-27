@@ -55,6 +55,7 @@ final class ItemSerializer{
 	){
 		$this->registerSpecialBlockSerializers();
 		new ItemSerializerDeserializerRegistrar(null, $this);
+		gc_ignore($this);
 	}
 
 	/**

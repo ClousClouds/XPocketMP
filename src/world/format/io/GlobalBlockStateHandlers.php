@@ -56,6 +56,8 @@ final class GlobalBlockStateHandlers{
 		if(self::$registrar === null){
 			$deserializer = new BlockStateToObjectDeserializer();
 			$serializer = new BlockObjectToStateSerializer();
+			gc_ignore($deserializer);
+			gc_ignore($serializer);
 			self::$registrar = new BlockSerializerDeserializerRegistrar($deserializer, $serializer);
 			VanillaBlockMappings::init(self::$registrar);
 		}
@@ -76,15 +78,17 @@ final class GlobalBlockStateHandlers{
 				Path::join(BEDROCK_BLOCK_UPGRADE_SCHEMA_PATH, 'nbt_upgrade_schema'),
 				PHP_INT_MAX
 			));
+			$blockIdMetaUpgrader = BlockIdMetaUpgrader::loadFromString(
+				Filesystem::fileGetContents(Path::join(
+					BEDROCK_BLOCK_UPGRADE_SCHEMA_PATH,
+					'id_meta_to_nbt/1.12.0.bin'
+				)),
+				LegacyBlockIdToStringIdMap::getInstance(),
+				$blockStateUpgrader
+			);
+			gc_ignore($blockIdMetaUpgrader);
 			self::$blockDataUpgrader = new BlockDataUpgrader(
-				BlockIdMetaUpgrader::loadFromString(
-					Filesystem::fileGetContents(Path::join(
-						BEDROCK_BLOCK_UPGRADE_SCHEMA_PATH,
-						'id_meta_to_nbt/1.12.0.bin'
-					)),
-					LegacyBlockIdToStringIdMap::getInstance(),
-					$blockStateUpgrader
-				),
+				$blockIdMetaUpgrader,
 				$blockStateUpgrader
 			);
 		}

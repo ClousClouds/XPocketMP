@@ -46,7 +46,9 @@ final class ItemTranslator{
 		private ItemSerializer $itemSerializer,
 		private ItemDeserializer $itemDeserializer,
 		private BlockItemIdMap $blockItemIdMap
-	){}
+	){
+		gc_ignore($this->itemTypeDictionary);
+	}
 
 	/**
 	 * @return int[]|null

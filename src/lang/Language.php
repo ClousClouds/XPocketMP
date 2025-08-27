@@ -112,6 +112,7 @@ class Language{
 
 		$this->lang = self::loadLang($path, $this->langName);
 		$this->fallbackLang = self::loadLang($path, $fallback);
+		gc_ignore($this);
 	}
 
 	public function getName() : string{

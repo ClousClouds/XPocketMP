@@ -45,6 +45,7 @@ final class ItemDeserializer{
 		private BlockStateDeserializer $blockStateDeserializer
 	){
 		new ItemSerializerDeserializerRegistrar($this, null);
+		gc_ignore($this);
 	}
 
 	/**

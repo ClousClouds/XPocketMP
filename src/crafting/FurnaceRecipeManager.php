@@ -40,6 +40,7 @@ final class FurnaceRecipeManager{
 	private ObjectSet $recipeRegisteredCallbacks;
 
 	public function __construct(){
+		gc_ignore($this);
 		$this->recipeRegisteredCallbacks = new ObjectSet();
 	}
 

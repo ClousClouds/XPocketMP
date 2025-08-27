@@ -34,6 +34,7 @@ trait SingletonTrait{
 	public static function getInstance() : self{
 		if(self::$instance === null){
 			self::$instance = self::make();
+			gc_ignore(self::$instance);
 		}
 		return self::$instance;
 	}

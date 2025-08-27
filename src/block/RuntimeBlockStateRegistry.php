@@ -91,6 +91,7 @@ class RuntimeBlockStateRegistry{
 		foreach(VanillaBlocks::getAll() as $block){
 			$this->register($block);
 		}
+		gc_ignore($this);
 	}
 
 	/**

@@ -91,6 +91,7 @@ class SimpleCommandMap implements CommandMap{
 
 	public function __construct(private Server $server){
 		$this->setDefaultCommands();
+		gc_ignore($this);
 	}
 
 	private function setDefaultCommands() : void{

@@ -485,6 +485,7 @@ class World implements ChunkManager{
 		private WritableWorldProvider $provider,
 		private AsyncPool $workerPool
 	){
+		gc_ignore($this);
 		$this->folderName = $name;
 		$this->worldId = self::$worldIdCounter++;
 

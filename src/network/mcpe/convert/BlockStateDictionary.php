@@ -76,6 +76,7 @@ final class BlockStateDictionary{
 				$this->stateDataToStateIdLookup[$name] = $stateIds;
 			}
 		}
+		gc_ignore($this);
 	}
 
 	/**

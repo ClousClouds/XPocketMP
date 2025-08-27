@@ -81,6 +81,7 @@ final class BlockStateUpgradeSchema{
 		private int $schemaId
 	){
 		$this->versionId = ($this->maxVersionMajor << 24) | ($this->maxVersionMinor << 16) | ($this->maxVersionPatch << 8) | $this->maxVersionRevision;
+		gc_ignore($this);
 	}
 
 	/**
