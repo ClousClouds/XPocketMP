@@ -130,14 +130,6 @@ final class RuntimeDataWriter implements RuntimeDataDescriber{
 		$this->writeBoundedIntAuto(0, (3 ** 4) - 1, $packed);
 	}
 
-	public function railShape(int &$railShape) : void{
-		$this->int(4, $railShape);
-	}
-
-	public function straightOnlyRailShape(int &$railShape) : void{
-		$this->int(3, $railShape);
-	}
-
 	public function enum(\UnitEnum &$case) : void{
 		$metadata = RuntimeEnumMetadata::from($case);
 		$this->writeInt($metadata->bits, $metadata->enumToInt($case));

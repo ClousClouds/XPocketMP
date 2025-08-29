@@ -24,7 +24,6 @@ declare(strict_types=1);
 namespace pocketmine\data\runtime;
 
 use pocketmine\block\utils\HorizontalFacingOption;
-use pocketmine\block\utils\RailConnectionInfo;
 use pocketmine\block\utils\WallConnectionType;
 use pocketmine\math\Axis;
 use pocketmine\math\Facing;
@@ -145,24 +144,6 @@ final class RuntimeDataReader implements RuntimeDataDescriber{
 		}
 
 		$connections = $result;
-	}
-
-	public function railShape(int &$railShape) : void{
-		$result = $this->readInt(4);
-		if(!isset(RailConnectionInfo::CONNECTIONS[$result]) && !isset(RailConnectionInfo::CURVE_CONNECTIONS[$result])){
-			throw new InvalidSerializedRuntimeDataException("Invalid rail shape $result");
-		}
-
-		$railShape = $result;
-	}
-
-	public function straightOnlyRailShape(int &$railShape) : void{
-		$result = $this->readInt(3);
-		if(!isset(RailConnectionInfo::CONNECTIONS[$result])){
-			throw new InvalidSerializedRuntimeDataException("No rail shape matches meta $result");
-		}
-
-		$railShape = $result;
 	}
 
 	public function enum(\UnitEnum &$case) : void{

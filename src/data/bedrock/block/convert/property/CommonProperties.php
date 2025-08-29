@@ -33,6 +33,7 @@ use pocketmine\block\SimplePressurePlate;
 use pocketmine\block\Slab;
 use pocketmine\block\Stair;
 use pocketmine\block\Stem;
+use pocketmine\block\StraightOnlyRail;
 use pocketmine\block\Torch;
 use pocketmine\block\Trapdoor;
 use pocketmine\block\utils\Ageable;
@@ -51,6 +52,7 @@ use pocketmine\block\utils\MultiAnyFacing;
 use pocketmine\block\utils\PillarRotation;
 use pocketmine\block\utils\SignLikeRotation;
 use pocketmine\block\utils\SlabType;
+use pocketmine\block\utils\StraightOnlyRailShape;
 use pocketmine\block\Wall;
 use pocketmine\block\Wood;
 use pocketmine\data\bedrock\block\BlockLegacyMetadata;
@@ -95,6 +97,8 @@ final class CommonProperties{
 	public readonly IntProperty $cropAgeMax7;
 	/** @phpstan-var BoolProperty<DoublePlant> */
 	public readonly BoolProperty $doublePlantHalf;
+	/** @phpstan-var ValueFromIntProperty<StraightOnlyRail, StraightOnlyRailShape> */
+	public readonly ValueFromIntProperty $straightOnlyRailShape;
 
 	/** @phpstan-var IntProperty<Liquid> */
 	public readonly IntProperty $liquidData;
@@ -265,6 +269,15 @@ final class CommonProperties{
 
 		$this->cropAgeMax7 = new IntProperty(StateNames::GROWTH, 0, 7, fn(Ageable $b) => $b->getAge(), fn(Ageable $b, int $v) => $b->setAge($v));
 		$this->doublePlantHalf = new BoolProperty(StateNames::UPPER_BLOCK_BIT, fn(DoublePlant $b) => $b->isTop(), fn(DoublePlant $b, bool $v) => $b->setTop($v));
+
+		$this->straightOnlyRailShape = new ValueFromIntProperty(StateNames::RAIL_DIRECTION, EnumFromRawStateMap::int(StraightOnlyRailShape::class, fn(StraightOnlyRailShape $case) => match($case){
+			StraightOnlyRailShape::FLAT_AXIS_Z => BlockLegacyMetadata::RAIL_STRAIGHT_NORTH_SOUTH,
+			StraightOnlyRailShape::FLAT_AXIS_X => BlockLegacyMetadata::RAIL_STRAIGHT_EAST_WEST,
+			StraightOnlyRailShape::ASCENDING_EAST => BlockLegacyMetadata::RAIL_ASCENDING_EAST,
+			StraightOnlyRailShape::ASCENDING_WEST => BlockLegacyMetadata::RAIL_ASCENDING_WEST,
+			StraightOnlyRailShape::ASCENDING_NORTH => BlockLegacyMetadata::RAIL_ASCENDING_NORTH,
+			StraightOnlyRailShape::ASCENDING_SOUTH => BlockLegacyMetadata::RAIL_ASCENDING_SOUTH
+		}), fn(StraightOnlyRail $b) => $b->getShape(), fn(StraightOnlyRail $b, StraightOnlyRailShape $v) => $b->setShape($v));
 
 		$fallingFlag = BlockLegacyMetadata::LIQUID_FALLING_FLAG;
 		$this->liquidData = new IntProperty(
