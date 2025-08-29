@@ -25,8 +25,6 @@ namespace pocketmine\block;
 
 use pocketmine\block\utils\FacesOppositePlacingPlayerTrait;
 use pocketmine\block\utils\HorizontalFacing;
-use pocketmine\block\utils\HorizontalFacingOption;
-use pocketmine\block\utils\HorizontalFacingTrait;
 use pocketmine\block\utils\PoweredByRedstone;
 use pocketmine\block\utils\PoweredByRedstoneTrait;
 use pocketmine\block\utils\StaticSupportTrait;
@@ -37,7 +35,6 @@ use pocketmine\math\AxisAlignedBB;
 use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
-use pocketmine\world\BlockTransaction;
 
 class RedstoneRepeater extends Flowable implements PoweredByRedstone, HorizontalFacing{
 	use FacesOppositePlacingPlayerTrait;

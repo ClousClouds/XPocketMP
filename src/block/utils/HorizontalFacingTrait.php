@@ -24,8 +24,6 @@ declare(strict_types=1);
 namespace pocketmine\block\utils;
 
 use pocketmine\data\runtime\RuntimeDataDescriber;
-use pocketmine\math\Axis;
-use pocketmine\math\Facing;
 
 trait HorizontalFacingTrait{
 	protected HorizontalFacingOption $facing = HorizontalFacingOption::NORTH;
