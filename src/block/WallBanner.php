@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace pocketmine\block;
 
 use pocketmine\block\utils\HorizontalFacing;
+use pocketmine\block\utils\HorizontalFacingOption;
 use pocketmine\block\utils\HorizontalFacingTrait;
 use pocketmine\item\Item;
 use pocketmine\math\Axis;
@@ -40,14 +41,15 @@ final class WallBanner extends BaseBanner implements HorizontalFacing{
 	}
 
 	protected function getSupportingFace() : Facing{
-		return Facing::opposite($this->facing);
+		return Facing::opposite($this->facing->toFacing());
 	}
 
 	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, Facing $face, Vector3 $clickVector, ?Player $player = null) : bool{
-		if(Facing::axis($face) === Axis::Y){
+		$hzFacing = HorizontalFacingOption::tryFromFacing($face);
+		if($hzFacing === null){
 			return false;
 		}
-		$this->facing = $face;
+		$this->facing = $hzFacing;
 		return parent::place($tx, $item, $blockReplace, $blockClicked, $face, $clickVector, $player);
 	}
 }

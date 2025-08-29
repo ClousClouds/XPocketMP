@@ -46,7 +46,7 @@ class Lectern extends Transparent implements HorizontalFacing{
 	protected bool $producingSignal = false;
 
 	protected function describeBlockOnlyState(RuntimeDataDescriber $w) : void{
-		$w->horizontalFacing($this->facing);
+		$w->enum($this->facing);
 		$w->bool($this->producingSignal);
 	}
 

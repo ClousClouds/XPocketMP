@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace pocketmine\block;
 
 use pocketmine\block\utils\HorizontalFacing;
+use pocketmine\block\utils\HorizontalFacingOption;
 use pocketmine\block\utils\HorizontalFacingTrait;
 use pocketmine\block\utils\SupportType;
 use pocketmine\item\Item;
@@ -44,7 +45,7 @@ final class CeilingEdgesHangingSign extends BaseSign implements HorizontalFacing
 			return false;
 		}
 		if($player !== null){
-			$this->facing = Facing::opposite($player->getHorizontalFacing());
+			$this->facing = HorizontalFacingOption::fromFacing(Facing::opposite($player->getHorizontalFacing()));
 		}
 		if(!$this->canBeSupportedAt($blockReplace)){
 			return false;
@@ -63,6 +64,6 @@ final class CeilingEdgesHangingSign extends BaseSign implements HorizontalFacing
 		$supportBlock = $block->getSide(Facing::UP);
 		return
 			$supportBlock->getSupportType(Facing::DOWN) === SupportType::FULL ||
-			(($supportBlock instanceof WallHangingSign || $supportBlock instanceof CeilingEdgesHangingSign) && Facing::axis($supportBlock->getFacing()) === Facing::axis($this->facing));
+			(($supportBlock instanceof WallHangingSign || $supportBlock instanceof CeilingEdgesHangingSign) && Facing::axis($supportBlock->getFacing()->toFacing()) === Facing::axis($this->facing->toFacing()));
 	}
 }

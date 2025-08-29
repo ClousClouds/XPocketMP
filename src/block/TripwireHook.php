@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace pocketmine\block;
 
 use pocketmine\block\utils\HorizontalFacing;
+use pocketmine\block\utils\HorizontalFacingOption;
 use pocketmine\block\utils\HorizontalFacingTrait;
 use pocketmine\data\runtime\RuntimeDataDescriber;
 use pocketmine\item\Item;
@@ -40,7 +41,7 @@ class TripwireHook extends Flowable implements HorizontalFacing{
 	protected bool $powered = false;
 
 	protected function describeBlockOnlyState(RuntimeDataDescriber $w) : void{
-		$w->horizontalFacing($this->facing);
+		$w->enum($this->facing);
 		$w->bool($this->connected);
 		$w->bool($this->powered);
 	}
@@ -62,9 +63,9 @@ class TripwireHook extends Flowable implements HorizontalFacing{
 	}
 
 	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, Facing $face, Vector3 $clickVector, ?Player $player = null) : bool{
-		if(Facing::axis($face) !== Axis::Y){
-			//TODO: check face is valid
-			$this->facing = $face;
+		$hzFacing = HorizontalFacingOption::tryFromFacing($face);
+		if($hzFacing !== null){
+			$this->facing = $hzFacing;
 			return parent::place($tx, $item, $blockReplace, $blockClicked, $face, $clickVector, $player);
 		}
 		return false;

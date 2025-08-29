@@ -26,6 +26,7 @@ namespace pocketmine\block;
 use pocketmine\block\tile\Bell as TileBell;
 use pocketmine\block\utils\BellAttachmentType;
 use pocketmine\block\utils\HorizontalFacing;
+use pocketmine\block\utils\HorizontalFacingOption;
 use pocketmine\block\utils\HorizontalFacingTrait;
 use pocketmine\block\utils\SupportType;
 use pocketmine\data\runtime\RuntimeDataDescriber;
@@ -46,13 +47,14 @@ final class Bell extends Transparent implements HorizontalFacing{
 
 	protected function describeBlockOnlyState(RuntimeDataDescriber $w) : void{
 		$w->enum($this->attachmentType);
-		$w->horizontalFacing($this->facing);
+		$w->enum($this->facing);
 	}
 
 	protected function recalculateCollisionBoxes() : array{
+		$realFacing = $this->facing->toFacing();
 		if($this->attachmentType === BellAttachmentType::FLOOR){
 			return [
-				AxisAlignedBB::one()->squashedCopy(Facing::axis($this->facing), 1 / 4)->trimmedCopy(Facing::UP, 3 / 16)
+				AxisAlignedBB::one()->squashedCopy(Facing::axis($realFacing), 1 / 4)->trimmedCopy(Facing::UP, 3 / 16)
 			];
 		}
 		if($this->attachmentType === BellAttachmentType::CEILING){
@@ -62,12 +64,12 @@ final class Bell extends Transparent implements HorizontalFacing{
 		}
 
 		$box = AxisAlignedBB::one()
-			->squashedCopy(Facing::axis(Facing::rotateY($this->facing, true)), 1 / 4)
+			->squashedCopy(Facing::axis(Facing::rotateY($realFacing, true)), 1 / 4)
 			->trimmedCopy(Facing::UP, 1 / 16)
 			->trimmedCopy(Facing::DOWN, 1 / 4);
 
 		return [
-			$this->attachmentType === BellAttachmentType::ONE_WALL ? $box->trimmedCopy($this->facing, 3 / 16) : $box
+			$this->attachmentType === BellAttachmentType::ONE_WALL ? $box->trimmedCopy($realFacing, 3 / 16) : $box
 		];
 	}
 
@@ -93,13 +95,13 @@ final class Bell extends Transparent implements HorizontalFacing{
 		}
 		if($face === Facing::UP){
 			if($player !== null){
-				$this->setFacing(Facing::opposite($player->getHorizontalFacing()));
+				$this->setFacing(HorizontalFacingOption::fromFacing(Facing::opposite($player->getHorizontalFacing())));
 			}
 			$this->setAttachmentType(BellAttachmentType::FLOOR);
 		}elseif($face === Facing::DOWN){
 			$this->setAttachmentType(BellAttachmentType::CEILING);
 		}else{
-			$this->setFacing($face);
+			$this->setFacing(HorizontalFacingOption::fromFacing($face));
 			$this->setAttachmentType(
 				$this->canBeSupportedAt($blockReplace, $face) ?
 					BellAttachmentType::TWO_WALLS :
@@ -113,8 +115,8 @@ final class Bell extends Transparent implements HorizontalFacing{
 		foreach(match($this->attachmentType){
 			BellAttachmentType::CEILING => [Facing::UP],
 			BellAttachmentType::FLOOR => [Facing::DOWN],
-			BellAttachmentType::ONE_WALL => [Facing::opposite($this->facing)],
-			BellAttachmentType::TWO_WALLS => [$this->facing, Facing::opposite($this->facing)]
+			BellAttachmentType::ONE_WALL => [Facing::opposite($this->facing->toFacing())],
+			BellAttachmentType::TWO_WALLS => [$this->facing->toFacing(), Facing::opposite($this->facing->toFacing())]
 		} as $supportBlockDirection){
 			if(!$this->canBeSupportedAt($this, $supportBlockDirection)){
 				$this->position->getWorld()->useBreakOn($this->position);
@@ -158,8 +160,8 @@ final class Bell extends Transparent implements HorizontalFacing{
 	private function isValidFaceToRing(Facing $faceHit) : bool{
 		return match($this->attachmentType){
 			BellAttachmentType::CEILING => true,
-			BellAttachmentType::FLOOR => Facing::axis($faceHit) === Facing::axis($this->facing),
-			BellAttachmentType::ONE_WALL, BellAttachmentType::TWO_WALLS => $faceHit === Facing::rotateY($this->facing, false) || $faceHit === Facing::rotateY($this->facing, true),
+			BellAttachmentType::FLOOR => Facing::axis($faceHit) === Facing::axis($this->facing->toFacing()),
+			BellAttachmentType::ONE_WALL, BellAttachmentType::TWO_WALLS => $faceHit === Facing::rotateY($this->facing->toFacing(), false) || $faceHit === Facing::rotateY($this->facing->toFacing(), true),
 		};
 	}
 }

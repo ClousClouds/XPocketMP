@@ -29,6 +29,7 @@ use pocketmine\block\utils\DirtType;
 use pocketmine\block\utils\DripleafState;
 use pocketmine\block\utils\DyeColor;
 use pocketmine\block\utils\FroglightType;
+use pocketmine\block\utils\HorizontalFacingOption;
 use pocketmine\block\utils\LeverFacing;
 use pocketmine\block\utils\MobHeadType;
 use pocketmine\block\utils\MushroomBlockType;
@@ -63,8 +64,8 @@ final class ValueMappings{
 	/** @phpstan-var EnumFromRawStateMap<MushroomBlockType, int> */
 	public readonly EnumFromRawStateMap $mushroomBlockType;
 
-	/** @phpstan-var IntFromRawStateMap<string> */
-	public readonly IntFromRawStateMap $cardinalDirection;
+	/** @phpstan-var EnumFromRawStateMap<HorizontalFacingOption, string> */
+	public readonly EnumFromRawStateMap $cardinalDirection;
 	/** @phpstan-var EnumFromRawStateMap<Facing, string> */
 	public readonly EnumFromRawStateMap $blockFace;
 	/** @phpstan-var EnumFromRawStateMap<Axis, string> */
@@ -76,16 +77,16 @@ final class ValueMappings{
 	/** @phpstan-var IntFromRawStateMap<string> */
 	public readonly IntFromRawStateMap $bambooLeafSize;
 
-	/** @phpstan-var IntFromRawStateMap<int> */
-	public readonly IntFromRawStateMap $horizontalFacing5Minus;
-	/** @phpstan-var IntFromRawStateMap<int> */
-	public readonly IntFromRawStateMap $horizontalFacingSWNE;
-	/** @phpstan-var IntFromRawStateMap<int> */
-	public readonly IntFromRawStateMap $horizontalFacingSWNEInverted;
-	/** @phpstan-var IntFromRawStateMap<int> */
-	public readonly IntFromRawStateMap $horizontalFacingCoral;
-	/** @phpstan-var IntFromRawStateMap<int> */
-	public readonly IntFromRawStateMap $horizontalFacingClassic;
+	/** @phpstan-var EnumFromRawStateMap<HorizontalFacingOption, int> */
+	public readonly EnumFromRawStateMap $horizontalFacing5Minus;
+	/** @phpstan-var EnumFromRawStateMap<HorizontalFacingOption, int> */
+	public readonly EnumFromRawStateMap $horizontalFacingSWNE;
+	/** @phpstan-var EnumFromRawStateMap<HorizontalFacingOption, int> */
+	public readonly EnumFromRawStateMap $horizontalFacingSWNEInverted;
+	/** @phpstan-var EnumFromRawStateMap<HorizontalFacingOption, int> */
+	public readonly EnumFromRawStateMap $horizontalFacingCoral;
+	/** @phpstan-var EnumFromRawStateMap<HorizontalFacingOption, int> */
+	public readonly EnumFromRawStateMap $horizontalFacingClassic;
 	/** @phpstan-var EnumFromRawStateMap<Facing, int> */
 	public readonly EnumFromRawStateMap $facing;
 	/** @phpstan-var EnumFromRawStateMap<Facing, int> */
@@ -191,12 +192,12 @@ final class ValueMappings{
 		);
 
 		//TODO: this can't use EnumFromRawStateMap until we have a dedicated HorizontalFacing enum
-		$this->cardinalDirection = IntFromRawStateMap::string([
-			Facing::NORTH->value => StringValues::MC_CARDINAL_DIRECTION_NORTH,
-			Facing::SOUTH->value => StringValues::MC_CARDINAL_DIRECTION_SOUTH,
-			Facing::WEST->value => StringValues::MC_CARDINAL_DIRECTION_WEST,
-			Facing::EAST->value => StringValues::MC_CARDINAL_DIRECTION_EAST,
-		]);
+		$this->cardinalDirection = EnumFromRawStateMap::string(HorizontalFacingOption::class, fn(HorizontalFacingOption $case) => match ($case) {
+			HorizontalFacingOption::NORTH => StringValues::MC_CARDINAL_DIRECTION_NORTH,
+			HorizontalFacingOption::SOUTH => StringValues::MC_CARDINAL_DIRECTION_SOUTH,
+			HorizontalFacingOption::WEST => StringValues::MC_CARDINAL_DIRECTION_WEST,
+			HorizontalFacingOption::EAST => StringValues::MC_CARDINAL_DIRECTION_EAST,
+		});
 		$this->blockFace = EnumFromRawStateMap::string(Facing::class, fn(Facing $case) => match ($case) {
 			Facing::DOWN => StringValues::MC_BLOCK_FACE_DOWN,
 			Facing::UP => StringValues::MC_BLOCK_FACE_UP,
@@ -232,39 +233,36 @@ final class ValueMappings{
 			Bamboo::LARGE_LEAVES => StringValues::BAMBOO_LEAF_SIZE_LARGE_LEAVES,
 		]);
 
-		$this->horizontalFacing5Minus = IntFromRawStateMap::int([
-			Facing::EAST->value => 0,
-			Facing::WEST->value => 1,
-			Facing::SOUTH->value => 2,
-			Facing::NORTH->value => 3
-		]);
-		$this->horizontalFacingSWNE = IntFromRawStateMap::int([
-			Facing::SOUTH->value => 0,
-			Facing::WEST->value => 1,
-			Facing::NORTH->value => 2,
-			Facing::EAST->value => 3
-		]);
-		$this->horizontalFacingSWNEInverted = IntFromRawStateMap::int([
-			Facing::NORTH->value => 0,
-			Facing::EAST->value => 1,
-			Facing::SOUTH->value => 2,
-			Facing::WEST->value => 3,
-		]);
-		$this->horizontalFacingCoral = IntFromRawStateMap::int([
-			Facing::WEST->value => 0,
-			Facing::EAST->value => 1,
-			Facing::NORTH->value => 2,
-			Facing::SOUTH->value => 3
-		]);
-		$horizontalFacingClassicTable = [
-			Facing::NORTH->value => 2,
-			Facing::SOUTH->value => 3,
-			Facing::WEST->value => 4,
-			Facing::EAST->value => 5
-		];
-		$this->horizontalFacingClassic = IntFromRawStateMap::int($horizontalFacingClassicTable, deserializeAliases: [
-			Facing::NORTH->value => [0, 1] //should be illegal but still technically possible
-		]);
+		$this->horizontalFacing5Minus = EnumFromRawStateMap::int(HorizontalFacingOption::class, fn(HorizontalFacingOption $case) => match ($case) {
+			HorizontalFacingOption::EAST => 0,
+			HorizontalFacingOption::WEST => 1,
+			HorizontalFacingOption::SOUTH => 2,
+			HorizontalFacingOption::NORTH => 3
+		});
+		$this->horizontalFacingSWNE = EnumFromRawStateMap::int(HorizontalFacingOption::class, fn(HorizontalFacingOption $case) => match ($case) {
+			HorizontalFacingOption::SOUTH => 0,
+			HorizontalFacingOption::WEST => 1,
+			HorizontalFacingOption::NORTH => 2,
+			HorizontalFacingOption::EAST => 3
+		});
+		$this->horizontalFacingSWNEInverted = EnumFromRawStateMap::int(HorizontalFacingOption::class, fn(HorizontalFacingOption $case) => match ($case) {
+			HorizontalFacingOption::NORTH => 0,
+			HorizontalFacingOption::EAST => 1,
+			HorizontalFacingOption::SOUTH => 2,
+			HorizontalFacingOption::WEST => 3,
+		});
+		$this->horizontalFacingCoral = EnumFromRawStateMap::int(HorizontalFacingOption::class, fn(HorizontalFacingOption $case) => match ($case) {
+			HorizontalFacingOption::WEST => 0,
+			HorizontalFacingOption::EAST => 1,
+			HorizontalFacingOption::NORTH => 2,
+			HorizontalFacingOption::SOUTH => 3
+		});
+		$this->horizontalFacingClassic = EnumFromRawStateMap::int(HorizontalFacingOption::class, fn(HorizontalFacingOption $case) => match ($case) {
+			HorizontalFacingOption::NORTH => 2,
+			HorizontalFacingOption::SOUTH => 3,
+			HorizontalFacingOption::WEST => 4,
+			HorizontalFacingOption::EAST => 5
+		}, aliasMapper: fn(HorizontalFacingOption $case) => $case === HorizontalFacingOption::NORTH ? [0, 1] : []); //should be illegal but still technically possible
 
 		$this->facing = EnumFromRawStateMap::int(Facing::class, fn(Facing $case) => match ($case) {
 			Facing::DOWN => 0,
@@ -285,6 +283,13 @@ final class ValueMappings{
 			Facing::WEST => 5,
 		});
 
+		//these can't be migrated to enums yet
+		$horizontalFacingClassicTable = [
+			Facing::NORTH->value => 2,
+			Facing::SOUTH->value => 3,
+			Facing::WEST->value => 4,
+			Facing::EAST->value => 5
+		];
 		$this->coralAxis = IntFromRawStateMap::int([
 			Axis::X->value => 0,
 			Axis::Z->value => 1,

@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace pocketmine\block;
 
 use pocketmine\block\utils\HorizontalFacing;
+use pocketmine\block\utils\HorizontalFacingOption;
 use pocketmine\block\utils\HorizontalFacingTrait;
 use pocketmine\block\utils\SupportType;
 use pocketmine\event\block\StructureGrowEvent;
@@ -63,7 +64,7 @@ abstract class BaseBigDripleaf extends Transparent implements HorizontalFacing{
 			return false;
 		}
 		if($player !== null){
-			$this->facing = Facing::opposite($player->getHorizontalFacing());
+			$this->facing = HorizontalFacingOption::fromFacing(Facing::opposite($player->getHorizontalFacing()));
 		}
 		if($block instanceof BaseBigDripleaf){
 			$this->facing = $block->facing;

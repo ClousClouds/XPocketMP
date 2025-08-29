@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace pocketmine\block;
 
 use pocketmine\block\utils\HorizontalFacing;
+use pocketmine\block\utils\HorizontalFacingOption;
 use pocketmine\block\utils\HorizontalFacingTrait;
 use pocketmine\block\utils\SupportType;
 use pocketmine\item\Item;
@@ -38,7 +39,7 @@ final class WallHangingSign extends BaseSign implements HorizontalFacing{
 	use HorizontalFacingTrait;
 
 	protected function getSupportingFace() : Facing{
-		return Facing::rotateY($this->facing, clockwise: true);
+		return Facing::rotateY($this->facing->toFacing(), clockwise: true);
 	}
 
 	public function onNearbyBlockChange() : void{
@@ -47,7 +48,7 @@ final class WallHangingSign extends BaseSign implements HorizontalFacing{
 
 	protected function recalculateCollisionBoxes() : array{
 		//only the cross bar is collidable
-		return [AxisAlignedBB::one()->trimmedCopy(Facing::DOWN, 7 / 8)->squashedCopy(Facing::axis($this->facing), 3 / 4)];
+		return [AxisAlignedBB::one()->trimmedCopy(Facing::DOWN, 7 / 8)->squashedCopy(Facing::axis($this->facing->toFacing()), 3 / 4)];
 	}
 
 	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, Facing $face, Vector3 $clickVector, ?Player $player = null) : bool{
@@ -64,18 +65,19 @@ final class WallHangingSign extends BaseSign implements HorizontalFacing{
 			return false;
 		}
 
-		$this->facing = Facing::rotateY(Facing::opposite($direction), clockwise: true);
+		$facing = Facing::rotateY(Facing::opposite($direction), clockwise: true);
 		//the front should always face the player if possible
-		if($this->facing === $player->getHorizontalFacing()){
-			$this->facing = Facing::opposite($this->facing);
+		if($facing === $player->getHorizontalFacing()){
+			$facing = Facing::opposite($facing);
 		}
+		$this->facing = HorizontalFacingOption::fromFacing($facing);
 
 		return parent::place($tx, $item, $blockReplace, $blockClicked, $face, $clickVector, $player);
 	}
 
 	private function canBeSupportedAt(Block $block, Facing $face) : bool{
 		return
-			($block instanceof WallHangingSign && Facing::axis(Facing::rotateY($block->getFacing(), clockwise: true)) === Facing::axis($face)) ||
+			($block instanceof WallHangingSign && Facing::axis(Facing::rotateY($block->getFacing()->toFacing(), clockwise: true)) === Facing::axis($face)) ||
 			$block->getSupportType(Facing::opposite($face)) === SupportType::FULL;
 	}
 }

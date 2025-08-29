@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace pocketmine\data\runtime;
 
+use pocketmine\block\utils\HorizontalFacingOption;
 use pocketmine\block\utils\WallConnectionType;
 use pocketmine\math\Axis;
 use pocketmine\math\Facing;
@@ -46,15 +47,13 @@ interface RuntimeDataDescriber{
 
 	public function bool(bool &$value) : void;
 
-	public function horizontalFacing(Facing &$facing) : void;
-
 	/**
 	 * @param Facing[] $faces
 	 */
 	public function facingFlags(array &$faces) : void;
 
 	/**
-	 * @param Facing[] $faces
+	 * @param HorizontalFacingOption[] $faces
 	 */
 	public function horizontalFacingFlags(array &$faces) : void;
 

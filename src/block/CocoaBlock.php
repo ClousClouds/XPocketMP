@@ -27,6 +27,7 @@ use pocketmine\block\utils\Ageable;
 use pocketmine\block\utils\AgeableTrait;
 use pocketmine\block\utils\BlockEventHelper;
 use pocketmine\block\utils\HorizontalFacing;
+use pocketmine\block\utils\HorizontalFacingOption;
 use pocketmine\block\utils\HorizontalFacingTrait;
 use pocketmine\block\utils\WoodType;
 use pocketmine\data\runtime\RuntimeDataDescriber;
@@ -48,18 +49,19 @@ class CocoaBlock extends Flowable implements Ageable, HorizontalFacing{
 	public const MAX_AGE = 2;
 
 	protected function describeBlockOnlyState(RuntimeDataDescriber $w) : void{
-		$w->horizontalFacing($this->facing);
+		$w->enum($this->facing);
 		$w->boundedIntAuto(0, self::MAX_AGE, $this->age);
 	}
 
 	protected function recalculateCollisionBoxes() : array{
+		$realFacing = $this->facing->toFacing();
 		return [
 			AxisAlignedBB::one()
-				->squashedCopy(Facing::axis(Facing::rotateY($this->facing, true)), (6 - $this->age) / 16) //sides
+				->squashedCopy(Facing::axis(Facing::rotateY($realFacing, true)), (6 - $this->age) / 16) //sides
 				->trimmedCopy(Facing::DOWN, (7 - $this->age * 2) / 16)
 				->trimmedCopy(Facing::UP, 0.25)
-				->trimmedCopy(Facing::opposite($this->facing), 1 / 16) //gap between log and pod
-				->trimmedCopy($this->facing, (11 - $this->age * 2) / 16) //outward face
+				->trimmedCopy(Facing::opposite($realFacing), 1 / 16) //gap between log and pod
+				->trimmedCopy($realFacing, (11 - $this->age * 2) / 16) //outward face
 		];
 	}
 
@@ -68,8 +70,8 @@ class CocoaBlock extends Flowable implements Ageable, HorizontalFacing{
 	}
 
 	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, Facing $face, Vector3 $clickVector, ?Player $player = null) : bool{
-		if(Facing::axis($face) !== Axis::Y && $this->canAttachTo($blockClicked)){
-			$this->facing = $face;
+		if(($hzFacing = HorizontalFacingOption::tryFromFacing($face)) !== null && $this->canAttachTo($blockClicked)){
+			$this->facing = $hzFacing;
 			return parent::place($tx, $item, $blockReplace, $blockClicked, $face, $clickVector, $player);
 		}
 
@@ -87,7 +89,7 @@ class CocoaBlock extends Flowable implements Ageable, HorizontalFacing{
 	}
 
 	public function onNearbyBlockChange() : void{
-		if(!$this->canAttachTo($this->getSide(Facing::opposite($this->facing)))){
+		if(!$this->canAttachTo($this->getSide(Facing::opposite($this->facing->toFacing())))){
 			$this->position->getWorld()->useBreakOn($this->position);
 		}
 	}

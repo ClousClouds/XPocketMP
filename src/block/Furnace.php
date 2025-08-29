@@ -48,7 +48,7 @@ class Furnace extends Opaque implements Lightable, HorizontalFacing{
 	}
 
 	protected function describeBlockOnlyState(RuntimeDataDescriber $w) : void{
-		$w->horizontalFacing($this->facing);
+		$w->enum($this->facing);
 		$w->bool($this->lit);
 	}
 

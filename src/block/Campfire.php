@@ -26,6 +26,7 @@ namespace pocketmine\block;
 use pocketmine\block\inventory\CampfireInventory;
 use pocketmine\block\tile\Campfire as TileCampfire;
 use pocketmine\block\utils\HorizontalFacing;
+use pocketmine\block\utils\HorizontalFacingOption;
 use pocketmine\block\utils\HorizontalFacingTrait;
 use pocketmine\block\utils\Lightable;
 use pocketmine\block\utils\LightableTrait;
@@ -176,7 +177,7 @@ class Campfire extends Transparent implements Lightable, HorizontalFacing{
 			return false;
 		}
 		if($player !== null){
-			$this->facing = $player->getHorizontalFacing();
+			$this->facing = HorizontalFacingOption::fromFacing($player->getHorizontalFacing());
 		}
 		$this->lit = true;
 		return parent::place($tx, $item, $blockReplace, $blockClicked, $face, $clickVector, $player);

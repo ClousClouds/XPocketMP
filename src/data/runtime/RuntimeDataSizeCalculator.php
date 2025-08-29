@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace pocketmine\data\runtime;
 
+use pocketmine\block\utils\HorizontalFacingOption;
 use pocketmine\math\Axis;
 use pocketmine\math\Facing;
 use function count;
@@ -51,16 +52,12 @@ final class RuntimeDataSizeCalculator implements RuntimeDataDescriber{
 		$this->addBits(1);
 	}
 
-	public function horizontalFacing(Facing &$facing) : void{
-		$this->addBits(2);
-	}
-
 	public function facingFlags(array &$faces) : void{
 		$this->addBits(count(Facing::cases()));
 	}
 
 	public function horizontalFacingFlags(array &$faces) : void{
-		$this->addBits(count(Facing::HORIZONTAL));
+		$this->addBits(count(HorizontalFacingOption::cases()));
 	}
 
 	public function facingExcept(Facing &$facing, Facing $except) : void{

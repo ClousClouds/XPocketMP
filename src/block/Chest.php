@@ -51,7 +51,7 @@ class Chest extends Transparent implements HorizontalFacing{
 		$tile = $world->getTile($this->position);
 		if($tile instanceof TileChest){
 			foreach([false, true] as $clockwise){
-				$side = Facing::rotateY($this->facing, $clockwise);
+				$side = Facing::rotateY($this->facing->toFacing(), $clockwise);
 				$c = $this->getSide($side);
 				if($c instanceof Chest && $c->hasSameTypeId($this) && $c->facing === $this->facing){
 					$pair = $world->getTile($c->position);

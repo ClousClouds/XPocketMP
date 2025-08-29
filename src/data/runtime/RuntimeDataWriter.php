@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace pocketmine\data\runtime;
 
+use pocketmine\block\utils\HorizontalFacingOption;
 use pocketmine\block\utils\WallConnectionType;
 use pocketmine\math\Axis;
 use pocketmine\math\Facing;
@@ -73,16 +74,6 @@ final class RuntimeDataWriter implements RuntimeDataDescriber{
 		$this->writeBool($value);
 	}
 
-	public function horizontalFacing(Facing &$facing) : void{
-		$this->writeInt(2, match($facing){
-			Facing::NORTH => 0,
-			Facing::EAST => 1,
-			Facing::SOUTH => 2,
-			Facing::WEST => 3,
-			default => throw new \InvalidArgumentException("Invalid horizontal facing $facing->name")
-		});
-	}
-
 	/**
 	 * @param Facing[] $faces
 	 */
@@ -97,14 +88,14 @@ final class RuntimeDataWriter implements RuntimeDataDescriber{
 	}
 
 	/**
-	 * @param Facing[] $faces
+	 * @param HorizontalFacingOption[] $faces
 	 */
 	public function horizontalFacingFlags(array &$faces) : void{
 		$uniqueFaces = [];
 		foreach($faces as $face){
 			$uniqueFaces[$face->value] = true;
 		}
-		foreach(Facing::HORIZONTAL as $facing){
+		foreach(HorizontalFacingOption::cases() as $facing){
 			$this->writeBool(isset($uniqueFaces[$facing->value]));
 		}
 	}

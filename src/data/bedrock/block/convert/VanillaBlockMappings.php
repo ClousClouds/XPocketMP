@@ -97,6 +97,7 @@ use pocketmine\block\utils\DripleafState;
 use pocketmine\block\utils\DyeColor;
 use pocketmine\block\utils\FroglightType;
 use pocketmine\block\utils\HorizontalFacing;
+use pocketmine\block\utils\HorizontalFacingOption;
 use pocketmine\block\utils\LeverFacing;
 use pocketmine\block\utils\MobHeadType;
 use pocketmine\block\utils\MushroomBlockType;
@@ -584,15 +585,15 @@ final class VanillaBlockMappings{
 		$reg->mapModel(Model::create(Blocks::VINES(), Ids::VINE)->properties([
 			new ValueSetFromIntProperty(
 				StateNames::VINE_DIRECTION_BITS,
-				IntFromRawStateMap::int([
-					Facing::NORTH->value => BlockLegacyMetadata::VINE_FLAG_NORTH,
-					Facing::SOUTH->value => BlockLegacyMetadata::VINE_FLAG_SOUTH,
-					Facing::WEST->value => BlockLegacyMetadata::VINE_FLAG_WEST,
-					Facing::EAST->value => BlockLegacyMetadata::VINE_FLAG_EAST,
-				]),
+				EnumFromRawStateMap::int(HorizontalFacingOption::class, fn(HorizontalFacingOption $case) => match($case) {
+					HorizontalFacingOption::NORTH => BlockLegacyMetadata::VINE_FLAG_NORTH,
+					HorizontalFacingOption::SOUTH => BlockLegacyMetadata::VINE_FLAG_SOUTH,
+					HorizontalFacingOption::WEST => BlockLegacyMetadata::VINE_FLAG_WEST,
+					HorizontalFacingOption::EAST => BlockLegacyMetadata::VINE_FLAG_EAST,
+				}),
 				//TODO: hack for lack of HorizontalFacing enum :(
-				fn(Vine $b) => array_map(fn(Facing $facing) => $facing->value, $b->getFaces()),
-				fn(Vine $b, array $v) => $b->setFaces(array_map(Facing::from(...), $v))
+				fn(Vine $b) => $b->getFaces(),
+				fn(Vine $b, array $v) => $b->setFaces($v)
 			)
 		]));
 
@@ -619,8 +620,7 @@ final class VanillaBlockMappings{
 		$reg->mapFlattenedId(FlattenedIdModel::create(Blocks::WALL_CORAL_FAN())
 			->idComponents([...$commonProperties->coralIdPrefixes, "_coral_wall_fan"])
 			->properties([
-				//TODO: hack for lack of horizontal facing enum :(
-				new ValueFromIntProperty(StateNames::CORAL_DIRECTION, ValueMappings::getInstance()->horizontalFacingCoral, fn(HorizontalFacing $b) => $b->getFacing()->value, fn(HorizontalFacing $b, int $v) => $b->setFacing(Facing::from($v))),
+				new ValueFromIntProperty(StateNames::CORAL_DIRECTION, ValueMappings::getInstance()->horizontalFacingCoral, fn(HorizontalFacing $b) => $b->getFacing(), fn(HorizontalFacing $b, HorizontalFacingOption $v) => $b->setFacing($v)),
 			])
 		);
 	}

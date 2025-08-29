@@ -35,7 +35,7 @@ class EndPortalFrame extends Opaque implements HorizontalFacing{
 	protected bool $eye = false;
 
 	protected function describeBlockOnlyState(RuntimeDataDescriber $w) : void{
-		$w->horizontalFacing($this->facing);
+		$w->enum($this->facing);
 		$w->bool($this->eye);
 	}
 

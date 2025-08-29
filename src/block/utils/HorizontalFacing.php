@@ -23,11 +23,9 @@ declare(strict_types=1);
 
 namespace pocketmine\block\utils;
 
-use pocketmine\math\Facing;
-
 interface HorizontalFacing{
-	public function getFacing() : Facing;
+	public function getFacing() : HorizontalFacingOption;
 
 	/** @return $this */
-	public function setFacing(Facing $facing) : self;
+	public function setFacing(HorizontalFacingOption $facing) : self;
 }

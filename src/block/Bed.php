@@ -28,6 +28,7 @@ use pocketmine\block\utils\Colored;
 use pocketmine\block\utils\ColoredTrait;
 use pocketmine\block\utils\DyeColor;
 use pocketmine\block\utils\HorizontalFacing;
+use pocketmine\block\utils\HorizontalFacingOption;
 use pocketmine\block\utils\HorizontalFacingTrait;
 use pocketmine\block\utils\SupportType;
 use pocketmine\data\runtime\RuntimeDataDescriber;
@@ -51,7 +52,7 @@ class Bed extends Transparent implements Colored, HorizontalFacing{
 	protected bool $head = false;
 
 	protected function describeBlockOnlyState(RuntimeDataDescriber $w) : void{
-		$w->horizontalFacing($this->facing);
+		$w->enum($this->facing);
 		$w->bool($this->occupied);
 		$w->bool($this->head);
 	}
@@ -107,7 +108,7 @@ class Bed extends Transparent implements Colored, HorizontalFacing{
 	}
 
 	private function getOtherHalfSide() : Facing{
-		return $this->head ? Facing::opposite($this->facing) : $this->facing;
+		return $this->head ? Facing::opposite($this->facing->toFacing()) : $this->facing->toFacing();
 	}
 
 	public function getOtherHalf() : ?Bed{
@@ -174,7 +175,9 @@ class Bed extends Transparent implements Colored, HorizontalFacing{
 
 	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, Facing $face, Vector3 $clickVector, ?Player $player = null) : bool{
 		if($this->canBeSupportedAt($blockReplace)){
-			$this->facing = $player !== null ? $player->getHorizontalFacing() : Facing::NORTH;
+			if($player !== null){
+				$this->facing = HorizontalFacingOption::fromFacing($player->getHorizontalFacing());
+			}
 
 			$next = $this->getSide($this->getOtherHalfSide());
 			if($next->canBeReplaced() && $this->canBeSupportedAt($next)){

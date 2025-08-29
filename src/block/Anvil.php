@@ -27,6 +27,7 @@ use pocketmine\block\inventory\AnvilInventory;
 use pocketmine\block\utils\Fallable;
 use pocketmine\block\utils\FallableTrait;
 use pocketmine\block\utils\HorizontalFacing;
+use pocketmine\block\utils\HorizontalFacingOption;
 use pocketmine\block\utils\HorizontalFacingTrait;
 use pocketmine\block\utils\SupportType;
 use pocketmine\data\runtime\RuntimeDataDescriber;
@@ -57,7 +58,7 @@ class Anvil extends Transparent implements Fallable, HorizontalFacing{
 	}
 
 	protected function describeBlockOnlyState(RuntimeDataDescriber $w) : void{
-		$w->horizontalFacing($this->facing);
+		$w->enum($this->facing);
 	}
 
 	public function getDamage() : int{ return $this->damage; }
@@ -72,7 +73,7 @@ class Anvil extends Transparent implements Fallable, HorizontalFacing{
 	}
 
 	protected function recalculateCollisionBoxes() : array{
-		return [AxisAlignedBB::one()->squashedCopy(Facing::axis(Facing::rotateY($this->facing, false)), 1 / 8)];
+		return [AxisAlignedBB::one()->squashedCopy(Facing::axis(Facing::rotateY($this->facing->toFacing(), false)), 1 / 8)];
 	}
 
 	public function getSupportType(Facing $facing) : SupportType{
@@ -89,7 +90,7 @@ class Anvil extends Transparent implements Fallable, HorizontalFacing{
 
 	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, Facing $face, Vector3 $clickVector, ?Player $player = null) : bool{
 		if($player !== null){
-			$this->facing = Facing::rotateY($player->getHorizontalFacing(), false);
+			$this->facing = HorizontalFacingOption::fromFacing(Facing::rotateY($player->getHorizontalFacing(), false));
 		}
 		return parent::place($tx, $item, $blockReplace, $blockClicked, $face, $clickVector, $player);
 	}

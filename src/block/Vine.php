@@ -23,6 +23,8 @@ declare(strict_types=1);
 
 namespace pocketmine\block;
 
+use pocketmine\block\utils\HorizontalFacing;
+use pocketmine\block\utils\HorizontalFacingOption;
 use pocketmine\data\runtime\RuntimeDataDescriber;
 use pocketmine\entity\Entity;
 use pocketmine\item\Item;
@@ -36,30 +38,29 @@ use function count;
 
 class Vine extends Flowable{
 
-	/** @var Facing[] */
+	/** @var HorizontalFacingOption[] */
 	protected array $faces = [];
 
 	protected function describeBlockOnlyState(RuntimeDataDescriber $w) : void{
 		$w->horizontalFacingFlags($this->faces);
 	}
 
-	/** @return Facing[] */
+	/** @return HorizontalFacingOption[] */
 	public function getFaces() : array{ return $this->faces; }
 
-	public function hasFace(Facing $face) : bool{
+	public function hasFace(HorizontalFacingOption $face) : bool{
 		return isset($this->faces[$face->value]);
 	}
 
 	/**
-	 * @param Facing[] $faces
-	 * @phpstan-param list<Facing::NORTH|Facing::EAST|Facing::SOUTH|Facing::WEST> $faces
+	 * @param HorizontalFacingOption[] $faces
 	 * @return $this
 	 */
 	public function setFaces(array $faces) : self{
 		$uniqueFaces = [];
 		foreach($faces as $face){
-			if($face !== Facing::NORTH && $face !== Facing::SOUTH && $face !== Facing::WEST && $face !== Facing::EAST){
-				throw new \InvalidArgumentException("Facing can only be north, east, south or west");
+			if(!$face instanceof HorizontalFacingOption){
+				throw new \InvalidArgumentException("Expected array of HorizontalFacingOption");
 			}
 			$uniqueFaces[$face->value] = $face;
 		}
@@ -68,10 +69,7 @@ class Vine extends Flowable{
 	}
 
 	/** @return $this */
-	public function setFace(Facing $face, bool $value) : self{
-		if($face !== Facing::NORTH && $face !== Facing::SOUTH && $face !== Facing::WEST && $face !== Facing::EAST){
-			throw new \InvalidArgumentException("Facing can only be north, east, south or west");
-		}
+	public function setFace(HorizontalFacingOption $face, bool $value) : self{
 		if($value){
 			$this->faces[$face->value] = $face;
 		}else{
@@ -102,13 +100,14 @@ class Vine extends Flowable{
 	}
 
 	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, Facing $face, Vector3 $clickVector, ?Player $player = null) : bool{
-		$opposite = Facing::opposite($face);
-		if(!$blockReplace->getSide($opposite)->isFullCube() || Facing::axis($face) === Axis::Y){
+		$oppositeFace = Facing::opposite($face);
+		$hzFacing = HorizontalFacingOption::tryFromFacing($oppositeFace);
+		if($hzFacing === null || !$blockReplace->getSide($oppositeFace)->isFullCube()){
 			return false;
 		}
 
 		$this->faces = $blockReplace instanceof Vine ? $blockReplace->faces : [];
-		$this->faces[$opposite->value] = $opposite;
+		$this->faces[$hzFacing->value] = $hzFacing;
 
 		return parent::place($tx, $item, $blockReplace, $blockClicked, $face, $clickVector, $player);
 	}
@@ -121,7 +120,7 @@ class Vine extends Flowable{
 		$supportedFaces = $up instanceof Vine ? array_intersect_key($this->faces, $up->faces) : [];
 
 		foreach($this->faces as $face){
-			if(!isset($supportedFaces[$face->value]) && !$this->getSide($face)->isSolid()){
+			if(!isset($supportedFaces[$face->value]) && !$this->getSide($face->toFacing())->isSolid()){
 				unset($this->faces[$face->value]);
 				$changed = true;
 			}

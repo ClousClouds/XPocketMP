@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace pocketmine\block;
 
 use pocketmine\block\utils\HorizontalFacing;
+use pocketmine\block\utils\HorizontalFacingOption;
 use pocketmine\block\utils\HorizontalFacingTrait;
 use pocketmine\data\runtime\RuntimeDataDescriber;
 use pocketmine\item\Item;
@@ -38,15 +39,15 @@ final class WallCoralFan extends BaseCoral implements HorizontalFacing{
 	use HorizontalFacingTrait;
 
 	protected function describeBlockOnlyState(RuntimeDataDescriber $w) : void{
-		$w->horizontalFacing($this->facing);
+		$w->enum($this->facing);
 	}
 
 	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, Facing $face, Vector3 $clickVector, ?Player $player = null) : bool{
-		$axis = Facing::axis($face);
-		if(($axis !== Axis::X && $axis !== Axis::Z) || !$this->canBeSupportedAt($blockReplace, Facing::opposite($face))){
+		$hzFacing = HorizontalFacingOption::tryFromFacing($face);
+		if($hzFacing === null || !$this->canBeSupportedAt($blockReplace, Facing::opposite($face))){
 			return false;
 		}
-		$this->facing = $face;
+		$this->facing = $hzFacing;
 
 		$this->dead = !$this->isCoveredWithWater();
 
@@ -55,7 +56,7 @@ final class WallCoralFan extends BaseCoral implements HorizontalFacing{
 
 	public function onNearbyBlockChange() : void{
 		$world = $this->position->getWorld();
-		if(!$this->canBeSupportedAt($this, Facing::opposite($this->facing))){
+		if(!$this->canBeSupportedAt($this, Facing::opposite($this->facing->toFacing()))){
 			$world->useBreakOn($this->position);
 		}else{
 			parent::onNearbyBlockChange();

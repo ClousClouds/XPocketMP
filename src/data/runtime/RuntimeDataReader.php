@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace pocketmine\data\runtime;
 
+use pocketmine\block\utils\HorizontalFacingOption;
 use pocketmine\block\utils\RailConnectionInfo;
 use pocketmine\block\utils\WallConnectionType;
 use pocketmine\math\Axis;
@@ -77,16 +78,6 @@ final class RuntimeDataReader implements RuntimeDataDescriber{
 		$value = $this->readBool();
 	}
 
-	public function horizontalFacing(Facing &$facing) : void{
-		$facing = match($this->readInt(2)){
-			0 => Facing::NORTH,
-			1 => Facing::EAST,
-			2 => Facing::SOUTH,
-			3 => Facing::WEST,
-			default => throw new AssumptionFailedError("Unreachable")
-		};
-	}
-
 	/**
 	 * @param Facing[] $faces
 	 */
@@ -102,11 +93,11 @@ final class RuntimeDataReader implements RuntimeDataDescriber{
 	}
 
 	/**
-	 * @param Facing[] $faces
+	 * @param HorizontalFacingOption[] $faces
 	 */
 	public function horizontalFacingFlags(array &$faces) : void{
 		$result = [];
-		foreach(Facing::HORIZONTAL as $facing){
+		foreach(HorizontalFacingOption::cases() as $facing){
 			if($this->readBool()){
 				$result[$facing->value] = $facing;
 			}

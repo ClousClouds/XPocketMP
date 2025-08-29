@@ -45,6 +45,7 @@ use pocketmine\block\utils\CoralMaterial;
 use pocketmine\block\utils\CoralType;
 use pocketmine\block\utils\DyeColor;
 use pocketmine\block\utils\HorizontalFacing;
+use pocketmine\block\utils\HorizontalFacingOption;
 use pocketmine\block\utils\Lightable;
 use pocketmine\block\utils\MultiAnyFacing;
 use pocketmine\block\utils\PillarRotation;
@@ -69,13 +70,13 @@ final class CommonProperties{
 	/** @phpstan-var ValueFromStringProperty<Torch, int> */
 	public readonly ValueFromStringProperty $torchFacing;
 
-	/** @phpstan-var ValueFromStringProperty<HorizontalFacing, int> */
+	/** @phpstan-var ValueFromStringProperty<HorizontalFacing, HorizontalFacingOption> */
 	public readonly ValueFromStringProperty $horizontalFacingCardinal;
-	/** @phpstan-var ValueFromIntProperty<HorizontalFacing, int> */
+	/** @phpstan-var ValueFromIntProperty<HorizontalFacing, HorizontalFacingOption> */
 	public readonly ValueFromIntProperty $horizontalFacingSWNE;
-	/** @phpstan-var ValueFromIntProperty<HorizontalFacing, int> */
+	/** @phpstan-var ValueFromIntProperty<HorizontalFacing, HorizontalFacingOption> */
 	public readonly ValueFromIntProperty $horizontalFacingSWNEInverted;
-	/** @phpstan-var ValueFromIntProperty<HorizontalFacing, int> */
+	/** @phpstan-var ValueFromIntProperty<HorizontalFacing, HorizontalFacingOption> */
 	public readonly ValueFromIntProperty $horizontalFacingClassic;
 
 	/** @phpstan-var ValueFromIntProperty<AnyFacing, Facing> */
@@ -208,8 +209,8 @@ final class CommonProperties{
 		$vm = ValueMappings::getInstance();
 
 		//TODO: crude hack here - since we have no HorizontalFacing enum we need to use ints and convert to enum in the accessors
-		$hfGet = fn(HorizontalFacing $v) => $v->getFacing()->value;
-		$hfSet = fn(HorizontalFacing $v, int $facing) => $v->setFacing(Facing::from($facing));
+		$hfGet = fn(HorizontalFacing $v) => $v->getFacing();
+		$hfSet = fn(HorizontalFacing $v, HorizontalFacingOption $facing) => $v->setFacing($facing);
 		$this->horizontalFacingCardinal = new ValueFromStringProperty(StateNames::MC_CARDINAL_DIRECTION, $vm->cardinalDirection, $hfGet, $hfSet);
 
 		$this->blockFace = new ValueFromStringProperty(
@@ -355,15 +356,15 @@ final class CommonProperties{
 			new BoolProperty(StateNames::OPEN_BIT, fn(Door $b) => $b->isOpen(), fn(Door $b, bool $v) => $b->setOpen($v)),
 			new ValueFromStringProperty(
 				StateNames::MC_CARDINAL_DIRECTION,
-				IntFromRawStateMap::string([
+				EnumFromRawStateMap::string(HorizontalFacingOption::class, fn(HorizontalFacingOption $case) => match ($case) {
 					//a door facing "east" is actually facing north - thanks mojang
-					Facing::NORTH->value => BlockStateStringValues::MC_CARDINAL_DIRECTION_EAST,
-					Facing::EAST->value => BlockStateStringValues::MC_CARDINAL_DIRECTION_SOUTH,
-					Facing::SOUTH->value => BlockStateStringValues::MC_CARDINAL_DIRECTION_WEST,
-					Facing::WEST->value => BlockStateStringValues::MC_CARDINAL_DIRECTION_NORTH
-				]),
-				fn(HorizontalFacing $b) => $b->getFacing()->value,
-				fn(HorizontalFacing $b, int $v) => $b->setFacing(Facing::from($v))
+					HorizontalFacingOption::NORTH => BlockStateStringValues::MC_CARDINAL_DIRECTION_EAST,
+					HorizontalFacingOption::EAST => BlockStateStringValues::MC_CARDINAL_DIRECTION_SOUTH,
+					HorizontalFacingOption::SOUTH => BlockStateStringValues::MC_CARDINAL_DIRECTION_WEST,
+					HorizontalFacingOption::WEST => BlockStateStringValues::MC_CARDINAL_DIRECTION_NORTH
+				}),
+				fn(HorizontalFacing $b) => $b->getFacing(),
+				fn(HorizontalFacing $b, HorizontalFacingOption $v) => $b->setFacing($v)
 			)
 		];
 
