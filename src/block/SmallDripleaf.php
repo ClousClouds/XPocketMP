@@ -75,7 +75,7 @@ class SmallDripleaf extends Transparent implements HorizontalFacing{
 		}
 	}
 
-	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, ?Player $player = null) : bool{
+	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, Facing $face, Vector3 $clickVector, ?Player $player = null) : bool{
 		$block = $blockReplace->getSide(Facing::UP);
 		if($block->getTypeId() !== BlockTypeIds::AIR || !$this->canBeSupportedBy($blockReplace->getSide(Facing::DOWN))){
 			return false;
@@ -91,7 +91,7 @@ class SmallDripleaf extends Transparent implements HorizontalFacing{
 		return parent::place($tx, $item, $blockReplace, $blockClicked, $face, $clickVector, $player);
 	}
 
-	public function onInteract(Item $item, int $face, Vector3 $clickVector, ?Player $player = null, array &$returnedItems = []) : bool{
+	public function onInteract(Item $item, Facing $face, Vector3 $clickVector, ?Player $player = null, array &$returnedItems = []) : bool{
 		if($item instanceof Fertilizer && $this->grow($player)){
 			$item->pop();
 			return true;
@@ -161,7 +161,7 @@ class SmallDripleaf extends Transparent implements HorizontalFacing{
 		return 100;
 	}
 
-	public function getSupportType(int $facing) : SupportType{
+	public function getSupportType(Facing $facing) : SupportType{
 		return SupportType::NONE;
 	}
 

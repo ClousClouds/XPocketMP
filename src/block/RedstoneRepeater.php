@@ -65,10 +65,10 @@ class RedstoneRepeater extends Flowable implements PoweredByRedstone, Horizontal
 	}
 
 	protected function recalculateCollisionBoxes() : array{
-		return [AxisAlignedBB::one()->trim(Facing::UP, 7 / 8)];
+		return [AxisAlignedBB::one()->trimmedCopy(Facing::UP, 7 / 8)];
 	}
 
-	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, ?Player $player = null) : bool{
+	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, Facing $face, Vector3 $clickVector, ?Player $player = null) : bool{
 		if($player !== null){
 			$this->facing = Facing::opposite($player->getHorizontalFacing());
 		}
@@ -76,7 +76,7 @@ class RedstoneRepeater extends Flowable implements PoweredByRedstone, Horizontal
 		return parent::place($tx, $item, $blockReplace, $blockClicked, $face, $clickVector, $player);
 	}
 
-	public function onInteract(Item $item, int $face, Vector3 $clickVector, ?Player $player = null, array &$returnedItems = []) : bool{
+	public function onInteract(Item $item, Facing $face, Vector3 $clickVector, ?Player $player = null, array &$returnedItems = []) : bool{
 		if(++$this->delay > self::MAX_DELAY){
 			$this->delay = self::MIN_DELAY;
 		}

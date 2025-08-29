@@ -983,7 +983,7 @@ class World implements ChunkManager{
 					continue;
 				}
 			}
-			foreach($this->getNearbyEntities(AxisAlignedBB::one()->offset($x, $y, $z)) as $entity){
+			foreach($this->getNearbyEntities(AxisAlignedBB::one()->offsetCopy($x, $y, $z)) as $entity){
 				$entity->onNearbyBlockChange();
 			}
 			$block->onNearbyBlockChange();
@@ -1611,7 +1611,7 @@ class World implements ChunkManager{
 		$stateCollisionInfo = $this->getBlockCollisionInfo($x, $y, $z, $collisionInfo);
 		$boxes = match($stateCollisionInfo){
 			RuntimeBlockStateRegistry::COLLISION_NONE => [],
-			RuntimeBlockStateRegistry::COLLISION_CUBE => [AxisAlignedBB::one()->offset($x, $y, $z)],
+			RuntimeBlockStateRegistry::COLLISION_CUBE => [AxisAlignedBB::one()->offsetCopy($x, $y, $z)],
 			default => $this->getBlockAt($x, $y, $z)->getCollisionBoxes()
 		};
 
@@ -1625,7 +1625,7 @@ class World implements ChunkManager{
 				$stateCollisionInfo = $this->getBlockCollisionInfo($offsetX, $offsetY, $offsetZ, $collisionInfo);
 				if($stateCollisionInfo === RuntimeBlockStateRegistry::COLLISION_MAY_OVERFLOW){
 					//avoid allocating this unless it's needed
-					$cellBB ??= AxisAlignedBB::one()->offset($x, $y, $z);
+					$cellBB ??= AxisAlignedBB::one()->offsetCopy($x, $y, $z);
 					$extraBoxes = $this->getBlockAt($offsetX, $offsetY, $offsetZ)->getCollisionBoxes();
 					foreach($extraBoxes as $extraBox){
 						if($extraBox->intersectsWith($cellBB)){
@@ -2219,7 +2219,7 @@ class World implements ChunkManager{
 	 * @param bool        $playSound      Whether to play a block-place sound if the block was placed successfully.
 	 * @param Item[]      &$returnedItems Items to be added to the target's inventory (or dropped if the inventory is full)
 	 */
-	public function useItemOn(Vector3 $vector, Item &$item, int $face, ?Vector3 $clickVector = null, ?Player $player = null, bool $playSound = false, array &$returnedItems = []) : bool{
+	public function useItemOn(Vector3 $vector, Item &$item, Facing $face, ?Vector3 $clickVector = null, ?Player $player = null, bool $playSound = false, array &$returnedItems = []) : bool{
 		$blockClicked = $this->getBlock($vector);
 		$blockReplace = $blockClicked->getSide($face);
 

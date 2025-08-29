@@ -52,26 +52,26 @@ final class Bell extends Transparent implements HorizontalFacing{
 	protected function recalculateCollisionBoxes() : array{
 		if($this->attachmentType === BellAttachmentType::FLOOR){
 			return [
-				AxisAlignedBB::one()->squash(Facing::axis($this->facing), 1 / 4)->trim(Facing::UP, 3 / 16)
+				AxisAlignedBB::one()->squashedCopy(Facing::axis($this->facing), 1 / 4)->trimmedCopy(Facing::UP, 3 / 16)
 			];
 		}
 		if($this->attachmentType === BellAttachmentType::CEILING){
 			return [
-				AxisAlignedBB::one()->contract(1 / 4, 0, 1 / 4)->trim(Facing::DOWN, 1 / 4)
+				AxisAlignedBB::one()->contractedCopy(1 / 4, 0, 1 / 4)->trimmedCopy(Facing::DOWN, 1 / 4)
 			];
 		}
 
 		$box = AxisAlignedBB::one()
-			->squash(Facing::axis(Facing::rotateY($this->facing, true)), 1 / 4)
-			->trim(Facing::UP, 1 / 16)
-			->trim(Facing::DOWN, 1 / 4);
+			->squashedCopy(Facing::axis(Facing::rotateY($this->facing, true)), 1 / 4)
+			->trimmedCopy(Facing::UP, 1 / 16)
+			->trimmedCopy(Facing::DOWN, 1 / 4);
 
 		return [
-			$this->attachmentType === BellAttachmentType::ONE_WALL ? $box->trim($this->facing, 3 / 16) : $box
+			$this->attachmentType === BellAttachmentType::ONE_WALL ? $box->trimmedCopy($this->facing, 3 / 16) : $box
 		];
 	}
 
-	public function getSupportType(int $facing) : SupportType{
+	public function getSupportType(Facing $facing) : SupportType{
 		return SupportType::NONE;
 	}
 
@@ -83,11 +83,11 @@ final class Bell extends Transparent implements HorizontalFacing{
 		return $this;
 	}
 
-	private function canBeSupportedAt(Block $block, int $face) : bool{
+	private function canBeSupportedAt(Block $block, Facing $face) : bool{
 		return $block->getAdjacentSupportType($face) !== SupportType::NONE;
 	}
 
-	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, ?Player $player = null) : bool{
+	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, Facing $face, Vector3 $clickVector, ?Player $player = null) : bool{
 		if(!$this->canBeSupportedAt($blockReplace, Facing::opposite($face))){
 			return false;
 		}
@@ -123,7 +123,7 @@ final class Bell extends Transparent implements HorizontalFacing{
 		}
 	}
 
-	public function onInteract(Item $item, int $face, Vector3 $clickVector, ?Player $player = null, array &$returnedItems = []) : bool{
+	public function onInteract(Item $item, Facing $face, Vector3 $clickVector, ?Player $player = null, array &$returnedItems = []) : bool{
 		if($player !== null){
 			$faceHit = Facing::opposite($player->getHorizontalFacing());
 			if($this->isValidFaceToRing($faceHit)){
@@ -142,7 +142,7 @@ final class Bell extends Transparent implements HorizontalFacing{
 		}
 	}
 
-	public function ring(int $faceHit) : void{
+	public function ring(Facing $faceHit) : void{
 		$world = $this->position->getWorld();
 		$world->addSound($this->position, new BellRingSound());
 		$tile = $world->getTile($this->position);
@@ -155,7 +155,7 @@ final class Bell extends Transparent implements HorizontalFacing{
 		return [$this->asItem()];
 	}
 
-	private function isValidFaceToRing(int $faceHit) : bool{
+	private function isValidFaceToRing(Facing $faceHit) : bool{
 		return match($this->attachmentType){
 			BellAttachmentType::CEILING => true,
 			BellAttachmentType::FLOOR => Facing::axis($faceHit) === Facing::axis($this->facing),

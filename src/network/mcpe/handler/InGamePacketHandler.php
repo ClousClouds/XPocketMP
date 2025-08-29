@@ -110,7 +110,6 @@ use function count;
 use function fmod;
 use function get_debug_type;
 use function implode;
-use function in_array;
 use function is_infinite;
 use function is_nan;
 use function json_decode;
@@ -280,7 +279,7 @@ class InGamePacketHandler extends PacketHandler{
 			foreach(Utils::promoteKeys($blockActions) as $k => $blockAction){
 				$actionHandled = false;
 				if($blockAction instanceof PlayerBlockActionStopBreak){
-					$actionHandled = $this->handlePlayerActionFromData($blockAction->getActionType(), new BlockPosition(0, 0, 0), Facing::DOWN);
+					$actionHandled = $this->handlePlayerActionFromData($blockAction->getActionType(), new BlockPosition(0, 0, 0), 0);
 				}elseif($blockAction instanceof PlayerBlockActionWithBlockInfo){
 					$actionHandled = $this->handlePlayerActionFromData($blockAction->getActionType(), $blockAction->getBlockPosition(), $blockAction->getFace());
 				}
@@ -493,16 +492,16 @@ class InGamePacketHandler extends PacketHandler{
 				}
 				//TODO: end hack for client spam bug
 
-				self::validateFacing($data->getFace());
+				$face = self::deserializeFacing($data->getFace());
 
 				$blockPos = $data->getBlockPosition();
 				$vBlockPos = new Vector3($blockPos->getX(), $blockPos->getY(), $blockPos->getZ());
-				$this->player->interactBlock($vBlockPos, $data->getFace(), $clickPos);
+				$this->player->interactBlock($vBlockPos, $face, $clickPos);
 				//always sync this in case plugins caused a different result than the client expected
 				//we *could* try to enhance detection of plugin-altered behaviour, but this would require propagating
 				//more information up the stack. For now I think this is good enough.
 				//if only the client would tell us what blocks it thinks changed...
-				$this->syncBlocksNearby($vBlockPos, $data->getFace());
+				$this->syncBlocksNearby($vBlockPos, $face);
 				return true;
 			case UseItemTransactionData::ACTION_CLICK_AIR:
 				if($this->player->isUsingItem()){
@@ -522,16 +521,19 @@ class InGamePacketHandler extends PacketHandler{
 	/**
 	 * @throws PacketHandlingException
 	 */
-	private static function validateFacing(int $facing) : void{
-		if(!in_array($facing, Facing::ALL, true)){
+	private static function deserializeFacing(int $facing) : Facing{
+		//TODO: dodgy use of network facing values as internal values here - they may not be the same in the future
+		$case = Facing::tryFrom($facing);
+		if($case === null){
 			throw new PacketHandlingException("Invalid facing value $facing");
 		}
+		return $case;
 	}
 
 	/**
 	 * Syncs blocks nearby to ensure that the client and server agree on the world's blocks after a block interaction.
 	 */
-	private function syncBlocksNearby(Vector3 $blockPos, ?int $face) : void{
+	private function syncBlocksNearby(Vector3 $blockPos, ?Facing $face) : void{
 		if($blockPos->distanceSquared($this->player->getLocation()) < 10000){
 			$blocks = $blockPos->sidesArray();
 			if($face !== null){
@@ -676,13 +678,13 @@ class InGamePacketHandler extends PacketHandler{
 		return $this->handlePlayerActionFromData($packet->action, $packet->blockPosition, $packet->face);
 	}
 
-	private function handlePlayerActionFromData(int $action, BlockPosition $blockPosition, int $face) : bool{
+	private function handlePlayerActionFromData(int $action, BlockPosition $blockPosition, int $extraData) : bool{
 		$pos = new Vector3($blockPosition->getX(), $blockPosition->getY(), $blockPosition->getZ());
 
 		switch($action){
 			case PlayerAction::START_BREAK:
 			case PlayerAction::CONTINUE_DESTROY_BLOCK: //destroy the next block while holding down left click
-				self::validateFacing($face);
+				$face = self::deserializeFacing($extraData);
 				if($this->lastBlockAttacked !== null && $blockPosition->equals($this->lastBlockAttacked)){
 					//the client will send CONTINUE_DESTROY_BLOCK for the currently targeted block directly before it
 					//sends PREDICT_DESTROY_BLOCK, but also when it starts to break the block
@@ -710,7 +712,7 @@ class InGamePacketHandler extends PacketHandler{
 				$this->player->stopSleep();
 				break;
 			case PlayerAction::CRACK_BREAK:
-				self::validateFacing($face);
+				$face = self::deserializeFacing($extraData);
 				$this->player->continueBreakBlock($pos, $face);
 				$this->lastBlockAttacked = $blockPosition;
 				break;
@@ -720,6 +722,7 @@ class InGamePacketHandler extends PacketHandler{
 				//TODO: do we need to handle this?
 			case PlayerAction::PREDICT_DESTROY_BLOCK:
 				if(!$this->player->breakBlock($pos)){
+					$face = self::deserializeFacing($extraData);
 					$this->syncBlocksNearby($pos, $face);
 				}
 				$this->lastBlockAttacked = null;

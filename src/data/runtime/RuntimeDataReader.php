@@ -77,7 +77,7 @@ final class RuntimeDataReader implements RuntimeDataDescriber{
 		$value = $this->readBool();
 	}
 
-	public function horizontalFacing(int &$facing) : void{
+	public function horizontalFacing(Facing &$facing) : void{
 		$facing = match($this->readInt(2)){
 			0 => Facing::NORTH,
 			1 => Facing::EAST,
@@ -88,13 +88,13 @@ final class RuntimeDataReader implements RuntimeDataDescriber{
 	}
 
 	/**
-	 * @param int[] $faces
+	 * @param Facing[] $faces
 	 */
 	public function facingFlags(array &$faces) : void{
 		$result = [];
 		foreach(Facing::ALL as $facing){
 			if($this->readBool()){
-				$result[$facing] = $facing;
+				$result[$facing->value] = $facing;
 			}
 		}
 
@@ -102,34 +102,22 @@ final class RuntimeDataReader implements RuntimeDataDescriber{
 	}
 
 	/**
-	 * @param int[] $faces
+	 * @param Facing[] $faces
 	 */
 	public function horizontalFacingFlags(array &$faces) : void{
 		$result = [];
 		foreach(Facing::HORIZONTAL as $facing){
 			if($this->readBool()){
-				$result[$facing] = $facing;
+				$result[$facing->value] = $facing;
 			}
 		}
 
 		$faces = $result;
 	}
 
-	public function facing(int &$facing) : void{
-		$facing = match($this->readInt(3)){
-			0 => Facing::DOWN,
-			1 => Facing::UP,
-			2 => Facing::NORTH,
-			3 => Facing::SOUTH,
-			4 => Facing::WEST,
-			5 => Facing::EAST,
-			default => throw new InvalidSerializedRuntimeDataException("Invalid facing value")
-		};
-	}
-
-	public function facingExcept(int &$facing, int $except) : void{
-		$result = 0;
-		$this->facing($result);
+	public function facingExcept(Facing &$facing, Facing $except) : void{
+		$result = Facing::DOWN;
+		$this->enum($result);
 		if($result === $except){
 			throw new InvalidSerializedRuntimeDataException("Illegal facing value");
 		}
@@ -137,16 +125,7 @@ final class RuntimeDataReader implements RuntimeDataDescriber{
 		$facing = $result;
 	}
 
-	public function axis(int &$axis) : void{
-		$axis = match($this->readInt(2)){
-			0 => Axis::X,
-			1 => Axis::Z,
-			2 => Axis::Y,
-			default => throw new InvalidSerializedRuntimeDataException("Invalid axis value")
-		};
-	}
-
-	public function horizontalAxis(int &$axis) : void{
+	public function horizontalAxis(Axis &$axis) : void{
 		$axis = match($this->readInt(1)){
 			0 => Axis::X,
 			1 => Axis::Z,
@@ -156,7 +135,7 @@ final class RuntimeDataReader implements RuntimeDataDescriber{
 
 	/**
 	 * @param WallConnectionType[] $connections
-	 * @phpstan-param array<Facing::NORTH|Facing::EAST|Facing::SOUTH|Facing::WEST, WallConnectionType> $connections
+	 * @phpstan-param array<value-of<Facing::NORTH|Facing::EAST|Facing::SOUTH|Facing::WEST>, WallConnectionType> $connections
 	 */
 	public function wallConnections(array &$connections) : void{
 		$result = [];
@@ -165,7 +144,7 @@ final class RuntimeDataReader implements RuntimeDataDescriber{
 		foreach(Facing::HORIZONTAL as $facing){
 			$type = intdiv($packed,  (3 ** $offset)) % 3;
 			if($type !== 0){
-				$result[$facing] = match($type){
+				$result[$facing->value] = match($type){
 					1 => WallConnectionType::SHORT,
 					2 => WallConnectionType::TALL,
 					default => throw new AssumptionFailedError("Unreachable")

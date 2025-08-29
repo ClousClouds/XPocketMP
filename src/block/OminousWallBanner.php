@@ -35,11 +35,11 @@ use pocketmine\world\BlockTransaction;
 final class OminousWallBanner extends BaseOminousBanner implements HorizontalFacing{
 	use HorizontalFacingTrait;
 
-	protected function getSupportingFace() : int{
+	protected function getSupportingFace() : Facing{
 		return Facing::opposite($this->facing);
 	}
 
-	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, ?Player $player = null) : bool{
+	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, Facing $face, Vector3 $clickVector, ?Player $player = null) : bool{
 		if(Facing::axis($face) === Axis::Y){
 			return false;
 		}

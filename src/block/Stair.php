@@ -83,21 +83,21 @@ class Stair extends Transparent implements HorizontalFacing{
 	protected function recalculateCollisionBoxes() : array{
 		$topStepFace = $this->upsideDown ? Facing::DOWN : Facing::UP;
 		$bbs = [
-			AxisAlignedBB::one()->trim($topStepFace, 0.5)
+			AxisAlignedBB::one()->trimmedCopy($topStepFace, 0.5)
 		];
 
 		$topStep = AxisAlignedBB::one()
-			->trim(Facing::opposite($topStepFace), 0.5)
-			->trim(Facing::opposite($this->facing), 0.5);
+			->trimmedCopy(Facing::opposite($topStepFace), 0.5)
+			->trimmedCopy(Facing::opposite($this->facing), 0.5);
 
 		if($this->shape === StairShape::OUTER_LEFT || $this->shape === StairShape::OUTER_RIGHT){
-			$topStep->trim(Facing::rotateY($this->facing, $this->shape === StairShape::OUTER_LEFT), 0.5);
+			$topStep = $topStep->trimmedCopy(Facing::rotateY($this->facing, $this->shape === StairShape::OUTER_LEFT), 0.5);
 		}elseif($this->shape === StairShape::INNER_LEFT || $this->shape === StairShape::INNER_RIGHT){
 			//add an extra cube
 			$bbs[] = AxisAlignedBB::one()
-				->trim(Facing::opposite($topStepFace), 0.5)
-				->trim($this->facing, 0.5) //avoid overlapping with main step
-				->trim(Facing::rotateY($this->facing, $this->shape === StairShape::INNER_LEFT), 0.5);
+				->trimmedCopy(Facing::opposite($topStepFace), 0.5)
+				->trimmedCopy($this->facing, 0.5) //avoid overlapping with main step
+				->trimmedCopy(Facing::rotateY($this->facing, $this->shape === StairShape::INNER_LEFT), 0.5);
 		}
 
 		$bbs[] = $topStep;
@@ -105,7 +105,7 @@ class Stair extends Transparent implements HorizontalFacing{
 		return $bbs;
 	}
 
-	public function getSupportType(int $facing) : SupportType{
+	public function getSupportType(Facing $facing) : SupportType{
 		if(
 			$facing === Facing::UP && $this->upsideDown ||
 			$facing === Facing::DOWN && !$this->upsideDown ||
@@ -118,7 +118,7 @@ class Stair extends Transparent implements HorizontalFacing{
 		return SupportType::NONE;
 	}
 
-	private function getPossibleCornerFacing(bool $oppositeFacing) : ?int{
+	private function getPossibleCornerFacing(bool $oppositeFacing) : ?Facing{
 		$side = $this->getSide($oppositeFacing ? Facing::opposite($this->facing) : $this->facing);
 		return (
 			$side instanceof Stair &&
@@ -127,7 +127,7 @@ class Stair extends Transparent implements HorizontalFacing{
 		) ? $side->facing : null;
 	}
 
-	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, ?Player $player = null) : bool{
+	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, Facing $face, Vector3 $clickVector, ?Player $player = null) : bool{
 		if($player !== null){
 			$this->facing = $player->getHorizontalFacing();
 		}

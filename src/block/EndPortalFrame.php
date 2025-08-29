@@ -52,6 +52,6 @@ class EndPortalFrame extends Opaque implements HorizontalFacing{
 	}
 
 	protected function recalculateCollisionBoxes() : array{
-		return [AxisAlignedBB::one()->trim(Facing::UP, 3 / 16)];
+		return [AxisAlignedBB::one()->trimmedCopy(Facing::UP, 3 / 16)];
 	}
 }

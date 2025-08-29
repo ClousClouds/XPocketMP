@@ -60,8 +60,8 @@ class Rail extends BaseRail{
 				Facing::WEST,
 				Facing::EAST
 			] as $d){
-				if($constraint !== $d){
-					$possible[$d] = true;
+				if($constraint !== $d->value){
+					$possible[$d->value] = true;
 				}
 			}
 		}

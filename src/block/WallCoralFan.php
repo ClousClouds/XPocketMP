@@ -41,7 +41,7 @@ final class WallCoralFan extends BaseCoral implements HorizontalFacing{
 		$w->horizontalFacing($this->facing);
 	}
 
-	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, ?Player $player = null) : bool{
+	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, Facing $face, Vector3 $clickVector, ?Player $player = null) : bool{
 		$axis = Facing::axis($face);
 		if(($axis !== Axis::X && $axis !== Axis::Z) || !$this->canBeSupportedAt($blockReplace, Facing::opposite($face))){
 			return false;
@@ -62,7 +62,7 @@ final class WallCoralFan extends BaseCoral implements HorizontalFacing{
 		}
 	}
 
-	private function canBeSupportedAt(Block $block, int $face) : bool{
+	private function canBeSupportedAt(Block $block, Facing $face) : bool{
 		return $block->getAdjacentSupportType($face)->hasCenterSupport();
 	}
 

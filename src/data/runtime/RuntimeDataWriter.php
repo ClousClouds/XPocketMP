@@ -26,7 +26,6 @@ namespace pocketmine\data\runtime;
 use pocketmine\block\utils\WallConnectionType;
 use pocketmine\math\Axis;
 use pocketmine\math\Facing;
-use function array_flip;
 use function log;
 use function spl_object_id;
 
@@ -74,78 +73,63 @@ final class RuntimeDataWriter implements RuntimeDataDescriber{
 		$this->writeBool($value);
 	}
 
-	public function horizontalFacing(int &$facing) : void{
+	public function horizontalFacing(Facing &$facing) : void{
 		$this->writeInt(2, match($facing){
 			Facing::NORTH => 0,
 			Facing::EAST => 1,
 			Facing::SOUTH => 2,
 			Facing::WEST => 3,
-			default => throw new \InvalidArgumentException("Invalid horizontal facing $facing")
+			default => throw new \InvalidArgumentException("Invalid horizontal facing $facing->name")
 		});
 	}
 
 	/**
-	 * @param int[] $faces
+	 * @param Facing[] $faces
 	 */
 	public function facingFlags(array &$faces) : void{
-		$uniqueFaces = array_flip($faces);
+		$uniqueFaces = [];
+		foreach($faces as $face){
+			$uniqueFaces[$face->value] = true;
+		}
 		foreach(Facing::ALL as $facing){
-			$this->writeBool(isset($uniqueFaces[$facing]));
+			$this->writeBool(isset($uniqueFaces[$facing->value]));
 		}
 	}
 
 	/**
-	 * @param int[] $faces
+	 * @param Facing[] $faces
 	 */
 	public function horizontalFacingFlags(array &$faces) : void{
-		$uniqueFaces = array_flip($faces);
+		$uniqueFaces = [];
+		foreach($faces as $face){
+			$uniqueFaces[$face->value] = true;
+		}
 		foreach(Facing::HORIZONTAL as $facing){
-			$this->writeBool(isset($uniqueFaces[$facing]));
+			$this->writeBool(isset($uniqueFaces[$facing->value]));
 		}
 	}
 
-	public function facing(int &$facing) : void{
-		$this->writeInt(3, match($facing){
-			0 => Facing::DOWN,
-			1 => Facing::UP,
-			2 => Facing::NORTH,
-			3 => Facing::SOUTH,
-			4 => Facing::WEST,
-			5 => Facing::EAST,
-			default => throw new \InvalidArgumentException("Invalid facing $facing")
-		});
+	public function facingExcept(Facing &$facing, Facing $except) : void{
+		$this->enum($facing);
 	}
 
-	public function facingExcept(int &$facing, int $except) : void{
-		$this->facing($facing);
-	}
-
-	public function axis(int &$axis) : void{
-		$this->writeInt(2, match($axis){
-			Axis::X => 0,
-			Axis::Z => 1,
-			Axis::Y => 2,
-			default => throw new \InvalidArgumentException("Invalid axis $axis")
-		});
-	}
-
-	public function horizontalAxis(int &$axis) : void{
+	public function horizontalAxis(Axis &$axis) : void{
 		$this->writeInt(1, match($axis){
 			Axis::X => 0,
 			Axis::Z => 1,
-			default => throw new \InvalidArgumentException("Invalid horizontal axis $axis")
+			default => throw new \InvalidArgumentException("Invalid horizontal axis $axis->name")
 		});
 	}
 
 	/**
 	 * @param WallConnectionType[] $connections
-	 * @phpstan-param array<Facing::NORTH|Facing::EAST|Facing::SOUTH|Facing::WEST, WallConnectionType> $connections
+	 * @phpstan-param array<value-of<Facing::NORTH|Facing::EAST|Facing::SOUTH|Facing::WEST>, WallConnectionType> $connections
 	 */
 	public function wallConnections(array &$connections) : void{
 		$packed = 0;
 		$offset = 0;
 		foreach(Facing::HORIZONTAL as $facing){
-			$packed += match($connections[$facing] ?? null){
+			$packed += match($connections[$facing->value] ?? null){
 				null => 0,
 				WallConnectionType::SHORT => 1,
 				WallConnectionType::TALL => 2,

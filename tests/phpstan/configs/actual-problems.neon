@@ -601,7 +601,7 @@ parameters:
 			path: ../../../src/crash/CrashDumpRenderer.php
 
 		-
-			message: '#^Parameter \#1 \$faces of method pocketmine\\block\\Vine\:\:setFaces\(\) expects list\<2\|3\|4\|5\>, array\<int\> given\.$#'
+			message: '#^Parameter \#1 \$faces of method pocketmine\\block\\Vine\:\:setFaces\(\) expects list\<pocketmine\\math\\Facing\:\:EAST\|pocketmine\\math\\Facing\:\:NORTH\|pocketmine\\math\\Facing\:\:SOUTH\|pocketmine\\math\\Facing\:\:WEST\>, array\<pocketmine\\math\\Facing\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../../src/data/bedrock/block/convert/VanillaBlockMappings.php

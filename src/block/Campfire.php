@@ -127,12 +127,12 @@ class Campfire extends Transparent implements Lightable, HorizontalFacing{
 		];
 	}
 
-	public function getSupportType(int $facing) : SupportType{
+	public function getSupportType(Facing $facing) : SupportType{
 		return SupportType::NONE;
 	}
 
 	protected function recalculateCollisionBoxes() : array{
-		return [AxisAlignedBB::one()->trim(Facing::UP, 9 / 16)];
+		return [AxisAlignedBB::one()->trimmedCopy(Facing::UP, 9 / 16)];
 	}
 
 	/**
@@ -171,7 +171,7 @@ class Campfire extends Transparent implements Lightable, HorizontalFacing{
 		return $this->cookingTimes[$slot] ?? 0;
 	}
 
-	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, ?Player $player = null) : bool{
+	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, Facing $face, Vector3 $clickVector, ?Player $player = null) : bool{
 		if($this->getSide(Facing::DOWN) instanceof Campfire){
 			return false;
 		}
@@ -182,7 +182,7 @@ class Campfire extends Transparent implements Lightable, HorizontalFacing{
 		return parent::place($tx, $item, $blockReplace, $blockClicked, $face, $clickVector, $player);
 	}
 
-	public function onInteract(Item $item, int $face, Vector3 $clickVector, ?Player $player = null, array &$returnedItems = []) : bool{
+	public function onInteract(Item $item, Facing $face, Vector3 $clickVector, ?Player $player = null, array &$returnedItems = []) : bool{
 		if(!$this->lit){
 			if($item->getTypeId() === ItemTypeIds::FIRE_CHARGE){
 				$item->pop();

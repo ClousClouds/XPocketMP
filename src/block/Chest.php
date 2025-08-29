@@ -39,10 +39,10 @@ class Chest extends Transparent implements HorizontalFacing{
 
 	protected function recalculateCollisionBoxes() : array{
 		//these are slightly bigger than in PC
-		return [AxisAlignedBB::one()->contract(0.025, 0, 0.025)->trim(Facing::UP, 0.05)];
+		return [AxisAlignedBB::one()->contractedCopy(0.025, 0, 0.025)->trimmedCopy(Facing::UP, 0.05)];
 	}
 
-	public function getSupportType(int $facing) : SupportType{
+	public function getSupportType(Facing $facing) : SupportType{
 		return SupportType::NONE;
 	}
 
@@ -70,7 +70,7 @@ class Chest extends Transparent implements HorizontalFacing{
 		}
 	}
 
-	public function onInteract(Item $item, int $face, Vector3 $clickVector, ?Player $player = null, array &$returnedItems = []) : bool{
+	public function onInteract(Item $item, Facing $face, Vector3 $clickVector, ?Player $player = null, array &$returnedItems = []) : bool{
 		if($player instanceof Player){
 
 			$chest = $this->position->getWorld()->getTile($this->position);

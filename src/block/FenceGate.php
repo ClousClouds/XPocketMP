@@ -67,10 +67,10 @@ class FenceGate extends Transparent implements HorizontalFacing, WoodMaterial{
 	}
 
 	protected function recalculateCollisionBoxes() : array{
-		return $this->open ? [] : [AxisAlignedBB::one()->extend(Facing::UP, 0.5)->squash(Facing::axis($this->facing), 6 / 16)];
+		return $this->open ? [] : [AxisAlignedBB::one()->extendedCopy(Facing::UP, 0.5)->squashedCopy(Facing::axis($this->facing), 6 / 16)];
 	}
 
-	public function getSupportType(int $facing) : SupportType{
+	public function getSupportType(Facing $facing) : SupportType{
 		return SupportType::NONE;
 	}
 
@@ -81,7 +81,7 @@ class FenceGate extends Transparent implements HorizontalFacing, WoodMaterial{
 		);
 	}
 
-	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, ?Player $player = null) : bool{
+	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, Facing $face, Vector3 $clickVector, ?Player $player = null) : bool{
 		if($player !== null){
 			$this->facing = $player->getHorizontalFacing();
 		}
@@ -99,7 +99,7 @@ class FenceGate extends Transparent implements HorizontalFacing, WoodMaterial{
 		}
 	}
 
-	public function onInteract(Item $item, int $face, Vector3 $clickVector, ?Player $player = null, array &$returnedItems = []) : bool{
+	public function onInteract(Item $item, Facing $face, Vector3 $clickVector, ?Player $player = null, array &$returnedItems = []) : bool{
 		$this->open = !$this->open;
 		if($this->open && $player !== null){
 			$playerFacing = $player->getHorizontalFacing();

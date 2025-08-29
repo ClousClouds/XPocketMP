@@ -122,6 +122,7 @@ use pocketmine\data\bedrock\block\convert\property\ValueFromIntProperty;
 use pocketmine\data\bedrock\block\convert\property\ValueFromStringProperty;
 use pocketmine\data\bedrock\block\convert\property\ValueMappings;
 use pocketmine\data\bedrock\block\convert\property\ValueSetFromIntProperty;
+use pocketmine\math\Axis;
 use pocketmine\math\Facing;
 use function array_map;
 use function min;
@@ -584,13 +585,14 @@ final class VanillaBlockMappings{
 			new ValueSetFromIntProperty(
 				StateNames::VINE_DIRECTION_BITS,
 				IntFromRawStateMap::int([
-					Facing::NORTH => BlockLegacyMetadata::VINE_FLAG_NORTH,
-					Facing::SOUTH => BlockLegacyMetadata::VINE_FLAG_SOUTH,
-					Facing::WEST => BlockLegacyMetadata::VINE_FLAG_WEST,
-					Facing::EAST => BlockLegacyMetadata::VINE_FLAG_EAST,
+					Facing::NORTH->value => BlockLegacyMetadata::VINE_FLAG_NORTH,
+					Facing::SOUTH->value => BlockLegacyMetadata::VINE_FLAG_SOUTH,
+					Facing::WEST->value => BlockLegacyMetadata::VINE_FLAG_WEST,
+					Facing::EAST->value => BlockLegacyMetadata::VINE_FLAG_EAST,
 				]),
-				fn(Vine $b) => $b->getFaces(),
-				fn(Vine $b, array $v) => $b->setFaces($v)
+				//TODO: hack for lack of HorizontalFacing enum :(
+				fn(Vine $b) => array_map(fn(Facing $facing) => $facing->value, $b->getFaces()),
+				fn(Vine $b, array $v) => $b->setFaces(array_map(Facing::from(...), $v))
 			)
 		]));
 
@@ -610,13 +612,15 @@ final class VanillaBlockMappings{
 		$reg->mapFlattenedId(FlattenedIdModel::create(Blocks::CORAL_FAN())
 			->idComponents([...$commonProperties->coralIdPrefixes, "_coral_fan"])
 			->properties([
-				new ValueFromIntProperty(StateNames::CORAL_FAN_DIRECTION, ValueMappings::getInstance()->coralAxis, fn(FloorCoralFan $b) => $b->getAxis(), fn(FloorCoralFan $b, int $v) => $b->setAxis($v))
+				//TODO: hack for lack of horizontal axis enum :(
+				new ValueFromIntProperty(StateNames::CORAL_FAN_DIRECTION, ValueMappings::getInstance()->coralAxis, fn(FloorCoralFan $b) => $b->getAxis()->value, fn(FloorCoralFan $b, int $v) => $b->setAxis(Axis::from($v)))
 			])
 		);
 		$reg->mapFlattenedId(FlattenedIdModel::create(Blocks::WALL_CORAL_FAN())
 			->idComponents([...$commonProperties->coralIdPrefixes, "_coral_wall_fan"])
 			->properties([
-				new ValueFromIntProperty(StateNames::CORAL_DIRECTION, ValueMappings::getInstance()->horizontalFacingCoral, fn(HorizontalFacing $b) => $b->getFacing(), fn(HorizontalFacing $b, int $v) => $b->setFacing($v)),
+				//TODO: hack for lack of horizontal facing enum :(
+				new ValueFromIntProperty(StateNames::CORAL_DIRECTION, ValueMappings::getInstance()->horizontalFacingCoral, fn(HorizontalFacing $b) => $b->getFacing()->value, fn(HorizontalFacing $b, int $v) => $b->setFacing(Facing::from($v))),
 			])
 		);
 	}
@@ -752,7 +756,7 @@ final class VanillaBlockMappings{
 				new ValueFromStringProperty("id", ValueMappings::getInstance()->mobHeadType, fn(MobHead $b) => $b->getMobHeadType(), fn(MobHead $b, MobHeadType $v) => $b->setMobHeadType($v)),
 			])
 			->properties([
-				new ValueFromIntProperty(StateNames::FACING_DIRECTION, ValueMappings::getInstance()->facingExceptDown, fn(MobHead $b) => $b->getFacing(), fn(MobHead $b, int $v) => $b->setFacing($v))
+				new ValueFromIntProperty(StateNames::FACING_DIRECTION, ValueMappings::getInstance()->facingExceptDown, fn(MobHead $b) => $b->getFacing()->value, fn(MobHead $b, int $v) => $b->setFacing(Facing::from($v)))
 			])
 		);
 
@@ -1306,7 +1310,7 @@ final class VanillaBlockMappings{
 			$commonProperties->horizontalFacingCardinal
 		]));
 		$reg->mapModel(Model::create(Blocks::END_ROD(), Ids::END_ROD)->properties([
-			new ValueFromIntProperty(StateNames::FACING_DIRECTION, ValueMappings::getInstance()->facingEndRod, fn(EndRod $b) => $b->getFacing(), fn(EndRod $b, int $v) => $b->setFacing($v)),
+			new ValueFromIntProperty(StateNames::FACING_DIRECTION, ValueMappings::getInstance()->facingEndRod, fn(EndRod $b) => $b->getFacing(), fn(EndRod $b, Facing $v) => $b->setFacing($v)),
 		]));
 
 		//F
@@ -1334,7 +1338,7 @@ final class VanillaBlockMappings{
 		$reg->mapModel(Model::create(Blocks::HOPPER(), Ids::HOPPER)->properties([
 			//kinda weird this doesn't use powered_bit?
 			new BoolProperty(StateNames::TOGGLE_BIT, fn(PoweredByRedstone $b) => $b->isPowered(), fn(PoweredByRedstone $b, bool $v) => $b->setPowered($v)),
-			new ValueFromIntProperty(StateNames::FACING_DIRECTION, ValueMappings::getInstance()->facingExceptUp, fn(Hopper $b) => $b->getFacing(), fn(Hopper $b, int $v) => $b->setFacing($v)),
+			new ValueFromIntProperty(StateNames::FACING_DIRECTION, ValueMappings::getInstance()->facingExceptUp, fn(Hopper $b) => $b->getFacing()->value, fn(Hopper $b, int $v) => $b->setFacing(Facing::from($v))),
 		]));
 
 		//I
@@ -1365,7 +1369,8 @@ final class VanillaBlockMappings{
 			new IntProperty(StateNames::AGE, 0, 3, fn(NetherWartPlant $b) => $b->getAge(), fn(NetherWartPlant $b, int $v) => $b->setAge($v))
 		]));
 		$reg->mapModel(Model::create(Blocks::NETHER_PORTAL(), Ids::PORTAL)->properties([
-			new ValueFromStringProperty(StateNames::PORTAL_AXIS, ValueMappings::getInstance()->portalAxis, fn(NetherPortal $b) => $b->getAxis(), fn(NetherPortal $b, int $v) => $b->setAxis($v))
+			//TODO: hack for lack of horizontal axis enum :(
+			new ValueFromStringProperty(StateNames::PORTAL_AXIS, ValueMappings::getInstance()->portalAxis, fn(NetherPortal $b) => $b->getAxis()->value, fn(NetherPortal $b, int $v) => $b->setAxis(Axis::from($v)))
 		]));
 
 		//P

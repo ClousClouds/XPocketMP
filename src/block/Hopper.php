@@ -38,17 +38,17 @@ use pocketmine\world\BlockTransaction;
 class Hopper extends Transparent implements PoweredByRedstone{
 	use PoweredByRedstoneTrait;
 
-	private int $facing = Facing::DOWN;
+	private Facing $facing = Facing::DOWN;
 
 	protected function describeBlockOnlyState(RuntimeDataDescriber $w) : void{
 		$w->facingExcept($this->facing, Facing::UP);
 		$w->bool($this->powered);
 	}
 
-	public function getFacing() : int{ return $this->facing; }
+	public function getFacing() : Facing{ return $this->facing; }
 
 	/** @return $this */
-	public function setFacing(int $facing) : self{
+	public function setFacing(Facing $facing) : self{
 		if($facing === Facing::UP){
 			throw new \InvalidArgumentException("Hopper may not face upward");
 		}
@@ -58,16 +58,16 @@ class Hopper extends Transparent implements PoweredByRedstone{
 
 	protected function recalculateCollisionBoxes() : array{
 		$result = [
-			AxisAlignedBB::one()->trim(Facing::UP, 6 / 16) //the empty area around the bottom is currently considered solid
+			AxisAlignedBB::one()->trimmedCopy(Facing::UP, 6 / 16) //the empty area around the bottom is currently considered solid
 		];
 
 		foreach(Facing::HORIZONTAL as $f){ //add the frame parts around the bowl
-			$result[] = AxisAlignedBB::one()->trim($f, 14 / 16);
+			$result[] = AxisAlignedBB::one()->trimmedCopy($f, 14 / 16);
 		}
 		return $result;
 	}
 
-	public function getSupportType(int $facing) : SupportType{
+	public function getSupportType(Facing $facing) : SupportType{
 		return match($facing){
 			Facing::UP => SupportType::FULL,
 			Facing::DOWN => $this->facing === Facing::DOWN ? SupportType::CENTER : SupportType::NONE,
@@ -75,13 +75,13 @@ class Hopper extends Transparent implements PoweredByRedstone{
 		};
 	}
 
-	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, ?Player $player = null) : bool{
+	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, Facing $face, Vector3 $clickVector, ?Player $player = null) : bool{
 		$this->facing = $face === Facing::DOWN ? Facing::DOWN : Facing::opposite($face);
 
 		return parent::place($tx, $item, $blockReplace, $blockClicked, $face, $clickVector, $player);
 	}
 
-	public function onInteract(Item $item, int $face, Vector3 $clickVector, ?Player $player = null, array &$returnedItems = []) : bool{
+	public function onInteract(Item $item, Facing $face, Vector3 $clickVector, ?Player $player = null, array &$returnedItems = []) : bool{
 		if($player !== null){
 			$tile = $this->position->getWorld()->getTile($this->position);
 			if($tile instanceof TileHopper){ //TODO: find a way to have inventories open on click without this boilerplate in every block

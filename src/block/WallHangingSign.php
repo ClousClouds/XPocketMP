@@ -37,7 +37,7 @@ use pocketmine\world\BlockTransaction;
 final class WallHangingSign extends BaseSign implements HorizontalFacing{
 	use HorizontalFacingTrait;
 
-	protected function getSupportingFace() : int{
+	protected function getSupportingFace() : Facing{
 		return Facing::rotateY($this->facing, clockwise: true);
 	}
 
@@ -47,10 +47,10 @@ final class WallHangingSign extends BaseSign implements HorizontalFacing{
 
 	protected function recalculateCollisionBoxes() : array{
 		//only the cross bar is collidable
-		return [AxisAlignedBB::one()->trim(Facing::DOWN, 7 / 8)->squash(Facing::axis($this->facing), 3 / 4)];
+		return [AxisAlignedBB::one()->trimmedCopy(Facing::DOWN, 7 / 8)->squashedCopy(Facing::axis($this->facing), 3 / 4)];
 	}
 
-	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, ?Player $player = null) : bool{
+	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, Facing $face, Vector3 $clickVector, ?Player $player = null) : bool{
 		if($player === null){
 			return false;
 		}
@@ -73,7 +73,7 @@ final class WallHangingSign extends BaseSign implements HorizontalFacing{
 		return parent::place($tx, $item, $blockReplace, $blockClicked, $face, $clickVector, $player);
 	}
 
-	private function canBeSupportedAt(Block $block, int $face) : bool{
+	private function canBeSupportedAt(Block $block, Facing $face) : bool{
 		return
 			($block instanceof WallHangingSign && Facing::axis(Facing::rotateY($block->getFacing(), clockwise: true)) === Facing::axis($face)) ||
 			$block->getSupportType(Facing::opposite($face)) === SupportType::FULL;

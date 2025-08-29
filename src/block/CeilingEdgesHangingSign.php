@@ -35,11 +35,11 @@ use pocketmine\world\BlockTransaction;
 final class CeilingEdgesHangingSign extends BaseSign implements HorizontalFacing{
 	use HorizontalFacingTrait;
 
-	protected function getSupportingFace() : int{
+	protected function getSupportingFace() : Facing{
 		return Facing::UP;
 	}
 
-	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, ?Player $player = null) : bool{
+	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, Facing $face, Vector3 $clickVector, ?Player $player = null) : bool{
 		if($face !== Facing::DOWN){
 			return false;
 		}

@@ -61,7 +61,7 @@ class TripwireHook extends Flowable implements HorizontalFacing{
 		return $this;
 	}
 
-	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, ?Player $player = null) : bool{
+	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, Facing $face, Vector3 $clickVector, ?Player $player = null) : bool{
 		if(Facing::axis($face) !== Axis::Y){
 			//TODO: check face is valid
 			$this->facing = $face;

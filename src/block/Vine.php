@@ -36,22 +36,22 @@ use function count;
 
 class Vine extends Flowable{
 
-	/** @var int[] */
+	/** @var Facing[] */
 	protected array $faces = [];
 
 	protected function describeBlockOnlyState(RuntimeDataDescriber $w) : void{
 		$w->horizontalFacingFlags($this->faces);
 	}
 
-	/** @return int[] */
+	/** @return Facing[] */
 	public function getFaces() : array{ return $this->faces; }
 
-	public function hasFace(int $face) : bool{
-		return isset($this->faces[$face]);
+	public function hasFace(Facing $face) : bool{
+		return isset($this->faces[$face->value]);
 	}
 
 	/**
-	 * @param int[] $faces
+	 * @param Facing[] $faces
 	 * @phpstan-param list<Facing::NORTH|Facing::EAST|Facing::SOUTH|Facing::WEST> $faces
 	 * @return $this
 	 */
@@ -61,21 +61,21 @@ class Vine extends Flowable{
 			if($face !== Facing::NORTH && $face !== Facing::SOUTH && $face !== Facing::WEST && $face !== Facing::EAST){
 				throw new \InvalidArgumentException("Facing can only be north, east, south or west");
 			}
-			$uniqueFaces[$face] = $face;
+			$uniqueFaces[$face->value] = $face;
 		}
 		$this->faces = $uniqueFaces;
 		return $this;
 	}
 
 	/** @return $this */
-	public function setFace(int $face, bool $value) : self{
+	public function setFace(Facing $face, bool $value) : self{
 		if($face !== Facing::NORTH && $face !== Facing::SOUTH && $face !== Facing::WEST && $face !== Facing::EAST){
 			throw new \InvalidArgumentException("Facing can only be north, east, south or west");
 		}
 		if($value){
-			$this->faces[$face] = $face;
+			$this->faces[$face->value] = $face;
 		}else{
-			unset($this->faces[$face]);
+			unset($this->faces[$face->value]);
 		}
 		return $this;
 	}
@@ -101,13 +101,14 @@ class Vine extends Flowable{
 		return [];
 	}
 
-	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, ?Player $player = null) : bool{
-		if(!$blockReplace->getSide(Facing::opposite($face))->isFullCube() || Facing::axis($face) === Axis::Y){
+	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, Facing $face, Vector3 $clickVector, ?Player $player = null) : bool{
+		$opposite = Facing::opposite($face);
+		if(!$blockReplace->getSide($opposite)->isFullCube() || Facing::axis($face) === Axis::Y){
 			return false;
 		}
 
 		$this->faces = $blockReplace instanceof Vine ? $blockReplace->faces : [];
-		$this->faces[Facing::opposite($face)] = Facing::opposite($face);
+		$this->faces[$opposite->value] = $opposite;
 
 		return parent::place($tx, $item, $blockReplace, $blockClicked, $face, $clickVector, $player);
 	}
@@ -120,8 +121,8 @@ class Vine extends Flowable{
 		$supportedFaces = $up instanceof Vine ? array_intersect_key($this->faces, $up->faces) : [];
 
 		foreach($this->faces as $face){
-			if(!isset($supportedFaces[$face]) && !$this->getSide($face)->isSolid()){
-				unset($this->faces[$face]);
+			if(!isset($supportedFaces[$face->value]) && !$this->getSide($face)->isSolid()){
+				unset($this->faces[$face->value]);
 				$changed = true;
 			}
 		}

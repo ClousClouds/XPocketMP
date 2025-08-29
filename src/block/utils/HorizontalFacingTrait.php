@@ -28,16 +28,17 @@ use pocketmine\math\Axis;
 use pocketmine\math\Facing;
 
 trait HorizontalFacingTrait{
-	protected int $facing = Facing::NORTH;
+	//TODO: this really needs a proper HorizontalFacing enum
+	protected Facing $facing = Facing::NORTH;
 
 	protected function describeBlockOnlyState(RuntimeDataDescriber $w) : void{
 		$w->horizontalFacing($this->facing);
 	}
 
-	public function getFacing() : int{ return $this->facing; }
+	public function getFacing() : Facing{ return $this->facing; }
 
 	/** @return $this */
-	public function setFacing(int $facing) : self{
+	public function setFacing(Facing $facing) : self{
 		$axis = Facing::axis($facing);
 		if($axis !== Axis::X && $axis !== Axis::Z){
 			throw new \InvalidArgumentException("Facing must be horizontal");

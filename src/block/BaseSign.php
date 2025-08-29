@@ -35,6 +35,7 @@ use pocketmine\event\block\SignChangeEvent;
 use pocketmine\item\Dye;
 use pocketmine\item\Item;
 use pocketmine\item\ItemTypeIds;
+use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
@@ -99,11 +100,11 @@ abstract class BaseSign extends Transparent implements WoodMaterial{
 		return [];
 	}
 
-	public function getSupportType(int $facing) : SupportType{
+	public function getSupportType(Facing $facing) : SupportType{
 		return SupportType::NONE;
 	}
 
-	abstract protected function getSupportingFace() : int;
+	abstract protected function getSupportingFace() : Facing;
 
 	public function onNearbyBlockChange() : void{
 		if($this->getSide($this->getSupportingFace())->getTypeId() === BlockTypeIds::AIR){
@@ -111,7 +112,7 @@ abstract class BaseSign extends Transparent implements WoodMaterial{
 		}
 	}
 
-	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, ?Player $player = null) : bool{
+	public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, Facing $face, Vector3 $clickVector, ?Player $player = null) : bool{
 		if($player !== null){
 			$this->editorEntityRuntimeId = $player->getId();
 		}
@@ -160,7 +161,7 @@ abstract class BaseSign extends Transparent implements WoodMaterial{
 		return true;
 	}
 
-	public function onInteract(Item $item, int $face, Vector3 $clickVector, ?Player $player = null, array &$returnedItems = []) : bool{
+	public function onInteract(Item $item, Facing $face, Vector3 $clickVector, ?Player $player = null, array &$returnedItems = []) : bool{
 		if($player === null){
 			return false;
 		}
