@@ -46,7 +46,7 @@ use pocketmine\block\utils\CoralType;
 use pocketmine\block\utils\DyeColor;
 use pocketmine\block\utils\HorizontalFacing;
 use pocketmine\block\utils\Lightable;
-use pocketmine\block\utils\MultiFacing;
+use pocketmine\block\utils\MultiAnyFacing;
 use pocketmine\block\utils\PillarRotation;
 use pocketmine\block\utils\SignLikeRotation;
 use pocketmine\block\utils\SlabType;
@@ -80,8 +80,8 @@ final class CommonProperties{
 	/** @phpstan-var ValueFromIntProperty<AnyFacing, int> */
 	public readonly ValueFromIntProperty $anyFacingClassic;
 
-	/** @phpstan-var OptionSetFromIntProperty<MultiFacing, int> */
-	public readonly OptionSetFromIntProperty $multiFacingFlags;
+	/** @phpstan-var ValueSetFromIntProperty<MultiAnyFacing, int> */
+	public readonly ValueSetFromIntProperty $multiFacingFlags;
 
 	/** @phpstan-var IntProperty<SignLikeRotation> */
 	public readonly IntProperty $floorSignLikeRotation;
@@ -242,7 +242,7 @@ final class CommonProperties{
 			fn(AnyFacing $b, int $v) => $b->setFacing($v)
 		);
 
-		$this->multiFacingFlags = new OptionSetFromIntProperty(
+		$this->multiFacingFlags = new ValueSetFromIntProperty(
 			StateNames::MULTI_FACE_DIRECTION_BITS,
 			IntFromRawStateMap::int([
 				Facing::DOWN => BlockLegacyMetadata::MULTI_FACE_DIRECTION_FLAG_DOWN,
@@ -252,8 +252,8 @@ final class CommonProperties{
 				Facing::WEST => BlockLegacyMetadata::MULTI_FACE_DIRECTION_FLAG_WEST,
 				Facing::EAST => BlockLegacyMetadata::MULTI_FACE_DIRECTION_FLAG_EAST
 			]),
-			fn(MultiFacing $b) => $b->getFaces(),
-			fn(MultiFacing $b, array $v) => $b->setFaces($v)
+			fn(MultiAnyFacing $b) => $b->getFaces(),
+			fn(MultiAnyFacing $b, array $v) => $b->setFaces($v)
 		);
 
 		$this->floorSignLikeRotation = new IntProperty(StateNames::GROUND_SIGN_DIRECTION, 0, 15, fn(SignLikeRotation $b) => $b->getRotation(), fn(SignLikeRotation $b, int $v) => $b->setRotation($v));
