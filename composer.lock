@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "326e0882230a0614d3dd2f0dce8e2efc",
+    "content-hash": "deb7c003ba4a6101153256d5d590da42",
     "packages": [
         {
             "name": "adhocore/json-comment",
@@ -344,30 +344,30 @@
         },
         {
             "name": "pocketmine/callback-validator",
-            "version": "1.0.3",
+            "version": "dev-rewrite",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pmmp/CallbackValidator.git",
-                "reference": "64787469766bcaa7e5885242e85c23c25e8c55a2"
+                "reference": "4b9b375590872cdd98a2a07c5aa0e1e99af5ceda"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pmmp/CallbackValidator/zipball/64787469766bcaa7e5885242e85c23c25e8c55a2",
-                "reference": "64787469766bcaa7e5885242e85c23c25e8c55a2",
+                "url": "https://api.github.com/repos/pmmp/CallbackValidator/zipball/4b9b375590872cdd98a2a07c5aa0e1e99af5ceda",
+                "reference": "4b9b375590872cdd98a2a07c5aa0e1e99af5ceda",
                 "shasum": ""
             },
             "require": {
                 "ext-reflection": "*",
-                "php": "^7.1 || ^8.0"
+                "php": "^8.1"
             },
             "replace": {
                 "daverandom/callback-validator": "*"
             },
             "require-dev": {
                 "phpstan/extension-installer": "^1.0",
-                "phpstan/phpstan": "0.12.59",
-                "phpstan/phpstan-strict-rules": "^0.12.4",
-                "phpunit/phpunit": "^7.5 || ^8.5 || ^9.0"
+                "phpstan/phpstan": "2.1.0",
+                "phpstan/phpstan-strict-rules": "^2.0",
+                "phpunit/phpunit": "^9.0 || ^10.0 || ^11.0"
             },
             "type": "library",
             "autoload": {
@@ -388,9 +388,9 @@
             "description": "Fork of daverandom/callback-validator - Tools for validating callback signatures",
             "support": {
                 "issues": "https://github.com/pmmp/CallbackValidator/issues",
-                "source": "https://github.com/pmmp/CallbackValidator/tree/1.0.3"
+                "source": "https://github.com/pmmp/CallbackValidator/tree/rewrite"
             },
-            "time": "2020-12-11T01:45:37+00:00"
+            "time": "2025-01-03T17:50:24+00:00"
         },
         {
             "name": "pocketmine/color",
@@ -2734,6 +2734,7 @@
     ],
     "minimum-stability": "stable",
     "stability-flags": {
+        "pocketmine/callback-validator": 20,
         "pocketmine/math": 20
     },
     "prefer-stable": false,
