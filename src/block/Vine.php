@@ -33,6 +33,7 @@ use pocketmine\player\Player;
 use pocketmine\world\BlockTransaction;
 use function array_intersect_key;
 use function count;
+use function spl_object_id;
 
 class Vine extends Flowable{
 
@@ -40,14 +41,14 @@ class Vine extends Flowable{
 	protected array $faces = [];
 
 	protected function describeBlockOnlyState(RuntimeDataDescriber $w) : void{
-		$w->horizontalFacingFlags($this->faces);
+		$w->enumSet($this->faces, HorizontalFacingOption::cases());
 	}
 
 	/** @return HorizontalFacingOption[] */
 	public function getFaces() : array{ return $this->faces; }
 
 	public function hasFace(HorizontalFacingOption $face) : bool{
-		return isset($this->faces[$face->value]);
+		return isset($this->faces[spl_object_id($face)]);
 	}
 
 	/**
@@ -60,7 +61,7 @@ class Vine extends Flowable{
 			if(!$face instanceof HorizontalFacingOption){
 				throw new \InvalidArgumentException("Expected array of HorizontalFacingOption");
 			}
-			$uniqueFaces[$face->value] = $face;
+			$uniqueFaces[spl_object_id($face)] = $face;
 		}
 		$this->faces = $uniqueFaces;
 		return $this;
@@ -69,9 +70,9 @@ class Vine extends Flowable{
 	/** @return $this */
 	public function setFace(HorizontalFacingOption $face, bool $value) : self{
 		if($value){
-			$this->faces[$face->value] = $face;
+			$this->faces[spl_object_id($face)] = $face;
 		}else{
-			unset($this->faces[$face->value]);
+			unset($this->faces[spl_object_id($face)]);
 		}
 		return $this;
 	}
@@ -105,7 +106,7 @@ class Vine extends Flowable{
 		}
 
 		$this->faces = $blockReplace instanceof Vine ? $blockReplace->faces : [];
-		$this->faces[$hzFacing->value] = $hzFacing;
+		$this->faces[spl_object_id($hzFacing)] = $hzFacing;
 
 		return parent::place($tx, $item, $blockReplace, $blockClicked, $face, $clickVector, $player);
 	}
@@ -118,8 +119,8 @@ class Vine extends Flowable{
 		$supportedFaces = $up instanceof Vine ? array_intersect_key($this->faces, $up->faces) : [];
 
 		foreach($this->faces as $face){
-			if(!isset($supportedFaces[$face->value]) && !$this->getSide($face->toFacing())->isSolid()){
-				unset($this->faces[$face->value]);
+			if(!isset($supportedFaces[spl_object_id($face)]) && !$this->getSide($face->toFacing())->isSolid()){
+				unset($this->faces[spl_object_id($face)]);
 				$changed = true;
 			}
 		}

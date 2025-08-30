@@ -47,16 +47,6 @@ interface RuntimeDataDescriber{
 
 	public function bool(bool &$value) : void;
 
-	/**
-	 * @param Facing[] $faces
-	 */
-	public function facingFlags(array &$faces) : void;
-
-	/**
-	 * @param HorizontalFacingOption[] $faces
-	 */
-	public function horizontalFacingFlags(array &$faces) : void;
-
 	public function facingExcept(Facing &$facing, Facing $except) : void;
 
 	public function horizontalAxis(Axis &$axis) : void;

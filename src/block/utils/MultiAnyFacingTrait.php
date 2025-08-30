@@ -25,6 +25,7 @@ namespace pocketmine\block\utils;
 
 use pocketmine\data\runtime\RuntimeDataDescriber;
 use pocketmine\math\Facing;
+use function spl_object_id;
 
 /**
  * Used by blocks that can have multiple target faces in the area of one solid block, such as covering three sides of a corner.
@@ -35,14 +36,14 @@ trait MultiAnyFacingTrait{
 	protected array $faces = [];
 
 	protected function describeBlockOnlyState(RuntimeDataDescriber $w) : void{
-		$w->facingFlags($this->faces);
+		$w->enumSet($this->faces, Facing::cases());
 	}
 
 	/** @return Facing[] */
 	public function getFaces() : array{ return $this->faces; }
 
 	public function hasFace(Facing $face) : bool{
-		return isset($this->faces[$face->value]);
+		return isset($this->faces[spl_object_id($face)]);
 	}
 
 	/**
@@ -52,7 +53,7 @@ trait MultiAnyFacingTrait{
 	public function setFaces(array $faces) : self{
 		$uniqueFaces = [];
 		foreach($faces as $face){
-			$uniqueFaces[$face->value] = $face;
+			$uniqueFaces[spl_object_id($face)] = $face;
 		}
 		$this->faces = $uniqueFaces;
 		return $this;
@@ -61,9 +62,9 @@ trait MultiAnyFacingTrait{
 	/** @return $this */
 	public function setFace(Facing $face, bool $value) : self{
 		if($value){
-			$this->faces[$face->value] = $face;
+			$this->faces[spl_object_id($face)] = $face;
 		}else{
-			unset($this->faces[$face->value]);
+			unset($this->faces[spl_object_id($face)]);
 		}
 		return $this;
 	}

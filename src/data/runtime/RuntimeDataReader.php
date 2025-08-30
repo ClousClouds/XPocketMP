@@ -77,34 +77,6 @@ final class RuntimeDataReader implements RuntimeDataDescriber{
 		$value = $this->readBool();
 	}
 
-	/**
-	 * @param Facing[] $faces
-	 */
-	public function facingFlags(array &$faces) : void{
-		$result = [];
-		foreach(Facing::ALL as $facing){
-			if($this->readBool()){
-				$result[$facing->value] = $facing;
-			}
-		}
-
-		$faces = $result;
-	}
-
-	/**
-	 * @param HorizontalFacingOption[] $faces
-	 */
-	public function horizontalFacingFlags(array &$faces) : void{
-		$result = [];
-		foreach(HorizontalFacingOption::cases() as $facing){
-			if($this->readBool()){
-				$result[$facing->value] = $facing;
-			}
-		}
-
-		$faces = $result;
-	}
-
 	public function facingExcept(Facing &$facing, Facing $except) : void{
 		$result = Facing::DOWN;
 		$this->enum($result);

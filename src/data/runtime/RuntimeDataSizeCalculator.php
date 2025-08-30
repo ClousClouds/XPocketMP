@@ -52,14 +52,6 @@ final class RuntimeDataSizeCalculator implements RuntimeDataDescriber{
 		$this->addBits(1);
 	}
 
-	public function facingFlags(array &$faces) : void{
-		$this->addBits(count(Facing::cases()));
-	}
-
-	public function horizontalFacingFlags(array &$faces) : void{
-		$this->addBits(count(HorizontalFacingOption::cases()));
-	}
-
 	public function facingExcept(Facing &$facing, Facing $except) : void{
 		$this->enum($facing);
 	}

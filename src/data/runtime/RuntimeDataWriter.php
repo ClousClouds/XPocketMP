@@ -74,32 +74,6 @@ final class RuntimeDataWriter implements RuntimeDataDescriber{
 		$this->writeBool($value);
 	}
 
-	/**
-	 * @param Facing[] $faces
-	 */
-	public function facingFlags(array &$faces) : void{
-		$uniqueFaces = [];
-		foreach($faces as $face){
-			$uniqueFaces[$face->value] = true;
-		}
-		foreach(Facing::ALL as $facing){
-			$this->writeBool(isset($uniqueFaces[$facing->value]));
-		}
-	}
-
-	/**
-	 * @param HorizontalFacingOption[] $faces
-	 */
-	public function horizontalFacingFlags(array &$faces) : void{
-		$uniqueFaces = [];
-		foreach($faces as $face){
-			$uniqueFaces[$face->value] = true;
-		}
-		foreach(HorizontalFacingOption::cases() as $facing){
-			$this->writeBool(isset($uniqueFaces[$facing->value]));
-		}
-	}
-
 	public function facingExcept(Facing &$facing, Facing $except) : void{
 		$this->enum($facing);
 	}
