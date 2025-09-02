@@ -102,26 +102,12 @@ abstract class BaseInventory implements Inventory, SlotValidatedInventory{
 
 		$listeners = $this->listeners->toArray();
 		$this->listeners->clear();
-		$viewers = $this->viewers;
-		$this->viewers = [];
 
 		$this->internalSetContents($items);
 
 		$this->listeners->add(...$listeners); //don't directly write, in case listeners were added while operation was in progress
-		foreach($viewers as $id => $viewer){
-			$this->viewers[$id] = $viewer;
-		}
 
 		$this->onContentChange($oldContents);
-	}
-
-	/**
-	 * Helper for utility functions which search the inventory.
-	 * TODO: make this abstract instead of providing a slow default implementation (BC break)
-	 */
-	protected function getMatchingItemCount(int $slot, Item $test, bool $checkTags) : int{
-		$item = $this->getItem($slot);
-		return $item->equals($test, true, $checkTags) ? $item->getCount() : 0;
 	}
 
 	public function contains(Item $item) : bool{
@@ -351,7 +337,7 @@ abstract class BaseInventory implements Inventory, SlotValidatedInventory{
 	 */
 	public function removeAllViewers() : void{
 		foreach($this->viewers as $hash => $viewer){
-			if($viewer->getCurrentWindow() === $this){ //this might not be the case for the player's own inventory
+			if($viewer->getCurrentWindow()?->getInventory() === $this){ //this might not be the case for the player's own inventory
 				$viewer->removeCurrentWindow();
 			}
 			unset($this->viewers[$hash]);
@@ -370,13 +356,6 @@ abstract class BaseInventory implements Inventory, SlotValidatedInventory{
 		foreach($this->listeners as $listener){
 			$listener->onSlotChange($this, $index, $before);
 		}
-		foreach($this->viewers as $viewer){
-			$invManager = $viewer->getNetworkSession()->getInvManager();
-			if($invManager === null){
-				continue;
-			}
-			$invManager->onSlotChange($this, $index);
-		}
 	}
 
 	/**
@@ -386,14 +365,6 @@ abstract class BaseInventory implements Inventory, SlotValidatedInventory{
 	protected function onContentChange(array $itemsBefore) : void{
 		foreach($this->listeners as $listener){
 			$listener->onContentChange($this, $itemsBefore);
-		}
-
-		foreach($this->getViewers() as $viewer){
-			$invManager = $viewer->getNetworkSession()->getInvManager();
-			if($invManager === null){
-				continue;
-			}
-			$invManager->syncContents($this);
 		}
 	}
 

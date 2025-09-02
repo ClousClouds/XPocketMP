@@ -99,6 +99,13 @@ interface Inventory{
 	public function getAddableItemQuantity(Item $item) : int;
 
 	/**
+	 * Returns the number of items in the inventory that match the given item.
+	 *
+	 * @param bool $checkTags If true, the NBT of the items will also be checked and must be the same to be counted.
+	 */
+	public function getMatchingItemCount(int $slot, Item $test, bool $checkTags) : int;
+
+	/**
 	 * Returns whether the total amount of matching items is at least the stack size of the given item. Multiple stacks
 	 * of the same item are added together.
 	 *
@@ -178,6 +185,11 @@ interface Inventory{
 	 * @return Player[]
 	 */
 	public function getViewers() : array;
+
+	/**
+	 * Tells all Players viewing this inventory to stop viewing it and discard associated windows.
+	 */
+	public function removeAllViewers() : void;
 
 	/**
 	 * Called when a player opens this inventory.

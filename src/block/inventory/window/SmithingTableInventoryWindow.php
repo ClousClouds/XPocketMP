@@ -21,17 +21,15 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\block\inventory;
+namespace pocketmine\block\inventory\window;
 
 use pocketmine\inventory\SimpleInventory;
-use pocketmine\inventory\TemporaryInventory;
+use pocketmine\player\Player;
+use pocketmine\player\TemporaryInventoryWindow;
 use pocketmine\world\Position;
 
-final class SmithingTableInventory extends SimpleInventory implements BlockInventory, TemporaryInventory{
-	use BlockInventoryTrait;
-
-	public function __construct(Position $holder){
-		$this->holder = $holder;
-		parent::__construct(3);
+final class SmithingTableInventoryWindow extends BlockInventoryWindow implements TemporaryInventoryWindow{
+	public function __construct(Player $viewer, Position $holder){
+		parent::__construct($viewer, new SimpleInventory(3), $holder);
 	}
 }

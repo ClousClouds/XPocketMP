@@ -21,8 +21,30 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\inventory;
+namespace pocketmine\player;
 
-interface TemporaryInventory extends Inventory{
+use pocketmine\inventory\Inventory;
 
+abstract class InventoryWindow{
+
+	public function __construct(
+		protected Player $viewer,
+		protected Inventory $inventory
+	){}
+
+	public function getViewer() : Player{
+		return $this->viewer;
+	}
+
+	public function getInventory() : Inventory{
+		return $this->inventory;
+	}
+
+	public function onOpen() : void{
+		$this->inventory->onOpen($this->viewer);
+	}
+
+	public function onClose() : void{
+		$this->inventory->onClose($this->viewer);
+	}
 }

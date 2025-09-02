@@ -21,23 +21,39 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\block;
+namespace pocketmine\block\inventory\window;
 
-use pocketmine\block\inventory\window\SmithingTableInventoryWindow;
-use pocketmine\block\utils\MenuAccessor;
-use pocketmine\block\utils\MenuAccessorTrait;
+use pocketmine\block\utils\AnimatedContainerLike;
+use pocketmine\inventory\Inventory;
 use pocketmine\player\InventoryWindow;
 use pocketmine\player\Player;
 use pocketmine\world\Position;
 
-final class SmithingTable extends Opaque implements MenuAccessor{
-	use MenuAccessorTrait;
+class BlockInventoryWindow extends InventoryWindow{
 
-	protected function newMenu(Player $player, Position $position) : InventoryWindow{
-		return new SmithingTableInventoryWindow($player, $position);
+	public function __construct(
+		Player $viewer,
+		Inventory $inventory,
+		protected Position $holder
+	){
+		parent::__construct($viewer, $inventory);
 	}
 
-	public function getFuelTime() : int{
-		return 300;
+	public function getHolder() : Position{ return $this->holder; }
+
+	public function onOpen() : void{
+		parent::onOpen();
+		$block = $this->holder->getWorld()->getBlock($this->holder);
+		if($block instanceof AnimatedContainerLike){
+			$block->onViewerAdded();
+		}
+	}
+
+	public function onClose() : void{
+		$block = $this->holder->getWorld()->getBlock($this->holder);
+		if($block instanceof AnimatedContainerLike){
+			$block->onViewerRemoved();
+		}
+		parent::onClose();
 	}
 }

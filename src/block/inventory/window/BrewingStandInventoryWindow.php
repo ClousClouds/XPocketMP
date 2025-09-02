@@ -21,17 +21,12 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\inventory;
+namespace pocketmine\block\inventory\window;
 
-use pocketmine\entity\Human;
-
-final class PlayerEnderInventory extends SimpleInventory{
-	public function __construct(
-		private Human $holder,
-		int $size = 27
-	){
-		parent::__construct($size);
-	}
-
-	public function getHolder() : Human{ return $this->holder; }
+final class BrewingStandInventoryWindow extends BlockInventoryWindow{
+	public const SLOT_INGREDIENT = 0;
+	public const SLOT_BOTTLE_LEFT = 1;
+	public const SLOT_BOTTLE_MIDDLE = 2;
+	public const SLOT_BOTTLE_RIGHT = 3;
+	public const SLOT_FUEL = 4;
 }

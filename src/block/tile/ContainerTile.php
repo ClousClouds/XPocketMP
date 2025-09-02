@@ -21,16 +21,19 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\block\inventory;
+namespace pocketmine\block\tile;
 
-use pocketmine\inventory\SimpleInventory;
-use pocketmine\world\Position;
+use pocketmine\inventory\Inventory;
+use pocketmine\inventory\InventoryHolder;
 
-class HopperInventory extends SimpleInventory implements BlockInventory{
-	use BlockInventoryTrait;
+interface ContainerTile extends InventoryHolder{
+	public const TAG_ITEMS = "Items";
+	public const TAG_LOCK = "Lock";
 
-	public function __construct(Position $holder, int $size = 5){
-		$this->holder = $holder;
-		parent::__construct($size);
-	}
+	public function getRealInventory() : Inventory;
+
+	/**
+	 * Returns whether this container can be opened by an item with the given custom name.
+	 */
+	public function canOpenWith(string $key) : bool;
 }

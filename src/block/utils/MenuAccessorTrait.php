@@ -21,23 +21,38 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\block;
+namespace pocketmine\block\utils;
 
-use pocketmine\block\inventory\window\SmithingTableInventoryWindow;
-use pocketmine\block\utils\MenuAccessor;
-use pocketmine\block\utils\MenuAccessorTrait;
+use pocketmine\block\Block;
+use pocketmine\item\Item;
+use pocketmine\math\Facing;
+use pocketmine\math\Vector3;
 use pocketmine\player\InventoryWindow;
 use pocketmine\player\Player;
 use pocketmine\world\Position;
 
-final class SmithingTable extends Opaque implements MenuAccessor{
-	use MenuAccessorTrait;
+trait MenuAccessorTrait{
 
-	protected function newMenu(Player $player, Position $position) : InventoryWindow{
-		return new SmithingTableInventoryWindow($player, $position);
+	/**
+	 * @see Block::onInteract()
+	 */
+	public function onInteract(Item $item, Facing $face, Vector3 $clickVector, ?Player $player = null, array &$returnedItems = []) : bool{
+		if($player instanceof Player && !$this->isOpeningObstructed()){
+			$this->openToUnchecked($player);
+		}
+
+		return true;
 	}
 
-	public function getFuelTime() : int{
-		return 300;
+	abstract protected function newMenu(Player $player, Position $position) : InventoryWindow;
+
+	public function isOpeningObstructed() : bool{
+		return false;
+	}
+
+	abstract protected function getPosition() : Position;
+
+	public function openToUnchecked(Player $player) : bool{
+		return $player->setCurrentWindow($this->newMenu($player, $this->getPosition()));
 	}
 }

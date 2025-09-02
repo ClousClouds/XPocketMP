@@ -28,6 +28,7 @@ use pocketmine\inventory\Inventory;
 use pocketmine\inventory\transaction\action\SlotChangeAction;
 use pocketmine\item\Item;
 use pocketmine\item\VanillaItems;
+use pocketmine\player\InventoryWindow;
 
 /**
  * This class facilitates generating SlotChangeActions to build an inventory transaction.
@@ -35,7 +36,7 @@ use pocketmine\item\VanillaItems;
  * This allows you to use the normal Inventory API methods like addItem() and so on to build a transaction, without
  * modifying the original inventory.
  */
-final class TransactionBuilderInventory extends BaseInventory{
+final class SlotChangeActionBuilder extends BaseInventory{
 
 	/**
 	 * @var \SplFixedArray|(Item|null)[]
@@ -44,14 +45,14 @@ final class TransactionBuilderInventory extends BaseInventory{
 	private \SplFixedArray $changedSlots;
 
 	public function __construct(
-		private Inventory $actualInventory
+		private InventoryWindow $inventoryWindow
 	){
 		parent::__construct();
-		$this->changedSlots = new \SplFixedArray($this->actualInventory->getSize());
+		$this->changedSlots = new \SplFixedArray($this->inventoryWindow->getInventory()->getSize());
 	}
 
-	public function getActualInventory() : Inventory{
-		return $this->actualInventory;
+	public function getInventoryWindow() : InventoryWindow{
+		return $this->inventoryWindow;
 	}
 
 	protected function internalSetContents(array $items) : void{
@@ -65,21 +66,21 @@ final class TransactionBuilderInventory extends BaseInventory{
 	}
 
 	protected function internalSetItem(int $index, Item $item) : void{
-		if(!$item->equalsExact($this->actualInventory->getItem($index))){
+		if(!$item->equalsExact($this->inventoryWindow->getInventory()->getItem($index))){
 			$this->changedSlots[$index] = $item->isNull() ? VanillaItems::AIR() : clone $item;
 		}
 	}
 
 	public function getSize() : int{
-		return $this->actualInventory->getSize();
+		return $this->inventoryWindow->getInventory()->getSize();
 	}
 
 	public function getItem(int $index) : Item{
-		return $this->changedSlots[$index] !== null ? clone $this->changedSlots[$index] : $this->actualInventory->getItem($index);
+		return $this->changedSlots[$index] !== null ? clone $this->changedSlots[$index] : $this->inventoryWindow->getInventory()->getItem($index);
 	}
 
 	public function getContents(bool $includeEmpty = false) : array{
-		$contents = $this->actualInventory->getContents($includeEmpty);
+		$contents = $this->inventoryWindow->getInventory()->getContents($includeEmpty);
 		foreach($this->changedSlots as $index => $item){
 			if($item !== null){
 				if($includeEmpty || !$item->isNull()){
@@ -92,16 +93,25 @@ final class TransactionBuilderInventory extends BaseInventory{
 		return $contents;
 	}
 
+	public function getMatchingItemCount(int $slot, Item $test, bool $checkTags) : int{
+		$slotItem = $this->changedSlots[$slot] ?? null;
+		if($slotItem !== null){
+			return $slotItem->equals($test, true, $checkTags) ? $slotItem->getCount() : 0;
+		}
+		return $this->inventoryWindow->getInventory()->getMatchingItemCount($slot, $test, $checkTags);
+	}
+
 	/**
 	 * @return SlotChangeAction[]
 	 */
 	public function generateActions() : array{
 		$result = [];
+		$inventory = $this->inventoryWindow->getInventory();
 		foreach($this->changedSlots as $index => $newItem){
 			if($newItem !== null){
-				$oldItem = $this->actualInventory->getItem($index);
+				$oldItem = $inventory->getItem($index);
 				if(!$newItem->equalsExact($oldItem)){
-					$result[] = new SlotChangeAction($this->actualInventory, $index, $oldItem, $newItem);
+					$result[] = new SlotChangeAction($this->inventoryWindow, $index, $oldItem, $newItem);
 				}
 			}
 		}

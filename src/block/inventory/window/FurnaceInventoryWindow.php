@@ -21,51 +21,51 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\block\inventory;
+namespace pocketmine\block\inventory\window;
 
 use pocketmine\crafting\FurnaceType;
-use pocketmine\inventory\SimpleInventory;
+use pocketmine\inventory\Inventory;
 use pocketmine\item\Item;
+use pocketmine\player\Player;
 use pocketmine\world\Position;
 
-class FurnaceInventory extends SimpleInventory implements BlockInventory{
-	use BlockInventoryTrait;
-
+final class FurnaceInventoryWindow extends BlockInventoryWindow{
 	public const SLOT_INPUT = 0;
 	public const SLOT_FUEL = 1;
 	public const SLOT_RESULT = 2;
 
 	public function __construct(
+		Player $viewer,
+		Inventory $inventory,
 		Position $holder,
 		private FurnaceType $furnaceType
 	){
-		$this->holder = $holder;
-		parent::__construct(3);
+		parent::__construct($viewer, $inventory, $holder);
 	}
 
 	public function getFurnaceType() : FurnaceType{ return $this->furnaceType; }
 
 	public function getResult() : Item{
-		return $this->getItem(self::SLOT_RESULT);
+		return $this->inventory->getItem(self::SLOT_RESULT);
 	}
 
 	public function getFuel() : Item{
-		return $this->getItem(self::SLOT_FUEL);
+		return $this->inventory->getItem(self::SLOT_FUEL);
 	}
 
 	public function getSmelting() : Item{
-		return $this->getItem(self::SLOT_INPUT);
+		return $this->inventory->getItem(self::SLOT_INPUT);
 	}
 
 	public function setResult(Item $item) : void{
-		$this->setItem(self::SLOT_RESULT, $item);
+		$this->inventory->setItem(self::SLOT_RESULT, $item);
 	}
 
 	public function setFuel(Item $item) : void{
-		$this->setItem(self::SLOT_FUEL, $item);
+		$this->inventory->setItem(self::SLOT_FUEL, $item);
 	}
 
 	public function setSmelting(Item $item) : void{
-		$this->setItem(self::SLOT_INPUT, $item);
+		$this->inventory->setItem(self::SLOT_INPUT, $item);
 	}
 }

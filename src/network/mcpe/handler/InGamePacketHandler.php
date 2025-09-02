@@ -307,11 +307,11 @@ class InGamePacketHandler extends PacketHandler{
 
 		switch($packet->eventId){
 			case ActorEvent::EATING_ITEM: //TODO: ignore this and handle it server-side
-				$item = $this->player->getInventory()->getItemInHand();
+				$item = $this->player->getMainHandItem();
 				if($item->isNull()){
 					return false;
 				}
-				$this->player->broadcastAnimation(new ConsumingItemAnimation($this->player, $this->player->getInventory()->getItemInHand()));
+				$this->player->broadcastAnimation(new ConsumingItemAnimation($this->player, $item));
 				break;
 			default:
 				return false;
@@ -358,7 +358,7 @@ class InGamePacketHandler extends PacketHandler{
 				[$windowId, $slot] = ItemStackContainerIdTranslator::translate($containerInfo->getContainerId(), $this->inventoryManager->getCurrentWindowId(), $netSlot);
 				$inventoryAndSlot = $this->inventoryManager->locateWindowAndSlot($windowId, $slot);
 				if($inventoryAndSlot !== null){ //trigger the normal slot sync logic
-					$this->inventoryManager->onSlotChange($inventoryAndSlot[0], $inventoryAndSlot[1]);
+					$this->inventoryManager->requestSyncSlot($inventoryAndSlot[0], $inventoryAndSlot[1]);
 				}
 			}
 		}
@@ -464,7 +464,8 @@ class InGamePacketHandler extends PacketHandler{
 		$droppedItem = $sourceSlotItem->pop($droppedCount);
 
 		$builder = new TransactionBuilder();
-		$builder->getInventory($inventory)->setItem($sourceSlot, $sourceSlotItem);
+		$window = $this->inventoryManager->getInventoryWindow($inventory) ?? throw new AssumptionFailedError("This should never happen");
+		$builder->getActionBuilder($window)->setItem($sourceSlot, $sourceSlotItem);
 		$builder->addAction(new DropItemAction($droppedItem));
 
 		$transaction = new InventoryTransaction($this->player, $builder->generateActions());

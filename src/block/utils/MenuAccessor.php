@@ -21,17 +21,25 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\block\inventory;
+namespace pocketmine\block\utils;
 
-use pocketmine\crafting\CraftingGrid;
-use pocketmine\inventory\TemporaryInventory;
-use pocketmine\world\Position;
+use pocketmine\player\Player;
 
-final class CraftingTableInventory extends CraftingGrid implements BlockInventory, TemporaryInventory{
-	use BlockInventoryTrait;
+/**
+ * Blocks which open a menu when interacted with
+ * This could be a container menu, or a menu that otherwise deals with items, such as a crafting menu
+ */
+interface MenuAccessor{
+	/**
+	 * Returns whether the block's ability to open the menu is currently obstructed (e.g. by nearby blocks).
+	 */
+	public function isOpeningObstructed() : bool;
 
-	public function __construct(Position $holder){
-		$this->holder = $holder;
-		parent::__construct(CraftingGrid::SIZE_BIG);
-	}
+	/**
+	 * Opens the menu to the player.
+	 * Note: No preconditions are checked. Do not check for obstruction or locks here.
+	 *
+	 * Returns true if successful, false otherwise (e.g. event cancelled, container missing)
+	 */
+	public function openToUnchecked(Player $player) : bool;
 }

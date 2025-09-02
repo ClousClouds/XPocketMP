@@ -21,16 +21,22 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\inventory;
+namespace pocketmine\block\utils;
 
-use pocketmine\crafting\CraftingGrid;
-use pocketmine\player\Player;
+/**
+ * Blocks which have audiovisual behaviour (like chests) and remain in their "open" state for as long as at least 1
+ * viewer is viewing the menu they provide access to
+ */
+interface AnimatedContainerLike extends MenuAccessor{
+	/**
+	 * Do actions when the container block is opened by a player.
+	 * If you have a custom viewer counter (like ender chests), you should increment it here.
+	 */
+	public function onViewerAdded() : void;
 
-final class PlayerCraftingInventory extends CraftingGrid implements TemporaryInventory{
-
-	public function __construct(private Player $holder){
-		parent::__construct(CraftingGrid::SIZE_SMALL);
-	}
-
-	public function getHolder() : Player{ return $this->holder; }
+	/**
+	 * Do actions when the container block is closed by a player.
+	 * As above, you should decrement your custom viewer counter here, if you have one.
+	 */
+	public function onViewerRemoved() : void;
 }

@@ -23,8 +23,9 @@ declare(strict_types=1);
 
 namespace pocketmine\block\tile;
 
-use pocketmine\block\inventory\ChestInventory;
-use pocketmine\block\inventory\DoubleChestInventory;
+use pocketmine\inventory\CombinedInventoryProxy;
+use pocketmine\inventory\Inventory;
+use pocketmine\inventory\SimpleInventory;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
@@ -32,11 +33,11 @@ use pocketmine\world\format\Chunk;
 use pocketmine\world\World;
 use function abs;
 
-class Chest extends Spawnable implements Container, Nameable{
+class Chest extends Spawnable implements ContainerTile, Nameable{
 	use NameableTrait {
 		addAdditionalSpawnData as addNameSpawnData;
 	}
-	use ContainerTrait {
+	use ContainerTileTrait {
 		onBlockDestroyedHook as containerTraitBlockDestroyedHook;
 	}
 
@@ -44,15 +45,15 @@ class Chest extends Spawnable implements Container, Nameable{
 	public const TAG_PAIRZ = "pairz";
 	public const TAG_PAIR_LEAD = "pairlead";
 
-	protected ChestInventory $inventory;
-	protected ?DoubleChestInventory $doubleInventory = null;
+	protected Inventory $inventory;
+	protected ?CombinedInventoryProxy $doubleInventory = null;
 
 	private ?int $pairX = null;
 	private ?int $pairZ = null;
 
 	public function __construct(World $world, Vector3 $pos){
 		parent::__construct($world, $pos);
-		$this->inventory = new ChestInventory($this->position);
+		$this->inventory = new SimpleInventory(27);
 	}
 
 	public function readSaveData(CompoundTag $nbt) : void{
@@ -114,14 +115,14 @@ class Chest extends Spawnable implements Container, Nameable{
 		$this->containerTraitBlockDestroyedHook();
 	}
 
-	public function getInventory() : ChestInventory|DoubleChestInventory{
+	public function getInventory() : Inventory|CombinedInventoryProxy{
 		if($this->isPaired() && $this->doubleInventory === null){
 			$this->checkPairing();
 		}
-		return $this->doubleInventory instanceof DoubleChestInventory ? $this->doubleInventory : $this->inventory;
+		return $this->doubleInventory ?? $this->inventory;
 	}
 
-	public function getRealInventory() : ChestInventory{
+	public function getRealInventory() : Inventory{
 		return $this->inventory;
 	}
 
@@ -140,9 +141,9 @@ class Chest extends Spawnable implements Container, Nameable{
 					$this->doubleInventory = $pair->doubleInventory;
 				}else{
 					if(($pair->position->x + ($pair->position->z << 15)) > ($this->position->x + ($this->position->z << 15))){ //Order them correctly
-						$this->doubleInventory = $pair->doubleInventory = new DoubleChestInventory($pair->inventory, $this->inventory);
+						$this->doubleInventory = $pair->doubleInventory = new CombinedInventoryProxy([$pair->inventory, $this->inventory]);
 					}else{
-						$this->doubleInventory = $pair->doubleInventory = new DoubleChestInventory($this->inventory, $pair->inventory);
+						$this->doubleInventory = $pair->doubleInventory = new CombinedInventoryProxy([$this->inventory, $pair->inventory]);
 					}
 				}
 			}

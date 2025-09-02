@@ -21,18 +21,24 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\inventory;
+namespace pocketmine\block\utils;
 
-use pocketmine\player\Player;
+use pocketmine\inventory\Inventory;
 
-class PlayerCursorInventory extends SimpleInventory implements TemporaryInventory{
-	public function __construct(
-		protected Player $holder
-	){
-		parent::__construct(1);
-	}
+/**
+ * Blocks which have an associated inventory of contents
+ * Default implementation provided by {@see ContainerTrait}
+ */
+interface Container extends MenuAccessor{
+	/**
+	 * Returns whether an item with the given key as its custom name can be used to access the container's contents.
+	 */
+	public function canOpenWith(string $key) : bool;
 
-	public function getHolder() : Player{
-		return $this->holder;
-	}
+	/**
+	 * Returns the inventory of this container.
+	 * Note: This may return NULL if the container's tile was missing or incorrect. This is rare, but may occur as a
+	 * result of plugins incorrectly creating blocks, or legacy world data.
+	 */
+	public function getInventory() : ?Inventory;
 }
