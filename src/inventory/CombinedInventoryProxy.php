@@ -26,7 +26,6 @@ namespace pocketmine\inventory;
 use pocketmine\item\Item;
 use pocketmine\item\VanillaItems;
 use pocketmine\player\InventoryWindow;
-use pocketmine\utils\AssumptionFailedError;
 use function array_fill_keys;
 use function array_keys;
 use function array_map;
@@ -85,36 +84,39 @@ final class CombinedInventoryProxy extends BaseInventory{
 		$this->size = $combinedSize;
 
 		$weakThis = \WeakReference::create($this);
-		$getThis = static fn() => $weakThis->get() ?? throw new AssumptionFailedError("Listener should've been unregistered in __destruct()");
-
 		$this->backingInventoryListener = new CallbackInventoryListener(
-			onSlotChange: static function(Inventory $inventory, int $slot, Item $oldItem) use ($getThis) : void{
-				$strongThis = $getThis();
-				if($strongThis->modifyingBackingInventory){
-					return;
-				}
-
-				$offset = $strongThis->inventoryToOffsetMap[spl_object_id($inventory)];
-				$strongThis->onSlotChange($offset + $slot, $oldItem);
-			},
-			onContentChange: static function(Inventory $inventory, array $oldContents) use ($getThis) : void{
-				$strongThis = $getThis();
-				if($strongThis->modifyingBackingInventory){
-					return;
-				}
-
-				if(count($strongThis->backingInventories) === 1){
-					$strongThis->onContentChange($oldContents);
-				}else{
-					$offset = $strongThis->inventoryToOffsetMap[spl_object_id($inventory)];
-					for($slot = 0, $limit = $inventory->getSize(); $slot < $limit; $slot++){
-						$strongThis->onSlotChange($offset + $slot, $oldContents[$slot] ?? VanillaItems::AIR());
-					}
-				}
-			}
+			static fn(Inventory $inventory, int $slot, Item $oldItem) => $weakThis->get()?->onBackingSlotChange($inventory, $slot, $oldItem),
+			static fn(Inventory $inventory, array $oldContents) => $weakThis->get()?->onBackingContentChange($inventory, $oldContents)
 		);
 		foreach($this->backingInventories as $inventory){
 			$inventory->getListeners()->add($this->backingInventoryListener);
+		}
+	}
+
+	private function onBackingSlotChange(Inventory $inventory, int $slot, Item $oldItem) : void{
+		if($this->modifyingBackingInventory){
+			return;
+		}
+
+		$offset = $this->inventoryToOffsetMap[spl_object_id($inventory)];
+		$this->onSlotChange($offset + $slot, $oldItem);
+	}
+
+	/**
+	 * @param Item[] $oldContents
+	 */
+	private function onBackingContentChange(Inventory $inventory, array $oldContents) : void{
+		if($this->modifyingBackingInventory){
+			return;
+		}
+
+		if(count($this->backingInventories) === 1){
+			$this->onContentChange($oldContents);
+		}else{
+			$offset = $this->inventoryToOffsetMap[spl_object_id($inventory)];
+			for($slot = 0, $limit = $inventory->getSize(); $slot < $limit; $slot++){
+				$this->onSlotChange($offset + $slot, $oldContents[$slot] ?? VanillaItems::AIR());
+			}
 		}
 	}
 
