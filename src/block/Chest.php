@@ -28,12 +28,15 @@ use pocketmine\block\inventory\window\DoubleChestInventoryWindow;
 use pocketmine\block\tile\Chest as TileChest;
 use pocketmine\block\utils\AnimatedContainerLike;
 use pocketmine\block\utils\AnimatedContainerLikeTrait;
+use pocketmine\block\utils\ChestPairHalf;
 use pocketmine\block\utils\Container;
 use pocketmine\block\utils\ContainerTrait;
 use pocketmine\block\utils\FacesOppositePlacingPlayerTrait;
 use pocketmine\block\utils\HorizontalFacing;
+use pocketmine\block\utils\HorizontalFacingOption;
 use pocketmine\block\utils\SupportType;
 use pocketmine\event\block\ChestPairEvent;
+use pocketmine\inventory\CombinedInventoryProxy;
 use pocketmine\inventory\Inventory;
 use pocketmine\math\AxisAlignedBB;
 use pocketmine\math\Facing;
@@ -45,83 +48,159 @@ use pocketmine\world\Position;
 use pocketmine\world\sound\ChestCloseSound;
 use pocketmine\world\sound\ChestOpenSound;
 use pocketmine\world\sound\Sound;
+use function assert;
 
 class Chest extends Transparent implements AnimatedContainerLike, Container, HorizontalFacing{
 	use AnimatedContainerLikeTrait;
 	use ContainerTrait;
 	use FacesOppositePlacingPlayerTrait;
 
+	protected ?ChestPairHalf $pairHalf = null;
+
+	public function getPairHalf() : ?ChestPairHalf{ return $this->pairHalf; }
+
+	public function setPairHalf(?ChestPairHalf $pairHalf) : self{
+		$this->pairHalf = $pairHalf;
+		return $this;
+	}
+
+	public function readStateFromWorld() : Block{
+		parent::readStateFromWorld();
+		$tile = $this->position->getWorld()->getTile($this->position);
+
+		$this->pairHalf = null;
+		if($tile instanceof TileChest && ($pairXZ = $tile->getPairXZ()) !== null){
+			[$pairX, $pairZ] = $pairXZ;
+			foreach(ChestPairHalf::cases() as $pairSide){
+				$pairDirection = $pairSide->getOtherHalfSide($this->facing);
+				$pairPosition = $this->position->getSide($pairDirection);
+				if($pairPosition->getFloorX() === $pairX && $pairPosition->getFloorZ() === $pairZ){
+					$this->pairHalf = $pairSide;
+					break;
+				}
+			}
+		}
+
+		return $this;
+	}
+
+	public function writeStateToWorld() : void{
+		parent::writeStateToWorld();
+		$tile = $this->position->getWorld()->getTile($this->position);
+		assert($tile instanceof TileChest);
+
+		//TODO: this should probably use relative coordinates instead of absolute, for portability
+		if($this->pairHalf !== null){
+			$pairDirection = $this->pairHalf->getOtherHalfSide($this->facing);
+			$pairPosition = $this->position->getSide($pairDirection);
+			$pairXZ = [$pairPosition->getFloorX(), $pairPosition->getFloorZ()];
+		}else{
+			$pairXZ = null;
+		}
+		$tile->setPairXZ($pairXZ);
+	}
+
 	protected function recalculateCollisionBoxes() : array{
 		//these are slightly bigger than in PC
-		return [AxisAlignedBB::one()->contractedCopy(0.025, 0, 0.025)->trimmedCopy(Facing::UP, 0.05)];
+		$facing = $this->facing->toFacing();
+		$box = AxisAlignedBB::one()
+			->squashedCopy(Facing::axis($facing), 0.025)
+			->trimmedCopy(Facing::UP, 0.05);
+		$pairSide = $this->pairHalf?->getOtherHalfSide($this->facing);
+		return [$pairSide !== null ?
+			$box->trimmedCopy(Facing::opposite($pairSide), 0.025) :
+			$box->squashedCopy(Facing::axis(Facing::rotateY($facing, true)), 0.025)
+		];
 	}
 
 	public function getSupportType(Facing $facing) : SupportType{
 		return SupportType::NONE;
 	}
 
-	/**
-	 * @phpstan-return array{bool, TileChest}|null
-	 */
-	private function locatePair(Position $position) : ?array{
-		$world = $position->getWorld();
-		$tile = $world->getTile($position);
-		if($tile instanceof TileChest){
-			foreach([false, true] as $clockwise){
-				$side = Facing::rotateY($this->facing->toFacing(), $clockwise);
-				$c = $position->getSide($side);
-				$pair = $world->getTile($c);
-				if($pair instanceof TileChest && $pair->isPaired() && $pair->getPair() === $tile){
-					return [$clockwise, $pair];
-				}
-			}
-		}
-		return null;
+	private function getPossiblePair(ChestPairHalf $pairSide) : ?Chest{
+		$pair = $this->getSide($pairSide->getOtherHalfSide($this->facing));
+		return $pair->hasSameTypeId($this) && $pair instanceof Chest && $pair->getFacing() === $this->facing ? $pair : null;
+	}
+
+	public function getOtherHalf() : ?Chest{
+		return $this->pairHalf !== null && ($pair = $this->getPossiblePair($this->pairHalf)) !== null && $pair->pairHalf === $this->pairHalf->opposite() ? $pair : null;
 	}
 
 	public function onPostPlace() : void{
+		//Not sure if this vanilla behaviour is intended, but a chest facing north or west will try to pair on the left
+		//side first, while a chest facing south or east will try the right side first.
+		$order = match($this->facing){
+			HorizontalFacingOption::NORTH, HorizontalFacingOption::WEST => [ChestPairHalf::LEFT, ChestPairHalf::RIGHT],
+			HorizontalFacingOption::SOUTH, HorizontalFacingOption::EAST => [ChestPairHalf::RIGHT, ChestPairHalf::LEFT]
+		};
 		$world = $this->position->getWorld();
-		$tile = $world->getTile($this->position);
-		if($tile instanceof TileChest){
-			foreach([false, true] as $clockwise){
-				$side = Facing::rotateY($this->facing->toFacing(), $clockwise);
-				$c = $this->getSide($side);
-				if($c instanceof Chest && $c->hasSameTypeId($this) && $c->facing === $this->facing){
-					$pair = $world->getTile($c->position);
-					if($pair instanceof TileChest && !$pair->isPaired()){
-						[$left, $right] = $clockwise ? [$c, $this] : [$this, $c];
-						$ev = new ChestPairEvent($left, $right);
-						$ev->call();
-						if(!$ev->isCancelled() && $world->getBlock($this->position)->hasSameTypeId($this) && $world->getBlock($c->position)->hasSameTypeId($c)){
-							$pair->pairWith($tile);
-							$tile->pairWith($pair);
-							break;
-						}
-					}
+		foreach($order as $pairSide){
+			$possiblePair = $this->getPossiblePair($pairSide);
+			if($possiblePair !== null && $possiblePair->pairHalf === null){
+				[$left, $right] = $pairSide === ChestPairHalf::LEFT ? [$this, $possiblePair] : [$possiblePair, $this];
+				$ev = new ChestPairEvent($left, $right);
+				if(!$ev->isCancelled() && $world->getBlock($this->position)->isSameState($this) && $world->getBlock($possiblePair->position)->isSameState($possiblePair)){
+					$world->setBlock($this->position, $this->setPairHalf($pairSide));
+					$world->setBlock($possiblePair->position, $possiblePair->setPairHalf($pairSide->opposite()));
+					break;
 				}
 			}
+		}
+	}
+
+	public function onNearbyBlockChange() : void{
+		//TODO: If the pair chunk isn't loaded, a block update of an adjacent block in loaded terrain could cause the
+		//chest to become unpaired. However, this is not unique to chests (think wall connections). Probably we
+		//should defer updates in chunks whose neighbours are not loaded?
+		if($this->pairHalf !== null && $this->getOtherHalf() === null){
+			$this->position->getWorld()->setBlock($this->position, $this->setPairHalf(null));
 		}
 	}
 
 	public function isOpeningObstructed() : bool{
-		if(!$this->getSide(Facing::UP)->isTransparent()){
-			return true;
+		foreach([$this, $this->getOtherHalf()] as $chest){
+			if($chest !== null && !$chest->getSide(Facing::UP)->isTransparent()){
+				return true;
+			}
 		}
-		[, $pair] = $this->locatePair($this->position) ?? [false, null];
-		return $pair !== null && !$pair->getBlock()->getSide(Facing::UP)->isTransparent();
+		return false;
+	}
+
+	protected function getTile() : ?TileChest{
+		$tile = $this->position->getWorld()->getTile($this->position);
+		return $tile instanceof TileChest ? $tile : null;
+	}
+
+	public function getInventory() : ?Inventory{
+		$thisTile = $this->getTile();
+		if($thisTile === null){
+			return null;
+		}
+		$pairTile = $this->getOtherHalf()?->getTile();
+		$thisInventory = $thisTile->getRealInventory();
+		if($pairTile === null){
+			$thisTile->setDoubleInventory(null);
+			return $thisInventory;
+		}
+		$doubleInventory = $thisTile->getDoubleInventory() ?? $pairTile->getDoubleInventory() ?? null;
+		if($doubleInventory === null){
+			$pairInventory = $pairTile->getRealInventory();
+			[$left, $right] = $this->pairHalf === ChestPairHalf::LEFT ? [$thisInventory, $pairInventory] : [$pairInventory, $thisInventory];
+			$doubleInventory = new CombinedInventoryProxy([$left, $right]);
+			$thisTile->setDoubleInventory($doubleInventory);
+			$pairTile->setDoubleInventory($doubleInventory);
+		}
+
+		return $doubleInventory;
 	}
 
 	protected function newMenu(Player $player, Inventory $inventory, Position $position) : InventoryWindow{
-		[$pairOnLeft, $pair] = $this->locatePair($position) ?? [false, null];
+		$pair = $this->getOtherHalf();
 		if($pair === null){
 			return new BlockInventoryWindow($player, $inventory, $position);
 		}
-		[$left, $right] = $pairOnLeft ? [$pair->getPosition(), $position] : [$position, $pair->getPosition()];
-
-		//TODO: we should probably construct DoubleChestInventory here directly too using the same logic
-		//right now it uses some weird logic in TileChest which produces incorrect results
-		//however I'm not sure if this is currently possible
-		return new DoubleChestInventoryWindow($player, $inventory, $left, $right);
+		[$left, $right] = $this->pairHalf === ChestPairHalf::LEFT ? [$this, $pair] : [$pair, $this];
+		return new DoubleChestInventoryWindow($player, $inventory, $left->position, $right->position);
 	}
 
 	public function getFuelTime() : int{
@@ -146,11 +225,10 @@ class Chest extends Transparent implements AnimatedContainerLike, Container, Hor
 		$this->playAnimationVisual($this->position, $isOpen);
 		$this->playAnimationSound($this->position, $isOpen);
 
-		$pairInfo = $this->locatePair($this->position);
-		if($pairInfo !== null){
-			[, $pair] = $pairInfo;
-			$this->playAnimationVisual($pair->getPosition(), $isOpen);
-			$this->playAnimationSound($pair->getPosition(), $isOpen);
+		$pair = $this->getOtherHalf();
+		if($pair !== null){
+			$this->playAnimationVisual($pair->position, $isOpen);
+			$this->playAnimationSound($pair->position, $isOpen);
 		}
 	}
 }

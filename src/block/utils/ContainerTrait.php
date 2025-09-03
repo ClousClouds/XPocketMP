@@ -68,8 +68,8 @@ trait ContainerTrait{
 	}
 
 	public function openToUnchecked(Player $player) : bool{
-		$tile = $this->getTile();
-		return $tile !== null && $player->setCurrentWindow($this->newMenu($player, $tile->getInventory(), $this->getPosition()));
+		$inventory = $this->getInventory();
+		return $inventory !== null && $player->setCurrentWindow($this->newMenu($player, $inventory, $this->getPosition()));
 	}
 
 	public function getInventory() : ?Inventory{
