@@ -23,7 +23,7 @@ declare(strict_types=1);
 
 namespace pocketmine\network\mcpe\convert;
 
-use pocketmine\block\tile\Container;
+use pocketmine\block\tile\ContainerTile;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\crafting\ExactRecipeIngredient;
 use pocketmine\crafting\MetaWildcardRecipeIngredient;
@@ -226,7 +226,7 @@ class TypeConverter{
 	 */
 	protected function stripContainedItemNonVisualNBT(CompoundTag $tag) : bool{
 		if(
-			($blockEntityInventoryTag = $tag->getTag(Container::TAG_ITEMS)) !== null &&
+			($blockEntityInventoryTag = $tag->getTag(ContainerTile::TAG_ITEMS)) !== null &&
 			$blockEntityInventoryTag instanceof ListTag &&
 			$blockEntityInventoryTag->getTagType() === NBT::TAG_Compound &&
 			$blockEntityInventoryTag->count() > 0
@@ -245,7 +245,7 @@ class TypeConverter{
 					continue;
 				}
 			}
-			$tag->setTag(Container::TAG_ITEMS, $stripped);
+			$tag->setTag(ContainerTile::TAG_ITEMS, $stripped);
 			return true;
 		}
 		return false;
