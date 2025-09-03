@@ -25,9 +25,12 @@ namespace pocketmine\inventory;
 
 use pocketmine\item\Item;
 use pocketmine\item\VanillaItems;
+use pocketmine\player\InventoryWindow;
 use pocketmine\utils\AssumptionFailedError;
 use function array_fill_keys;
 use function array_keys;
+use function array_map;
+use function array_merge;
 use function count;
 use function spl_object_id;
 
@@ -190,5 +193,27 @@ final class CombinedInventoryProxy extends BaseInventory{
 	public function isSlotEmpty(int $index) : bool{
 		[$inventory, $actualSlot] = $this->getInventory($index);
 		return $inventory->isSlotEmpty($actualSlot);
+	}
+
+	public function onOpen(InventoryWindow $window) : void{
+		foreach($this->backingInventories as $inventory){
+			$inventory->onOpen($window);
+		}
+	}
+
+	public function onClose(InventoryWindow $window) : void{
+		foreach($this->backingInventories as $inventory){
+			$inventory->onClose($window);
+		}
+	}
+
+	public function removeAllWindows() : void{
+		foreach($this->backingInventories as $inventory){
+			$inventory->removeAllWindows();
+		}
+	}
+
+	public function getViewers() : array{
+		return array_merge(...array_map(fn(Inventory $inventory) => $inventory->getViewers(), $this->backingInventories));
 	}
 }

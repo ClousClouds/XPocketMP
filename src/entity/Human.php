@@ -563,9 +563,9 @@ class Human extends Living implements ProjectileSource, InventoryHolder{
 
 	protected function onDispose() : void{
 		$this->hotbar->getSelectedIndexChangeListeners()->clear();
-		$this->inventory->removeAllViewers();
-		$this->offHandInventory->removeAllViewers();
-		$this->enderInventory->removeAllViewers();
+		$this->inventory->removeAllWindows();
+		$this->offHandInventory->removeAllWindows();
+		$this->enderInventory->removeAllWindows();
 		parent::onDispose();
 	}
 

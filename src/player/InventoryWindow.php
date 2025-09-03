@@ -41,10 +41,10 @@ abstract class InventoryWindow{
 	}
 
 	public function onOpen() : void{
-		$this->inventory->onOpen($this->viewer);
+		$this->inventory->onOpen($this);
 	}
 
 	public function onClose() : void{
-		$this->inventory->onClose($this->viewer);
+		$this->inventory->onClose($this);
 	}
 }

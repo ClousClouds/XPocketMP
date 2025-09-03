@@ -107,7 +107,7 @@ class BrewingStand extends Spawnable implements ContainerTile, Nameable{
 
 	public function close() : void{
 		if(!$this->closed){
-			$this->inventory->removeAllViewers();
+			$this->inventory->removeAllWindows();
 
 			parent::close();
 		}

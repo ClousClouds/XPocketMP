@@ -117,4 +117,20 @@ final class SlotChangeActionBuilder extends BaseInventory{
 		}
 		return $result;
 	}
+
+	public function getViewers() : array{
+		return [];
+	}
+
+	public function removeAllWindows() : void{
+		//NOOP
+	}
+
+	public function onOpen(InventoryWindow $window) : void{
+		//NOOP
+	}
+
+	public function onClose(InventoryWindow $window) : void{
+		//NOOP
+	}
 }

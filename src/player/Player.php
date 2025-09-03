@@ -2414,8 +2414,8 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer{
 
 	protected function onDispose() : void{
 		$this->disconnect("Player destroyed");
-		$this->cursorInventory->removeAllViewers();
-		$this->craftingGrid->removeAllViewers();
+		$this->cursorInventory->removeAllWindows();
+		$this->craftingGrid->removeAllWindows();
 		parent::onDispose();
 	}
 

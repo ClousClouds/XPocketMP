@@ -27,6 +27,7 @@ declare(strict_types=1);
 namespace pocketmine\inventory;
 
 use pocketmine\item\Item;
+use pocketmine\player\InventoryWindow;
 use pocketmine\player\Player;
 use pocketmine\utils\ObjectSet;
 
@@ -189,14 +190,14 @@ interface Inventory{
 	/**
 	 * Tells all Players viewing this inventory to stop viewing it and discard associated windows.
 	 */
-	public function removeAllViewers() : void;
+	public function removeAllWindows() : void;
 
 	/**
 	 * Called when a player opens this inventory.
 	 */
-	public function onOpen(Player $who) : void;
+	public function onOpen(InventoryWindow $window) : void;
 
-	public function onClose(Player $who) : void;
+	public function onClose(InventoryWindow $window) : void;
 
 	/**
 	 * Returns whether the specified slot exists in the inventory.

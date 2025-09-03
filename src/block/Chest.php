@@ -172,26 +172,17 @@ class Chest extends Transparent implements AnimatedContainerLike, Container, Hor
 	}
 
 	public function getInventory() : ?Inventory{
-		$thisTile = $this->getTile();
-		if($thisTile === null){
+		$thisInventory = $this->getTile()?->getRealInventory();
+		if($thisInventory === null){
 			return null;
 		}
-		$pairTile = $this->getOtherHalf()?->getTile();
-		$thisInventory = $thisTile->getRealInventory();
-		if($pairTile === null){
-			$thisTile->setDoubleInventory(null);
+		$pairInventory = $this->getOtherHalf()?->getTile()?->getRealInventory();
+		if($pairInventory === null){
 			return $thisInventory;
 		}
-		$doubleInventory = $thisTile->getDoubleInventory() ?? $pairTile->getDoubleInventory() ?? null;
-		if($doubleInventory === null){
-			$pairInventory = $pairTile->getRealInventory();
-			[$left, $right] = $this->pairHalf === ChestPairHalf::LEFT ? [$thisInventory, $pairInventory] : [$pairInventory, $thisInventory];
-			$doubleInventory = new CombinedInventoryProxy([$left, $right]);
-			$thisTile->setDoubleInventory($doubleInventory);
-			$pairTile->setDoubleInventory($doubleInventory);
-		}
 
-		return $doubleInventory;
+		[$left, $right] = $this->pairHalf === ChestPairHalf::LEFT ? [$thisInventory, $pairInventory] : [$pairInventory, $thisInventory];
+		return new CombinedInventoryProxy([$left, $right]);
 	}
 
 	protected function newMenu(Player $player, Inventory $inventory, Position $position) : InventoryWindow{

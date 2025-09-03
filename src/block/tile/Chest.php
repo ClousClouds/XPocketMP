@@ -94,25 +94,13 @@ class Chest extends Spawnable implements ContainerTile, Nameable{
 
 	public function close() : void{
 		if(!$this->closed){
-			$this->inventory->removeAllViewers();
-
-			if($this->doubleInventory !== null){
-				$this->doubleInventory->removeAllViewers();
-				$this->doubleInventory = null;
-			}
-
+			$this->inventory->removeAllWindows();
 			parent::close();
 		}
 	}
 
-	public function getDoubleInventory() : ?CombinedInventoryProxy{ return $this->doubleInventory; }
-
-	public function setDoubleInventory(?CombinedInventoryProxy $inventory) : void{
-		$this->doubleInventory = $inventory;
-	}
-
-	public function getInventory() : Inventory|CombinedInventoryProxy{
-		return $this->doubleInventory ?? $this->inventory;
+	public function getInventory() : Inventory{
+		return $this->inventory;
 	}
 
 	public function getRealInventory() : Inventory{
