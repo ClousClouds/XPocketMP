@@ -385,6 +385,12 @@ parameters:
 			path: ../../../src/block/Mycelium.php
 
 		-
+			message: '#^Offset 0\|1\|2\|3\|4\|5\|6\|7\|8\|9 might not exist on array\{array\{2, 3\}, array\{5, 4\}, array\{4, 16777221\}, array\{5, 16777220\}, array\{3, 16777218\}, array\{2, 16777219\}\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: ../../../src/block/Rail.php
+
+		-
 			message: '#^Parameter \#1 \$x of method pocketmine\\world\\World\:\:getFullLightAt\(\) expects int, float\|int given\.$#'
 			identifier: argument.type
 			count: 1
@@ -587,6 +593,12 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: ../../../src/entity/object/FallingBlock.php
+
+		-
+			message: '#^Offset 0\|1\|2\|3\|4\|5 might not exist on array\{3\: 0, 4\: 1, 2\: 2, 5\: 3\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 3
+			path: ../../../src/entity/object/Painting.php
 
 		-
 			message: '#^Parameter \#1 \$x of method pocketmine\\world\\World\:\:getBlockAt\(\) expects int, float\|int given\.$#'
@@ -889,6 +901,12 @@ parameters:
 			path: ../../../src/plugin/PluginDescription.php
 
 		-
+			message: '#^Property pocketmine\\plugin\\PluginDescription\:\:\$srcNamespacePrefix \(string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: ../../../src/plugin/PluginDescription.php
+
+		-
 			message: '#^Cannot call method addChild\(\) on pocketmine\\permission\\Permission\|null\.$#'
 			identifier: method.nonObject
 			count: 4
@@ -929,6 +947,12 @@ parameters:
 			identifier: method.nonObject
 			count: 1
 			path: ../../../src/scheduler/TaskScheduler.php
+
+		-
+			message: '#^Possibly invalid array key type mixed\.$#'
+			identifier: offsetAccess.invalidOffset
+			count: 1
+			path: ../../../src/thread/ThreadManager.php
 
 		-
 			message: '#^Cannot access offset string on mixed\.$#'
