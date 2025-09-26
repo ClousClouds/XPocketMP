@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2b45f6c98ece3e7043727ce0717b7c4b",
+    "content-hash": "09e49f15217a41b27bed993400e6c185",
     "packages": [
         {
             "name": "adhocore/json-comment",
@@ -256,19 +256,20 @@
         },
         {
             "name": "pocketmine/bedrock-protocol",
-            "version": "41.0.1+bedrock-1.21.100",
+            "version": "50.0.0+bedrock-1.21.100",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pmmp/BedrockProtocol.git",
-                "reference": "01f54c3e86ddfd3d9354b17a57c7b9a6064f3795"
+                "reference": "2d7aa27a5537ae593fb1c39158648ea462fef72a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pmmp/BedrockProtocol/zipball/01f54c3e86ddfd3d9354b17a57c7b9a6064f3795",
-                "reference": "01f54c3e86ddfd3d9354b17a57c7b9a6064f3795",
+                "url": "https://api.github.com/repos/pmmp/BedrockProtocol/zipball/2d7aa27a5537ae593fb1c39158648ea462fef72a",
+                "reference": "2d7aa27a5537ae593fb1c39158648ea462fef72a",
                 "shasum": ""
             },
             "require": {
+                "ext-encoding": "~1.0.0",
                 "ext-json": "*",
                 "php": "^8.1",
                 "pocketmine/binaryutils": "^0.2.0",
@@ -296,9 +297,9 @@
             "description": "An implementation of the Minecraft: Bedrock Edition protocol in PHP",
             "support": {
                 "issues": "https://github.com/pmmp/BedrockProtocol/issues",
-                "source": "https://github.com/pmmp/BedrockProtocol/tree/41.0.1+bedrock-1.21.100"
+                "source": "https://github.com/pmmp/BedrockProtocol/tree/50.0.0+bedrock-1.21.100"
             },
-            "time": "2025-09-14T19:29:22+00:00"
+            "time": "2025-09-20T23:09:19+00:00"
         },
         {
             "name": "pocketmine/binaryutils",
@@ -2812,6 +2813,7 @@
         "ext-ctype": "*",
         "ext-curl": "*",
         "ext-date": "*",
+        "ext-encoding": "~1.0.0",
         "ext-gmp": "*",
         "ext-hash": "*",
         "ext-igbinary": "^3.0.1",
