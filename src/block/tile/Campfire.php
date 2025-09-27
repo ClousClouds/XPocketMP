@@ -94,6 +94,7 @@ class Campfire extends Spawnable implements ContainerTile{
 		$listeners = $this->inventory->getListeners()->toArray();
 		$this->inventory->getListeners()->remove(...$listeners); //prevent any events being fired by initialization
 
+		$baseErrorContext = "Campfire ($this->position)";
 		foreach([
 			[0, self::TAG_FIRST_INPUT_ITEM, self::TAG_FIRST_COOKING_TIME],
 			[1, self::TAG_SECOND_INPUT_ITEM, self::TAG_SECOND_COOKING_TIME],
@@ -101,7 +102,7 @@ class Campfire extends Spawnable implements ContainerTile{
 			[3, self::TAG_FOURTH_INPUT_ITEM, self::TAG_FOURTH_COOKING_TIME],
 		] as [$slot, $itemTag, $cookingTimeTag]){
 			if(($tag = $nbt->getTag($itemTag)) instanceof CompoundTag){
-				$items[$slot] = Item::nbtDeserialize($tag);
+				$items[$slot] = Item::safeNbtDeserialize($tag, "$baseErrorContext slot $slot");
 			}
 			if(($tag = $nbt->getTag($cookingTimeTag)) instanceof IntTag){
 				$this->cookingTimes[$slot] = $tag->getValue();
