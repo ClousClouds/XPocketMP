@@ -101,6 +101,11 @@ final class SlotChangeActionBuilder extends BaseInventory{
 		return $this->inventoryWindow->getInventory()->getMatchingItemCount($slot, $test, $checkTags);
 	}
 
+	public function isSlotEmpty(int $index) : bool{
+		$slotItem = $this->changedSlots[$index] ?? null;
+		return $slotItem !== null ? $slotItem->isNull() : $this->inventoryWindow->getInventory()->isSlotEmpty($index);
+	}
+
 	/**
 	 * @return SlotChangeAction[]
 	 */

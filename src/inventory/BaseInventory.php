@@ -155,14 +155,6 @@ abstract class BaseInventory implements Inventory, SlotValidatedInventory{
 		return -1;
 	}
 
-	/**
-	 * TODO: make this abstract and force implementations to implement it properly (BC break)
-	 * This default implementation works, but is slow.
-	 */
-	public function isSlotEmpty(int $index) : bool{
-		return $this->getItem($index)->isNull();
-	}
-
 	public function canAddItem(Item $item) : bool{
 		return $this->getAddableItemQuantity($item) === $item->getCount();
 	}
