@@ -141,7 +141,6 @@ final class ItemSerializerDeserializerRegistrar{
 		$this->map1to1Block(Ids::CAKE, Blocks::CAKE());
 		$this->map1to1Block(Ids::CAMPFIRE, Blocks::CAMPFIRE());
 		$this->map1to1Block(Ids::CAULDRON, Blocks::CAULDRON());
-		$this->map1to1Block(Ids::CHAIN, Blocks::CHAIN());
 		$this->map1to1Block(Ids::CHERRY_DOOR, Blocks::CHERRY_DOOR());
 		$this->map1to1Block(Ids::COMPARATOR, Blocks::REDSTONE_COMPARATOR());
 		$this->map1to1Block(Ids::CRIMSON_DOOR, Blocks::CRIMSON_DOOR());
@@ -518,6 +517,14 @@ final class ItemSerializerDeserializerRegistrar{
 				$item->setHornType(GoatHornTypeIdMap::getInstance()->fromId($meta) ?? throw new ItemTypeDeserializeException("Unknown goat horn type ID $meta"));
 			},
 			fn(GoatHorn $item) => GoatHornTypeIdMap::getInstance()->toId($item->getHornType())
+		);
+		$this->map1to1ItemWithMeta(
+			Ids::LINGERING_POTION,
+			Items::LINGERING_POTION(),
+			function(SplashPotion $item, int $meta) : void{
+				$item->setType(PotionTypeIdMap::getInstance()->fromId($meta) ?? throw new ItemTypeDeserializeException("Unknown potion type ID $meta"));
+			},
+			fn(SplashPotion $item) => PotionTypeIdMap::getInstance()->toId($item->getType())
 		);
 		$this->map1to1ItemWithMeta(
 			Ids::MEDICINE,
