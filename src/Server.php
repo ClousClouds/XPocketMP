@@ -680,11 +680,8 @@ class Server{
 	 * @phpstan-return (Command&PluginOwned)|null
 	 */
 	public function getPluginCommand(string $name){
-		if(($command = $this->commandMap->getCommand($name)) instanceof PluginOwned){
-			return $command;
-		}else{
-			return null;
-		}
+		$command = $this->commandMap->getCommand($name);
+		return $command instanceof PluginOwned ? $command : null;
 	}
 
 	public function getNameBans() : BanList{
