@@ -1099,7 +1099,8 @@ class NetworkSession{
 		$globalAliasMap = $this->server->getCommandMap()->getAliasMap();
 		$userAliasMap = $this->player->getCommandAliasMap();
 		foreach($this->server->getCommandMap()->getUniqueCommands() as $command){
-			if(!$command->testPermissionSilent($this->player)){
+			if(count($command->getUsages($this->player, "")) === 0){
+				//no permitted overloads
 				continue;
 			}
 

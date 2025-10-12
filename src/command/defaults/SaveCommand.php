@@ -25,23 +25,24 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\command\overload\CommandOverload;
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\permission\DefaultPermissionNames;
 use function microtime;
 use function round;
 
-class SaveCommand extends VanillaCommand{
+class SaveCommand extends Command{
 
 	public function __construct(string $namespace, string $name){
 		parent::__construct(
 			$namespace,
 			$name,
+			[new CommandOverload([], DefaultPermissionNames::COMMAND_SAVE_PERFORM, self::execute(...))],
 			KnownTranslationFactory::pocketmine_command_save_description()
 		);
-		$this->setPermission(DefaultPermissionNames::COMMAND_SAVE_PERFORM);
 	}
 
-	public function execute(CommandSender $sender, string $commandLabel, array $args){
+	private static function execute(CommandSender $sender) : void{
 		Command::broadcastCommandMessage($sender, KnownTranslationFactory::pocketmine_save_start());
 		$start = microtime(true);
 
@@ -54,7 +55,5 @@ class SaveCommand extends VanillaCommand{
 		}
 
 		Command::broadcastCommandMessage($sender, KnownTranslationFactory::pocketmine_save_success((string) round(microtime(true) - $start, 3)));
-
-		return true;
 	}
 }

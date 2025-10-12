@@ -25,8 +25,10 @@ namespace pocketmine\command\utils;
 
 use pocketmine\utils\AssumptionFailedError;
 use function preg_last_error_msg;
+use function preg_match;
 use function preg_match_all;
 use function preg_replace;
+use function strlen;
 
 final class CommandStringHelper{
 
@@ -59,5 +61,31 @@ final class CommandStringHelper{
 		}
 
 		return $args;
+	}
+
+	/**
+	 * Splits by the same logic as {@link self::parseQuoteAware()}, but doesn't strip quotes from the parts or remove
+	 * escapes. Useful if you need to join the parts back into a new command string.
+	 *
+	 * @return string[]
+	 */
+	public static function splitQuoteAware(string $commandLine) : array{
+		preg_match_all('/"((?:\\\\.|[^\\\\"])*)"|(\S+)/u', $commandLine, $matches);
+		return $matches[0];
+	}
+
+	public static function parseQuoteAwareSingle(string $commandLine, int &$offset = 0) : ?string{
+		//quoted or bare string, like the old CommandStringHelper
+		if(preg_match('/\G(?:"((?:\\\\.|[^\\\\"])*)"|(\S+))/u', $commandLine, $matches, offset: $offset) > 0){
+			$offset += strlen($matches[0]);
+			for($i = 1; $i <= 2; ++$i){
+				if($matches[$i] !== ""){
+					$match = $matches[$i];
+					return preg_replace('/\\\\([\\\\"])/u', '$1', $match) ?? throw new AssumptionFailedError(preg_last_error_msg());
+				}
+			}
+		}
+
+		return null;
 	}
 }

@@ -25,32 +25,29 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\utils\InvalidCommandSyntaxException;
+use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\StringParameter;
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\permission\DefaultPermissionNames;
-use function count;
 
-class PardonCommand extends VanillaCommand{
+class PardonCommand extends Command{
 
 	public function __construct(string $namespace, string $name){
 		parent::__construct(
 			$namespace,
 			$name,
+			[new CommandOverload(
+				[new StringParameter("playerName", "player name")],
+				DefaultPermissionNames::COMMAND_UNBAN_PLAYER,
+				self::execute(...)
+			)],
 			KnownTranslationFactory::pocketmine_command_unban_player_description(),
-			KnownTranslationFactory::commands_unban_usage()
 		);
-		$this->setPermission(DefaultPermissionNames::COMMAND_UNBAN_PLAYER);
 	}
 
-	public function execute(CommandSender $sender, string $commandLabel, array $args){
-		if(count($args) !== 1){
-			throw new InvalidCommandSyntaxException();
-		}
+	private static function execute(CommandSender $sender, string $playerName) : void{
+		$sender->getServer()->getNameBans()->remove($playerName);
 
-		$sender->getServer()->getNameBans()->remove($args[0]);
-
-		Command::broadcastCommandMessage($sender, KnownTranslationFactory::commands_unban_success($args[0]));
-
-		return true;
+		Command::broadcastCommandMessage($sender, KnownTranslationFactory::commands_unban_success($playerName));
 	}
 }

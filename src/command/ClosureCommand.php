@@ -29,13 +29,14 @@ use pocketmine\utils\Utils;
 /**
  * @phpstan-type Execute \Closure(CommandSender $sender, Command $command, string $commandLabel, list<string> $args) : mixed
  */
-final class ClosureCommand extends Command{
+final class ClosureCommand extends LegacyCommand{
 	/** @phpstan-var Execute */
 	private \Closure $execute;
 
 	/**
 	 * @param string[] $permissions
 	 * @phpstan-param Execute $execute
+	 * @phpstan-param list<string> $permissions
 	 */
 	public function __construct(
 		string $namespace,

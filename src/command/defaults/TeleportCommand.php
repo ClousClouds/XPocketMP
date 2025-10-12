@@ -25,100 +25,138 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\FloatRangeParameter;
+use pocketmine\command\overload\RelativeFloat;
+use pocketmine\command\overload\RelativeFloatParameter;
+use pocketmine\command\overload\StringParameter;
 use pocketmine\command\utils\InvalidCommandSyntaxException;
 use pocketmine\entity\Location;
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\permission\DefaultPermissionNames;
 use pocketmine\player\Player;
-use pocketmine\utils\AssumptionFailedError;
+use pocketmine\utils\Limits;
 use pocketmine\utils\TextFormat;
 use pocketmine\world\World;
-use function array_shift;
-use function count;
 use function round;
 
-class TeleportCommand extends VanillaCommand{
+class TeleportCommand extends Command{
 
 	public function __construct(string $namespace, string $name){
 		parent::__construct(
 			$namespace,
 			$name,
-			KnownTranslationFactory::pocketmine_command_tp_description(),
-			KnownTranslationFactory::commands_tp_usage()
+			[
+				new CommandOverload([
+					new RelativeFloatParameter("xIn", "x"),
+					new RelativeFloatParameter("yIn", "y"),
+					new RelativeFloatParameter("zIn", "z"),
+					new FloatRangeParameter("yaw", "yaw", 0, 360),
+					new FloatRangeParameter("pitch", "pitch", -90, 90)
+				], DefaultPermissionNames::COMMAND_TELEPORT_SELF, self::tpSelfCoords(...)),
+				new CommandOverload([
+					new StringParameter("teleportedPlayerName", "player to teleport"),
+					new RelativeFloatParameter("xIn", "x"),
+					new RelativeFloatParameter("yIn", "y"),
+					new RelativeFloatParameter("zIn", "z"),
+					new FloatRangeParameter("yaw", "yaw", 0, 360),
+					new FloatRangeParameter("pitch", "pitch", -90, 90)
+				], DefaultPermissionNames::COMMAND_TELEPORT_OTHER, self::tpOtherCoords(...)),
+				new CommandOverload([
+					new StringParameter("destinationPlayerName", "destination player")
+				], DefaultPermissionNames::COMMAND_TELEPORT_SELF, self::tpSelfToPlayer(...)),
+				new CommandOverload([
+					new StringParameter("teleportedPlayerName", "player to teleport"),
+					new StringParameter("destinationPlayerName", "destination player")
+				], DefaultPermissionNames::COMMAND_TELEPORT_OTHER, self::tpOtherToPlayer(...))
+			],
+			KnownTranslationFactory::pocketmine_command_tp_description()
 		);
-		$this->setPermissions([
-			DefaultPermissionNames::COMMAND_TELEPORT_SELF,
-			DefaultPermissionNames::COMMAND_TELEPORT_OTHER
-		]);
 	}
 
-	private function findPlayer(CommandSender $sender, string $playerName) : ?Player{
-		$subject = $sender->getServer()->getPlayerByPrefix($playerName);
-		if($subject === null){
-			$sender->sendMessage(TextFormat::RED . "Can't find player " . $playerName);
-			return null;
-		}
-		return $subject;
+	private static function tpCoords(
+		CommandSender $sender,
+		Player $subject,
+		RelativeFloat $xIn,
+		RelativeFloat $yIn,
+		RelativeFloat $zIn,
+		float $yaw,
+		float $pitch
+	) : void{
+		$base = $subject->getLocation();
+
+		$x = $xIn->resolve($base->x, Limits::INT32_MIN, Limits::INT32_MAX);
+		$y = $yIn->resolve($base->y, World::Y_MIN, World::Y_MAX);
+		$z = $zIn->resolve($base->z, Limits::INT32_MIN, Limits::INT32_MAX);
+		$targetLocation = new Location($x, $y, $z, $base->getWorld(), $yaw, $pitch);
+
+		$subject->teleport($targetLocation);
+		Command::broadcastCommandMessage($sender, KnownTranslationFactory::commands_tp_success_coordinates(
+			$subject->getName(),
+			(string) round($targetLocation->x, 2),
+			(string) round($targetLocation->y, 2),
+			(string) round($targetLocation->z, 2)
+		));
 	}
 
-	public function execute(CommandSender $sender, string $commandLabel, array $args){
-		switch(count($args)){
-			case 1: // /tp targetPlayer
-			case 3: // /tp x y z
-			case 5: // /tp x y z yaw pitch - TODO: 5 args could be target x y z yaw :(
-				$subjectName = null; //self
-				break;
-			case 2: // /tp player1 player2
-			case 4: // /tp player1 x y z - TODO: 4 args could be x y z yaw :(
-			case 6: // /tp player1 x y z yaw pitch
-				$subjectName = array_shift($args);
-				break;
-			default:
-				throw new InvalidCommandSyntaxException();
+	private static function tpSelfCoords(
+		CommandSender $sender,
+		RelativeFloat $xIn,
+		RelativeFloat $yIn,
+		RelativeFloat $zIn,
+		float $yaw = 0.0,
+		float $pitch = 0.0
+	) : void{
+		if(!$sender instanceof Player){
+			throw new InvalidCommandSyntaxException("This syntax can only be used as a player");
 		}
 
-		$subject = $this->fetchPermittedPlayerTarget($commandLabel, $sender, $subjectName, DefaultPermissionNames::COMMAND_TELEPORT_SELF, DefaultPermissionNames::COMMAND_TELEPORT_OTHER);
+		self::tpCoords($sender, $sender, $xIn, $yIn, $zIn, $yaw, $pitch);
+	}
+
+	private static function tpOtherCoords(
+		CommandSender $sender,
+		string $teleportedPlayerName,
+		RelativeFloat $xIn,
+		RelativeFloat $yIn,
+		RelativeFloat $zIn,
+		float $yaw = 0.0,
+		float $pitch = 0.0
+	) : void{
+		$subject = self::fetchPermittedPlayerTarget($sender, $teleportedPlayerName, DefaultPermissionNames::COMMAND_TELEPORT_SELF, DefaultPermissionNames::COMMAND_TELEPORT_OTHER);
 		if($subject === null){
-			return true;
+			return;
 		}
 
-		switch(count($args)){
-			case 1:
-				$targetPlayer = $this->findPlayer($sender, $args[0]);
-				if($targetPlayer === null){
-					return true;
-				}
+		self::tpCoords($sender, $subject, $xIn, $yIn, $zIn, $yaw, $pitch);
+	}
 
-				$subject->teleport($targetPlayer->getLocation());
-				Command::broadcastCommandMessage($sender, KnownTranslationFactory::commands_tp_success($subject->getName(), $targetPlayer->getName()));
-
-				return true;
-			case 3:
-			case 5:
-				$base = $subject->getLocation();
-				if(count($args) === 5){
-					$yaw = (float) $args[3];
-					$pitch = (float) $args[4];
-				}else{
-					$yaw = $base->yaw;
-					$pitch = $base->pitch;
-				}
-
-				$x = $this->getRelativeDouble($base->x, $sender, $args[0]);
-				$y = $this->getRelativeDouble($base->y, $sender, $args[1], World::Y_MIN, World::Y_MAX);
-				$z = $this->getRelativeDouble($base->z, $sender, $args[2]);
-				$targetLocation = new Location($x, $y, $z, $base->getWorld(), $yaw, $pitch);
-
-				$subject->teleport($targetLocation);
-				Command::broadcastCommandMessage($sender, KnownTranslationFactory::commands_tp_success_coordinates(
-					$subject->getName(),
-					(string) round($targetLocation->x, 2),
-					(string) round($targetLocation->y, 2),
-					(string) round($targetLocation->z, 2)
-				));
-				return true;
-			default:
-				throw new AssumptionFailedError("This branch should be unreachable (for now)");
+	private static function tpToPlayer(CommandSender $sender, Player $teleportedPlayer, string $destinationPlayerName) : void{
+		$destination = $sender->getServer()->getPlayerByPrefix($destinationPlayerName);
+		if($destination === null){
+			//TODO: this isn't really a syntax error, but we don't have strings for it currently
+			$sender->sendMessage(TextFormat::RED . "Cannot find destination player: $destinationPlayerName");
+			return;
 		}
+
+		$teleportedPlayer->teleport($destination->getLocation());
+		Command::broadcastCommandMessage($sender, KnownTranslationFactory::commands_tp_success($teleportedPlayer->getName(), $destination->getName()));
+	}
+
+	private static function tpSelfToPlayer(CommandSender $sender, string $destinationPlayer) : void{
+		if(!$sender instanceof Player){
+			throw new InvalidCommandSyntaxException("This syntax can only be used as a player");
+		}
+
+		self::tpToPlayer($sender, $sender, $destinationPlayer);
+	}
+
+	private static function tpOtherToPlayer(CommandSender $sender, string $teleportedPlayerName, string $destinationPlayerName) : void{
+		$subject = self::fetchPermittedPlayerTarget($sender, $teleportedPlayerName, DefaultPermissionNames::COMMAND_TELEPORT_SELF, DefaultPermissionNames::COMMAND_TELEPORT_OTHER);
+		if($subject === null){
+			return;
+		}
+
+		self::tpToPlayer($sender, $subject, $destinationPlayerName);
 	}
 }

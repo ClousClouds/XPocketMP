@@ -25,14 +25,21 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\block\BlockTypeIds;
 use pocketmine\color\Color;
+use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\utils\InvalidCommandSyntaxException;
+use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\FloatRangeParameter;
+use pocketmine\command\overload\IntRangeParameter;
+use pocketmine\command\overload\RelativeFloat;
+use pocketmine\command\overload\RelativeFloatParameter;
+use pocketmine\command\overload\StringParameter;
 use pocketmine\item\StringToItemParser;
 use pocketmine\item\VanillaItems;
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\math\Vector3;
 use pocketmine\permission\DefaultPermissionNames;
 use pocketmine\player\Player;
+use pocketmine\utils\Limits;
 use pocketmine\utils\Random;
 use pocketmine\utils\TextFormat;
 use pocketmine\world\particle\AngryVillagerParticle;
@@ -67,59 +74,71 @@ use pocketmine\world\particle\WaterParticle;
 use pocketmine\world\World;
 use function count;
 use function explode;
-use function max;
 use function microtime;
 use function mt_rand;
 use function strtolower;
 
-class ParticleCommand extends VanillaCommand{
+class ParticleCommand extends Command{
 
 	public function __construct(string $namespace, string $name){
 		parent::__construct(
 			$namespace,
 			$name,
-			KnownTranslationFactory::pocketmine_command_particle_description(),
-			KnownTranslationFactory::pocketmine_command_particle_usage()
+			[new CommandOverload(
+				[
+					new StringParameter("particleName", "particle name"),
+					new RelativeFloatParameter("x", "x"),
+					new RelativeFloatParameter("y", "y"),
+					new RelativeFloatParameter("z", "z"),
+					new FloatRangeParameter("xd", "xd", -1000, 1000),
+					new FloatRangeParameter("yd", "yd", -1000, 1000),
+					new FloatRangeParameter("zd", "zd", -1000, 1000),
+					new IntRangeParameter("count", "count", 1, 100000),
+					new StringParameter("data", "data")
+				],
+				DefaultPermissionNames::COMMAND_PARTICLE,
+				self::execute(...)
+			)],
+			KnownTranslationFactory::pocketmine_command_particle_description()
 		);
-		$this->setPermission(DefaultPermissionNames::COMMAND_PARTICLE);
 	}
 
-	public function execute(CommandSender $sender, string $commandLabel, array $args){
-		if(count($args) < 7){
-			throw new InvalidCommandSyntaxException();
-		}
+	private static function execute(
+		CommandSender $sender,
+		string $particleName,
+		RelativeFloat $x,
+		RelativeFloat $y,
+		RelativeFloat $z,
+		float $xd = 0.0,
+		float $yd = 0.0,
+		float $zd = 0.0,
+		int $count = 1,
+		string $data = ""
+	) : void{
 
 		if($sender instanceof Player){
 			$senderPos = $sender->getPosition();
 			$world = $senderPos->getWorld();
-			$pos = new Vector3(
-				$this->getRelativeDouble($senderPos->getX(), $sender, $args[1]),
-				$this->getRelativeDouble($senderPos->getY(), $sender, $args[2], World::Y_MIN, World::Y_MAX),
-				$this->getRelativeDouble($senderPos->getZ(), $sender, $args[3])
-			);
+			[$senderX, $senderY, $senderZ] = [$senderPos->getX(), $senderPos->getY(), $senderPos->getZ()];
 		}else{
 			$world = $sender->getServer()->getWorldManager()->getDefaultWorld();
-			$pos = new Vector3((float) $args[1], (float) $args[2], (float) $args[3]);
+			[$senderX, $senderY, $senderZ] = [0, 0, 0];
 		}
 
-		$name = strtolower($args[0]);
+		$pos = new Vector3(
+			$x->resolve($senderX, Limits::INT32_MIN, Limits::INT32_MAX),
+			$y->resolve($senderY, World::Y_MIN, World::Y_MAX),
+			$z->resolve($senderZ, Limits::INT32_MIN, Limits::INT32_MAX)
+		);
 
-		$xd = (float) $args[4];
-		$yd = (float) $args[5];
-		$zd = (float) $args[6];
-
-		$count = isset($args[7]) ? max(1, (int) $args[7]) : 1;
-
-		$data = $args[8] ?? null;
-
-		$particle = $this->getParticle($name, $data);
+		$particle = self::getParticle(strtolower($particleName), $data);
 
 		if($particle === null){
-			$sender->sendMessage(KnownTranslationFactory::commands_particle_notFound($name)->prefix(TextFormat::RED));
-			return true;
+			$sender->sendMessage(KnownTranslationFactory::commands_particle_notFound($particleName)->prefix(TextFormat::RED));
+			return;
 		}
 
-		$sender->sendMessage(KnownTranslationFactory::commands_particle_success($name, (string) $count));
+		$sender->sendMessage(KnownTranslationFactory::commands_particle_success($particleName, (string) $count));
 
 		$random = new Random((int) (microtime(true) * 1000) + mt_rand());
 
@@ -130,11 +149,9 @@ class ParticleCommand extends VanillaCommand{
 				$random->nextSignedFloat() * $zd
 			), $particle);
 		}
-
-		return true;
 	}
 
-	private function getParticle(string $name, ?string $data = null) : ?Particle{
+	private static function getParticle(string $name, ?string $data = null) : ?Particle{
 		switch($name){
 			case "explode":
 				return new ExplodeParticle();

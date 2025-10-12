@@ -23,80 +23,82 @@ declare(strict_types=1);
 
 namespace pocketmine\command\defaults;
 
+use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\utils\InvalidCommandSyntaxException;
+use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\IntRangeParameter;
+use pocketmine\command\overload\RawParameter;
+use pocketmine\command\overload\StringParameter;
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\permission\DefaultPermissionNames;
-use function array_slice;
-use function count;
-use function implode;
+use pocketmine\player\Player;
+use pocketmine\utils\Limits;
 
-class TitleCommand extends VanillaCommand{
+class TitleCommand extends Command{
+
+	private const string SELF_PERM = DefaultPermissionNames::COMMAND_TITLE_SELF;
+	private const string OTHER_PERM = DefaultPermissionNames::COMMAND_TITLE_OTHER;
+
+	private const OVERLOAD_PERMS = [self::SELF_PERM, self::OTHER_PERM];
 
 	public function __construct(string $namespace, string $name){
+		$playerParameter = new StringParameter("playerName", "player name");
+		$textParameter = new RawParameter("text", "text");
 		parent::__construct(
 			$namespace,
 			$name,
+			[
+				new CommandOverload([$playerParameter, "clear"], self::OVERLOAD_PERMS, self::clearTitles(...)),
+				new CommandOverload([$playerParameter, "reset"], self::OVERLOAD_PERMS, self::resetTitles(...)),
+				new CommandOverload([$playerParameter, "title", $textParameter], self::OVERLOAD_PERMS, self::sendTitle(...)),
+				new CommandOverload([$playerParameter, "subtitle", $textParameter], self::OVERLOAD_PERMS, self::sendSubTitle(...)),
+				new CommandOverload([$playerParameter, "actionbar", $textParameter], self::OVERLOAD_PERMS, self::sendActionBar(...)),
+				new CommandOverload([
+					$playerParameter,
+					"times",
+					new IntRangeParameter("fadeInTicks", "fade-in ticks", 0, Limits::INT32_MAX),
+					new IntRangeParameter("stayTicks", "stay ticks", 0, Limits::INT32_MAX),
+					new IntRangeParameter("fadeOutTicks", "fade-out ticks", 0, Limits::INT32_MAX)
+				], self::OVERLOAD_PERMS, self::setTitleDuration(...))
+			],
 			KnownTranslationFactory::pocketmine_command_title_description(),
-			KnownTranslationFactory::commands_title_usage()
 		);
-		$this->setPermissions([
-			DefaultPermissionNames::COMMAND_TITLE_SELF,
-			DefaultPermissionNames::COMMAND_TITLE_OTHER
-		]);
 	}
 
-	public function execute(CommandSender $sender, string $commandLabel, array $args){
-		if(count($args) < 2){
-			throw new InvalidCommandSyntaxException();
-		}
-
-		$player = $this->fetchPermittedPlayerTarget($commandLabel, $sender, $args[0], DefaultPermissionNames::COMMAND_TITLE_SELF, DefaultPermissionNames::COMMAND_TITLE_OTHER);
+	/**
+	 * @phpstan-param \Closure(Player) : void $action
+	 */
+	private static function doTitleAction(CommandSender $sender, string $playerName, \Closure $action) : void{
+		$player = self::fetchPermittedPlayerTarget($sender, $playerName, self::SELF_PERM, self::OTHER_PERM);
 		if($player === null){
-			return true;
+			return;
 		}
-
-		switch($args[1]){
-			case "clear":
-				$player->removeTitles();
-				break;
-			case "reset":
-				$player->resetTitles();
-				break;
-			case "title":
-				if(count($args) < 3){
-					throw new InvalidCommandSyntaxException();
-				}
-
-				$player->sendTitle(implode(" ", array_slice($args, 2)));
-				break;
-			case "subtitle":
-				if(count($args) < 3){
-					throw new InvalidCommandSyntaxException();
-				}
-
-				$player->sendSubTitle(implode(" ", array_slice($args, 2)));
-				break;
-			case "actionbar":
-				if(count($args) < 3){
-					throw new InvalidCommandSyntaxException();
-				}
-
-				$player->sendActionBarMessage(implode(" ", array_slice($args, 2)));
-				break;
-			case "times":
-				if(count($args) < 5){
-					throw new InvalidCommandSyntaxException();
-				}
-
-				$player->setTitleDuration($this->getInteger($sender, $args[2]), $this->getInteger($sender, $args[3]), $this->getInteger($sender, $args[4]));
-				break;
-			default:
-				throw new InvalidCommandSyntaxException();
-		}
+		$action($player);
 
 		$sender->sendMessage(KnownTranslationFactory::commands_title_success());
+	}
 
-		return true;
+	private static function clearTitles(CommandSender $sender, string $playerName) : void{
+		self::doTitleAction($sender, $playerName, static fn(Player $p) => $p->removeTitles());
+	}
+
+	private static function resetTitles(CommandSender $sender, string $playerName) : void{
+		self::doTitleAction($sender, $playerName, static fn(Player $p) => $p->resetTitles());
+	}
+
+	private static function sendTitle(CommandSender $sender, string $playerName, string $text) : void{
+		self::doTitleAction($sender, $playerName, static fn(Player $p) => $p->sendTitle($text));
+	}
+
+	private static function sendSubTitle(CommandSender $sender, string $playerName, string $text) : void{
+		self::doTitleAction($sender, $playerName, static fn(Player $p) => $p->sendSubTitle($text));
+	}
+
+	private static function sendActionBar(CommandSender $sender, string $playerName, string $text) : void{
+		self::doTitleAction($sender, $playerName, static fn(Player $p) => $p->sendActionBarMessage($text));
+	}
+
+	private static function setTitleDuration(CommandSender $sender, string $playerName, int $fadeInTicks, int $stayTicks, int $fadeOutTicks) : void{
+		self::doTitleAction($sender, $playerName, static fn(Player $p) => $p->setTitleDuration($fadeInTicks, $stayTicks, $fadeOutTicks));
 	}
 }

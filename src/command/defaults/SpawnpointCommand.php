@@ -25,56 +25,71 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\utils\InvalidCommandSyntaxException;
+use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\RelativeFloat;
+use pocketmine\command\overload\RelativeFloatParameter;
+use pocketmine\command\overload\StringParameter;
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\permission\DefaultPermissionNames;
 use pocketmine\player\Player;
+use pocketmine\utils\Limits;
 use pocketmine\world\Position;
 use pocketmine\world\World;
-use function count;
 use function round;
 
-class SpawnpointCommand extends VanillaCommand{
+class SpawnpointCommand extends Command{
+
+	private const string SELF_PERM = DefaultPermissionNames::COMMAND_SPAWNPOINT_SELF;
+	private const string OTHER_PERM = DefaultPermissionNames::COMMAND_SPAWNPOINT_OTHER;
+
+	private const OVERLOAD_PERMS = [self::SELF_PERM, self::OTHER_PERM];
 
 	public function __construct(string $namespace, string $name){
 		parent::__construct(
 			$namespace,
 			$name,
-			KnownTranslationFactory::pocketmine_command_spawnpoint_description(),
-			KnownTranslationFactory::commands_spawnpoint_usage()
+			[
+				new CommandOverload([
+					new StringParameter("target", "target")
+				], self::OVERLOAD_PERMS, self::setSpawnHere(...)),
+				new CommandOverload([
+					new StringParameter("target", "target"),
+					new RelativeFloatParameter("x", "x"),
+					new RelativeFloatParameter("y", "y"),
+					new RelativeFloatParameter("z", "z")
+				], self::OVERLOAD_PERMS, self::setSpawnCoords(...))
+			],
+			KnownTranslationFactory::pocketmine_command_spawnpoint_description()
 		);
-		$this->setPermissions([
-			DefaultPermissionNames::COMMAND_SPAWNPOINT_SELF,
-			DefaultPermissionNames::COMMAND_SPAWNPOINT_OTHER
-		]);
 	}
 
-	public function execute(CommandSender $sender, string $commandLabel, array $args){
-		$target = $this->fetchPermittedPlayerTarget($commandLabel, $sender, $args[0] ?? null, DefaultPermissionNames::COMMAND_SPAWNPOINT_SELF, DefaultPermissionNames::COMMAND_SPAWNPOINT_OTHER);
+	private static function setSpawnHere(CommandSender $sender, ?string $target = null) : void{
+		$target = self::fetchPermittedPlayerTarget($sender, $target, self::SELF_PERM, self::OTHER_PERM);
 		if($target === null){
-			return true;
+			return;
 		}
 
-		if(count($args) === 4){
-			$world = $target->getWorld();
-			$pos = $sender instanceof Player ? $sender->getPosition() : $world->getSpawnLocation();
-			$x = $this->getRelativeDouble($pos->x, $sender, $args[1]);
-			$y = $this->getRelativeDouble($pos->y, $sender, $args[2], World::Y_MIN, World::Y_MAX);
-			$z = $this->getRelativeDouble($pos->z, $sender, $args[3]);
-			$target->setSpawn(new Position($x, $y, $z, $world));
+		$cpos = $target->getPosition();
+		$pos = Position::fromObject($cpos->floor(), $cpos->getWorld());
+		$target->setSpawn($pos);
 
-			Command::broadcastCommandMessage($sender, KnownTranslationFactory::commands_spawnpoint_success($target->getName(), (string) round($x, 2), (string) round($y, 2), (string) round($z, 2)));
+		Command::broadcastCommandMessage($sender, KnownTranslationFactory::commands_spawnpoint_success($target->getName(), (string) round($pos->x, 2), (string) round($pos->y, 2), (string) round($pos->z, 2)));
+	}
 
-			return true;
-		}elseif(count($args) <= 1 && $sender instanceof Player){
-			$cpos = $sender->getPosition();
-			$pos = Position::fromObject($cpos->floor(), $cpos->getWorld());
-			$target->setSpawn($pos);
-
-			Command::broadcastCommandMessage($sender, KnownTranslationFactory::commands_spawnpoint_success($target->getName(), (string) round($pos->x, 2), (string) round($pos->y, 2), (string) round($pos->z, 2)));
-			return true;
+	private static function setSpawnCoords(CommandSender $sender, string $target, RelativeFloat $x, RelativeFloat $y, RelativeFloat $z) : void{
+		$target = self::fetchPermittedPlayerTarget($sender, $target, self::SELF_PERM, self::OTHER_PERM);
+		if($target === null){
+			return;
 		}
 
-		throw new InvalidCommandSyntaxException();
+		$world = $target->getWorld();
+		$pos = $sender instanceof Player ? $sender->getPosition() : $world->getSpawnLocation();
+		$x = $x->resolve($pos->x, Limits::INT32_MIN, Limits::INT32_MAX);
+		$y = $y->resolve($pos->y, World::Y_MIN, World::Y_MAX);
+		$z = $z->resolve($pos->z, Limits::INT32_MIN, Limits::INT32_MAX);
+		$target->setSpawn(new Position($x, $y, $z, $world));
+
+		Command::broadcastCommandMessage($sender, KnownTranslationFactory::commands_spawnpoint_success($target->getName(), (string) round($x, 2), (string) round($y, 2), (string) round($z, 2)));
+
 	}
 }

@@ -28,7 +28,7 @@ use pocketmine\lang\Translatable;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginOwned;
 
-final class PluginCommand extends Command implements PluginOwned{
+final class PluginCommand extends LegacyCommand implements PluginOwned{
 	public function __construct(
 		string $namespace,
 		string $name,

@@ -23,30 +23,30 @@ declare(strict_types=1);
 
 namespace pocketmine\command\defaults;
 
+use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\command\overload\CommandOverload;
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\permission\DefaultPermissionNames;
 use pocketmine\player\Player;
 
-class SeedCommand extends VanillaCommand{
+class SeedCommand extends Command{
 
 	public function __construct(string $namespace, string $name){
 		parent::__construct(
 			$namespace,
 			$name,
+			[new CommandOverload([], DefaultPermissionNames::COMMAND_SEED, self::execute(...))],
 			KnownTranslationFactory::pocketmine_command_seed_description()
 		);
-		$this->setPermission(DefaultPermissionNames::COMMAND_SEED);
 	}
 
-	public function execute(CommandSender $sender, string $commandLabel, array $args){
+	private static function execute(CommandSender $sender) : void{
 		if($sender instanceof Player){
 			$seed = $sender->getPosition()->getWorld()->getSeed();
 		}else{
 			$seed = $sender->getServer()->getWorldManager()->getDefaultWorld()->getSeed();
 		}
 		$sender->sendMessage(KnownTranslationFactory::commands_seed_success((string) $seed));
-
-		return true;
 	}
 }

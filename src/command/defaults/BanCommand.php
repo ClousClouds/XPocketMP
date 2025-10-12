@@ -25,42 +25,38 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\utils\InvalidCommandSyntaxException;
+use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\RawParameter;
+use pocketmine\command\overload\StringParameter;
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\permission\DefaultPermissionNames;
 use pocketmine\player\Player;
-use function array_shift;
-use function count;
-use function implode;
 
-class BanCommand extends VanillaCommand{
+class BanCommand extends Command{
 
 	public function __construct(string $namespace, string $name){
 		parent::__construct(
 			$namespace,
 			$name,
+			[new CommandOverload(
+				[
+					new StringParameter("playerName", "player name"),
+					new RawParameter("reason", "reason")
+				],
+				DefaultPermissionNames::COMMAND_BAN_PLAYER,
+				self::execute(...)
+			)],
 			KnownTranslationFactory::pocketmine_command_ban_player_description(),
-			KnownTranslationFactory::commands_ban_usage()
 		);
-		$this->setPermission(DefaultPermissionNames::COMMAND_BAN_PLAYER);
 	}
 
-	public function execute(CommandSender $sender, string $commandLabel, array $args){
-		if(count($args) === 0){
-			throw new InvalidCommandSyntaxException();
-		}
+	private static function execute(CommandSender $sender, string $playerName, string $reason) : void{
+		$sender->getServer()->getNameBans()->addBan($playerName, $reason, null, $sender->getName());
 
-		$name = array_shift($args);
-		$reason = implode(" ", $args);
-
-		$sender->getServer()->getNameBans()->addBan($name, $reason, null, $sender->getName());
-
-		if(($player = $sender->getServer()->getPlayerExact($name)) instanceof Player){
+		if(($player = $sender->getServer()->getPlayerExact($playerName)) instanceof Player){
 			$player->kick($reason !== "" ? KnownTranslationFactory::pocketmine_disconnect_ban($reason) : KnownTranslationFactory::pocketmine_disconnect_ban_noReason());
 		}
 
-		Command::broadcastCommandMessage($sender, KnownTranslationFactory::commands_ban_success($player !== null ? $player->getName() : $name));
-
-		return true;
+		Command::broadcastCommandMessage($sender, KnownTranslationFactory::commands_ban_success($player !== null ? $player->getName() : $playerName));
 	}
 }

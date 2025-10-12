@@ -23,40 +23,35 @@ declare(strict_types=1);
 
 namespace pocketmine\command\defaults;
 
+use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\utils\InvalidCommandSyntaxException;
+use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\MappedParameter;
+use pocketmine\command\overload\ParameterParseException;
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\permission\DefaultPermissionNames;
 use pocketmine\player\GameMode;
 use pocketmine\ServerProperties;
-use function count;
 
-class DefaultGamemodeCommand extends VanillaCommand{
+class DefaultGamemodeCommand extends Command{
 
 	public function __construct(string $namespace, string $name){
 		parent::__construct(
 			$namespace,
 			$name,
+			[new CommandOverload([
+				new MappedParameter(
+					"gameMode",
+					"game mode",
+					static fn(string $v) : GameMode => GameMode::fromString($v) ?? throw new ParameterParseException("Illegal gamemode value")
+				)
+			], DefaultPermissionNames::COMMAND_DEFAULTGAMEMODE, self::execute(...))],
 			KnownTranslationFactory::pocketmine_command_defaultgamemode_description(),
-			KnownTranslationFactory::commands_defaultgamemode_usage()
 		);
-		$this->setPermission(DefaultPermissionNames::COMMAND_DEFAULTGAMEMODE);
 	}
 
-	public function execute(CommandSender $sender, string $commandLabel, array $args){
-		if(count($args) === 0){
-			throw new InvalidCommandSyntaxException();
-		}
-
-		$gameMode = GameMode::fromString($args[0]);
-		if($gameMode === null){
-			$sender->sendMessage(KnownTranslationFactory::pocketmine_command_gamemode_unknown($args[0]));
-			return true;
-		}
-
-		//TODO: this probably shouldn't use the enum name directly
+	public function execute(CommandSender $sender, GameMode $gameMode) : void{
 		$sender->getServer()->getConfigGroup()->setConfigString(ServerProperties::GAME_MODE, $gameMode->name);
 		$sender->sendMessage(KnownTranslationFactory::commands_defaultgamemode_success($gameMode->getTranslatableName()));
-		return true;
 	}
 }

@@ -66,7 +66,6 @@ use pocketmine\command\defaults\VersionCommand;
 use pocketmine\command\defaults\WhitelistCommand;
 use pocketmine\command\defaults\XpCommand;
 use pocketmine\command\utils\CommandStringHelper;
-use pocketmine\command\utils\InvalidCommandSyntaxException;
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\Server;
 use pocketmine\timings\Timings;
@@ -76,9 +75,11 @@ use function array_filter;
 use function array_map;
 use function array_shift;
 use function count;
+use function explode;
 use function implode;
 use function is_array;
 use function is_string;
+use function ltrim;
 use function str_contains;
 use function strcasecmp;
 use function strtolower;
@@ -146,7 +147,7 @@ class SimpleCommandMap implements CommandMap{
 	}
 
 	public function register(Command $command, array $otherAliases = []) : void{
-		if(count($command->getPermissions()) === 0){
+		if($command instanceof LegacyCommand && count($command->getPermissions()) === 0){
 			throw new \InvalidArgumentException("Commands must have a permission set");
 		}
 
@@ -172,10 +173,10 @@ class SimpleCommandMap implements CommandMap{
 	}
 
 	public function dispatch(CommandSender $sender, string $commandLine) : bool{
-		$args = CommandStringHelper::parseQuoteAware($commandLine);
+		$parts = explode(" ", ltrim($commandLine), limit: 2);
+		[$sentCommandLabel, $rawArgs] = count($parts) === 2 ? $parts : [$parts[0], ""];
 
-		$sentCommandLabel = array_shift($args);
-		if($sentCommandLabel !== null && ($target = $this->getCommand($sentCommandLabel, $sender->getCommandAliasMap())) !== null){
+		if(($target = $this->getCommand($sentCommandLabel, $sender->getCommandAliasMap())) !== null){
 			if(is_array($target)){
 				self::handleConflicted($sender, $sentCommandLabel, $target, $this->aliasMap);
 				return true;
@@ -184,12 +185,7 @@ class SimpleCommandMap implements CommandMap{
 			$timings->startTiming();
 
 			try{
-				if($target->testPermission($sentCommandLabel, $sender)){
-					$target->execute($sender, $sentCommandLabel, $args);
-				}
-			}catch(InvalidCommandSyntaxException $e){
-				//TODO: localised command message should use user-provided alias, it shouldn't be hard-baked into the language strings
-				$sender->sendMessage($sender->getLanguage()->translate(KnownTranslationFactory::commands_generic_usage($target->getUsage() ?? "/$sentCommandLabel")));
+				$target->executeOverloaded($sender, $sentCommandLabel, $rawArgs);
 			}finally{
 				$timings->stopTiming();
 			}
@@ -198,7 +194,7 @@ class SimpleCommandMap implements CommandMap{
 
 		//Don't love hardcoding the command ID here, but it seems like the only way for now
 		$sender->sendMessage(KnownTranslationFactory::pocketmine_command_notFound(
-			$sentCommandLabel ?? "",
+			$sentCommandLabel,
 			"/" . $sender->getCommandAliasMap()->getPreferredAlias("pocketmine:help", $this->aliasMap)
 		)->prefix(TextFormat::RED));
 		return false;
@@ -214,7 +210,7 @@ class SimpleCommandMap implements CommandMap{
 		$candidates = [];
 		$userAliasMap = $sender->getCommandAliasMap();
 		foreach($conflictedEntries as $c){
-			if($c->testPermissionSilent($sender)){
+			if(count($c->getUsages($sender, $alias)) > 0){
 				$candidates[] = "/" . $c->getId();
 			}
 		}

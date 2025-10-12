@@ -23,59 +23,61 @@ declare(strict_types=1);
 
 namespace pocketmine\command\defaults;
 
+use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\utils\InvalidCommandSyntaxException;
+use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\IntRangeParameter;
+use pocketmine\command\overload\MappedParameter;
+use pocketmine\command\overload\ParameterParseException;
+use pocketmine\command\overload\StringParameter;
 use pocketmine\item\enchantment\EnchantingHelper;
+use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\item\enchantment\StringToEnchantmentParser;
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\permission\DefaultPermissionNames;
-use function count;
+use pocketmine\utils\TextFormat;
 
-class EnchantCommand extends VanillaCommand{
+class EnchantCommand extends Command{
+
+	private const string SELF_PERM = DefaultPermissionNames::COMMAND_ENCHANT_SELF;
+	private const string OTHER_PERM = DefaultPermissionNames::COMMAND_ENCHANT_OTHER;
+
+	private const OVERLOAD_PERMS = [self::SELF_PERM, self::OTHER_PERM];
 
 	public function __construct(string $namespace, string $name){
 		parent::__construct(
 			$namespace,
 			$name,
-			KnownTranslationFactory::pocketmine_command_enchant_description(),
-			KnownTranslationFactory::commands_enchant_usage()
+			[new CommandOverload([
+				new StringParameter("target", "target"),
+				new MappedParameter("enchantment", "enchantment", static fn(string $v) : Enchantment => StringToEnchantmentParser::getInstance()->parse($v) ??
+					throw new ParameterParseException("Invalid enchantment name")
+				),
+				//sad, this one depends on previous parameters :(
+				new IntRangeParameter("level", "level", 1, 10)
+			], self::OVERLOAD_PERMS, self::enchant(...))],
+			KnownTranslationFactory::pocketmine_command_enchant_description()
 		);
-		$this->setPermissions([
-			DefaultPermissionNames::COMMAND_ENCHANT_SELF,
-			DefaultPermissionNames::COMMAND_ENCHANT_OTHER
-		]);
 	}
 
-	public function execute(CommandSender $sender, string $commandLabel, array $args){
-		if(count($args) < 2){
-			throw new InvalidCommandSyntaxException();
-		}
-
-		$player = $this->fetchPermittedPlayerTarget($commandLabel, $sender, $args[0], DefaultPermissionNames::COMMAND_ENCHANT_SELF, DefaultPermissionNames::COMMAND_ENCHANT_OTHER);
+	private function enchant(CommandSender $sender, string $target, Enchantment $enchantment, int $level = 1) : void{
+		$player = self::fetchPermittedPlayerTarget($sender, $target, self::SELF_PERM, self::OTHER_PERM);
 		if($player === null){
-			return true;
+			return;
 		}
 
 		$item = $player->getMainHandItem();
 
 		if($item->isNull()){
 			$sender->sendMessage(KnownTranslationFactory::commands_enchant_noItem());
-			return true;
+			return;
 		}
 
-		$enchantment = StringToEnchantmentParser::getInstance()->parse($args[1]);
-		if($enchantment === null){
-			$sender->sendMessage(KnownTranslationFactory::commands_enchant_notFound($args[1]));
-			return true;
-		}
-
-		$level = 1;
-		if(isset($args[2])){
-			$level = $this->getBoundedInt($sender, $args[2], 1, $enchantment->getMaxLevel());
-			if($level === null){
-				return false;
-			}
+		$max = $enchantment->getMaxLevel();
+		if($level > $max){
+			$sender->sendMessage(KnownTranslationFactory::commands_generic_num_tooBig("$level", "$max")->prefix(TextFormat::RED));
+			return;
 		}
 
 		//this is necessary to deal with enchanted books, which are a different item type than regular books
@@ -83,6 +85,5 @@ class EnchantCommand extends VanillaCommand{
 		$player->setMainHandItem($enchantedItem);
 
 		self::broadcastCommandMessage($sender, KnownTranslationFactory::commands_enchant_success($player->getName()));
-		return true;
 	}
 }

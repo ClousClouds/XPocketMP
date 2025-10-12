@@ -25,25 +25,24 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\command\overload\CommandOverload;
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\permission\DefaultPermissionNames;
 
-class SaveOffCommand extends VanillaCommand{
+class SaveOffCommand extends Command{
 
 	public function __construct(string $namespace, string $name){
 		parent::__construct(
 			$namespace,
 			$name,
+			[new CommandOverload([], DefaultPermissionNames::COMMAND_SAVE_DISABLE, self::execute(...))],
 			KnownTranslationFactory::pocketmine_command_saveoff_description()
 		);
-		$this->setPermission(DefaultPermissionNames::COMMAND_SAVE_DISABLE);
 	}
 
-	public function execute(CommandSender $sender, string $commandLabel, array $args){
+	private static function execute(CommandSender $sender) : void{
 		$sender->getServer()->getWorldManager()->setAutoSave(false);
 
 		Command::broadcastCommandMessage($sender, KnownTranslationFactory::commands_save_disabled());
-
-		return true;
 	}
 }

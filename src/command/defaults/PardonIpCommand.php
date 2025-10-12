@@ -25,37 +25,34 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\utils\InvalidCommandSyntaxException;
+use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\StringParameter;
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\permission\DefaultPermissionNames;
-use function count;
 use function inet_pton;
 
-class PardonIpCommand extends VanillaCommand{
+class PardonIpCommand extends Command{
 
 	public function __construct(string $namespace, string $name){
 		parent::__construct(
 			$namespace,
 			$name,
-			KnownTranslationFactory::pocketmine_command_unban_ip_description(),
-			KnownTranslationFactory::commands_unbanip_usage()
+			[new CommandOverload(
+				[new StringParameter("ip", "IP address")],
+				DefaultPermissionNames::COMMAND_UNBAN_IP,
+				self::execute(...)
+			)],
+			KnownTranslationFactory::pocketmine_command_unban_ip_description()
 		);
-		$this->setPermission(DefaultPermissionNames::COMMAND_UNBAN_IP);
 	}
 
-	public function execute(CommandSender $sender, string $commandLabel, array $args){
-		if(count($args) !== 1){
-			throw new InvalidCommandSyntaxException();
-		}
-
-		if(inet_pton($args[0]) !== false){
-			$sender->getServer()->getIPBans()->remove($args[0]);
-			$sender->getServer()->getNetwork()->unblockAddress($args[0]);
-			Command::broadcastCommandMessage($sender, KnownTranslationFactory::commands_unbanip_success($args[0]));
+	private static function execute(CommandSender $sender, string $ip) : void{
+		if(inet_pton($ip) !== false){
+			$sender->getServer()->getIPBans()->remove($ip);
+			$sender->getServer()->getNetwork()->unblockAddress($ip);
+			Command::broadcastCommandMessage($sender, KnownTranslationFactory::commands_unbanip_success($ip));
 		}else{
 			$sender->sendMessage(KnownTranslationFactory::commands_unbanip_invalid());
 		}
-
-		return true;
 	}
 }

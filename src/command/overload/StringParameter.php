@@ -21,28 +21,30 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\command\defaults;
+namespace pocketmine\command\overload;
 
-use pocketmine\command\Command;
-use pocketmine\command\CommandSender;
-use pocketmine\command\overload\CommandOverload;
-use pocketmine\lang\KnownTranslationFactory;
-use pocketmine\permission\DefaultPermissionNames;
+use DaveRandom\CallbackValidator\Type\BuiltInType;
+use DaveRandom\CallbackValidator\Type\NamedType;
+use pocketmine\command\utils\CommandStringHelper;
+use pocketmine\lang\Translatable;
 
-class SaveOnCommand extends Command{
+/**
+ * @phpstan-extends Parameter<string>
+ */
+final class StringParameter extends Parameter{
 
-	public function __construct(string $namespace, string $name){
+	public function __construct(
+		string $codeName,
+		Translatable|string $printableName,
+	){
 		parent::__construct(
-			$namespace,
-			$name,
-			[new CommandOverload([], DefaultPermissionNames::COMMAND_SAVE_ENABLE, self::execute(...))],
-			KnownTranslationFactory::pocketmine_command_saveon_description()
+			$codeName,
+			$printableName,
+			new NamedType(BuiltInType::STRING)
 		);
 	}
 
-	private static function execute(CommandSender $sender) : void{
-		$sender->getServer()->getWorldManager()->setAutoSave(true);
-
-		Command::broadcastCommandMessage($sender, KnownTranslationFactory::commands_save_enabled());
+	public function parse(string $buffer, int &$offset) : string{
+		return CommandStringHelper::parseQuoteAwareSingle($buffer, $offset) ?? throw new ParameterParseException();
 	}
 }

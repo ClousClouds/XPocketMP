@@ -23,34 +23,34 @@ declare(strict_types=1);
 
 namespace pocketmine\command\defaults;
 
+use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\utils\InvalidCommandSyntaxException;
+use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\RawParameter;
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\permission\DefaultPermissionNames;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
-use function count;
-use function implode;
 
-class MeCommand extends VanillaCommand{
+class MeCommand extends Command{
 
 	public function __construct(string $namespace, string $name){
 		parent::__construct(
 			$namespace,
 			$name,
+			[new CommandOverload(
+				[new RawParameter("message", "message")],
+				DefaultPermissionNames::COMMAND_ME,
+				self::execute(...)
+			)],
 			KnownTranslationFactory::pocketmine_command_me_description(),
-			KnownTranslationFactory::commands_me_usage()
 		);
-		$this->setPermission(DefaultPermissionNames::COMMAND_ME);
 	}
 
-	public function execute(CommandSender $sender, string $commandLabel, array $args){
-		if(count($args) === 0){
-			throw new InvalidCommandSyntaxException();
-		}
-
-		$sender->getServer()->broadcastMessage(KnownTranslationFactory::chat_type_emote($sender instanceof Player ? $sender->getDisplayName() : $sender->getName(), TextFormat::RESET . implode(" ", $args)));
-
-		return true;
+	private static function execute(CommandSender $sender, string $message) : void{
+		$sender->getServer()->broadcastMessage(KnownTranslationFactory::chat_type_emote(
+			$sender instanceof Player ? $sender->getDisplayName() : $sender->getName(),
+			TextFormat::RESET . $message
+		));
 	}
 }
