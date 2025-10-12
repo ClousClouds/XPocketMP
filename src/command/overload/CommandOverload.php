@@ -32,7 +32,6 @@ use pocketmine\command\CommandSender;
 use pocketmine\command\utils\InvalidCommandSyntaxException;
 use pocketmine\lang\Translatable;
 use pocketmine\permission\PermissionManager;
-use pocketmine\utils\AssumptionFailedError;
 use function array_key_last;
 use function count;
 use function get_class;
@@ -40,7 +39,7 @@ use function implode;
 use function is_string;
 use function preg_match;
 use function strlen;
-use function strpos;
+use function substr_compare;
 
 final class CommandOverload{
 
@@ -195,7 +194,7 @@ final class CommandOverload{
 		if($offset < strlen($commandLine)){
 			foreach($this->parameters as $parameter){
 				if(is_string($parameter)){
-					if(strpos($commandLine, $parameter, $offset) === $offset){
+					if(substr_compare($commandLine, $parameter, $offset, strlen($parameter)) === 0){
 						$offset += strlen($parameter);
 						$literals++;
 					}else{
