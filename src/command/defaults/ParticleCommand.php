@@ -59,6 +59,7 @@ use pocketmine\world\particle\PortalParticle;
 use pocketmine\world\particle\RainSplashParticle;
 use pocketmine\world\particle\RedstoneParticle;
 use pocketmine\world\particle\SmokeParticle;
+use pocketmine\world\particle\SonicExplosionParticle;
 use pocketmine\world\particle\SplashParticle;
 use pocketmine\world\particle\SporeParticle;
 use pocketmine\world\particle\TerrainParticle;
@@ -235,6 +236,8 @@ class ParticleCommand extends VanillaCommand{
 					}
 				}
 				break;
+			case "sonicexplosion":
+				return new SonicExplosionParticle();
 		}
 
 		return null;
