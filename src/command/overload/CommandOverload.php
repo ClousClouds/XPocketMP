@@ -215,10 +215,9 @@ final class CommandOverload{
 					if($offset === strlen($commandLine)){
 						//no more tokens, rest of the parameters must be optional
 						break;
+					}elseif(is_string($parameter)){
+						throw new ParameterParseException("Incorrect literal provided (should have been \"$parameter\" followed by whitespace)");
 					}else{
-						if(is_string($parameter)){
-							throw new AssumptionFailedError();
-						}
 						throw new ParameterParseException("Parameter " . get_class($parameter) . " for \$" . $parameter->getCodeName() . " didn't stop on a whitespace character");
 					}
 				}
