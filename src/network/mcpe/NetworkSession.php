@@ -26,6 +26,10 @@ namespace pocketmine\network\mcpe;
 use pmmp\encoding\ByteBufferReader;
 use pmmp\encoding\ByteBufferWriter;
 use pmmp\encoding\DataDecodeException;
+use pocketmine\command\overload\FloatRangeParameter;
+use pocketmine\command\overload\IntRangeParameter;
+use pocketmine\command\overload\RawParameter;
+use pocketmine\command\overload\RelativeFloatParameter;
 use pocketmine\entity\effect\EffectInstance;
 use pocketmine\event\player\PlayerDuplicateLoginEvent;
 use pocketmine\event\player\PlayerResourcePackOfferEvent;
@@ -90,6 +94,7 @@ use pocketmine\network\mcpe\protocol\types\command\CommandData;
 use pocketmine\network\mcpe\protocol\types\command\CommandEnum;
 use pocketmine\network\mcpe\protocol\types\command\CommandOverload;
 use pocketmine\network\mcpe\protocol\types\command\CommandParameter;
+use pocketmine\network\mcpe\protocol\types\command\CommandParameterTypes;
 use pocketmine\network\mcpe\protocol\types\command\CommandPermissions;
 use pocketmine\network\mcpe\protocol\types\CompressionAlgorithm;
 use pocketmine\network\mcpe\protocol\types\DimensionIds;
@@ -1098,6 +1103,9 @@ class NetworkSession{
 		$commandData = [];
 		$globalAliasMap = $this->server->getCommandMap()->getAliasMap();
 		$userAliasMap = $this->player->getCommandAliasMap();
+		$language = $this->player->getLanguage();
+
+		$literals = [];
 		foreach($this->server->getCommandMap()->getUniqueCommands() as $command){
 			if(count($command->getUsages($this->player, "")) === 0){
 				//no permitted overloads
@@ -1114,18 +1122,55 @@ class NetworkSession{
 			//use filtered aliases for command name discovery - this allows /help to still be shown as /pocketmine:help
 			//on the client without conflicting with the client's built-in /help command
 			$lname = strtolower($firstNetworkAlias);
-			$aliasObj = new CommandEnum(ucfirst($firstNetworkAlias) . "Aliases", $aliases);
+			$aliasObj = $command->getId() === "pocketmine:xp" ? new CommandEnum(ucfirst($firstNetworkAlias) . "Aliases", $aliases) : null;
+
+			$overloads = [];
+			foreach($command->getOverloads() as $overload){
+				//TODO: we should only send permissible overloads here
+				$parameters = [];
+				$required = $overload->getRequiredParameterCount();
+				foreach($overload->getParameters() as $k => $parameter){
+					if(is_string($parameter)){
+						$literalEnum = $literals[$parameter] ??= new CommandEnum("Literal_$parameter", [$parameter], isSoft: false);
+						$parameters[] = CommandParameter::enum(
+							$parameter,
+							$literalEnum,
+							flags: CommandParameter::FLAG_FORCE_COLLAPSE_ENUM,
+							optional: $k >= $required
+						);
+					}else{
+						$simpleArgType = match(true){
+							$parameter instanceof FloatRangeParameter => CommandParameterTypes::VAL,
+							$parameter instanceof IntRangeParameter => CommandParameterTypes::INT,
+							$parameter instanceof RawParameter => CommandParameterTypes::RAWTEXT,
+							$parameter instanceof RelativeFloatParameter => CommandParameterTypes::RVAL,
+							default => CommandParameterTypes::ID //string
+						};
+						$suffix = $parameter->getSuffix();
+						$name = $parameter->getPrintableName();
+						$translated = $name instanceof Translatable ? $language->translate($name) : $name;
+						if($suffix !== ""){
+							//umm... client only allows suffixes on integer params???
+							//TODO: as of 1.21.111, the client crashes if we try to provide actual suffixes for /xp and
+							//I can't be bothered to debug it. Fill this with string for now.
+							//$parameters[] = CommandParameter::postfixed($translated, strtolower($suffix), flags: 0, optional: $k >= $required);
+							$parameters[] = CommandParameter::standard($translated, CommandParameterTypes::ID, optional: $k >= $required);
+						}else{
+							$parameters[] = CommandParameter::standard($translated, $simpleArgType, optional: $k >= $required);
+						}
+					}
+				}
+				$overloads[] = new CommandOverload(chaining: false, parameters: $parameters);
+			}
 
 			$description = $command->getDescription();
 			$data = new CommandData(
 				$lname, //TODO: commands containing uppercase letters in the name crash 1.9.0 client
-				$description instanceof Translatable ? $this->player->getLanguage()->translate($description) : $description,
+				$description instanceof Translatable ? $language->translate($description) : $description,
 				0,
 				0,
 				$aliasObj,
-				[
-					new CommandOverload(chaining: false, parameters: [CommandParameter::standard("args", AvailableCommandsPacket::ARG_TYPE_RAWTEXT, 0, true)])
-				],
+				$overloads,
 				chainedSubCommandData: []
 			);
 

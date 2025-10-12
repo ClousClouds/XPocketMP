@@ -109,6 +109,12 @@ abstract class Command{
 	}
 
 	/**
+	 * @return CommandOverload[]
+	 * @phpstan-return list<CommandOverload>
+	 */
+	public function getOverloads() : array{ return $this->overloads; }
+
+	/**
 	 * @return Translatable[]
 	 * @phpstan-return list<Translatable>
 	 */

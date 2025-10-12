@@ -130,6 +130,16 @@ final class CommandOverload{
 	}
 
 	/**
+	 * @return Parameter[]
+	 * @phpstan-return list<Parameter>
+	 */
+	public function getParameters() : array{ return $this->parameters; }
+
+	public function getRequiredParameterCount() : int{
+		return $this->requiredInputCount;
+	}
+
+	/**
 	 * @return string[]
 	 * @phpstan-return list<string>
 	 */
