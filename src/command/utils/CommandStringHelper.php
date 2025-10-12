@@ -63,17 +63,6 @@ final class CommandStringHelper{
 		return $args;
 	}
 
-	/**
-	 * Splits by the same logic as {@link self::parseQuoteAware()}, but doesn't strip quotes from the parts or remove
-	 * escapes. Useful if you need to join the parts back into a new command string.
-	 *
-	 * @return string[]
-	 */
-	public static function splitQuoteAware(string $commandLine) : array{
-		preg_match_all('/"((?:\\\\.|[^\\\\"])*)"|(\S+)/u', $commandLine, $matches);
-		return $matches[0];
-	}
-
 	public static function parseQuoteAwareSingle(string $commandLine, int &$offset = 0) : ?string{
 		//quoted or bare string, like the old CommandStringHelper
 		if(preg_match('/\G(?:"((?:\\\\.|[^\\\\"])*)"|(\S+))/u', $commandLine, $matches, offset: $offset) > 0){

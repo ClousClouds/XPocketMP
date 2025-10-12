@@ -130,8 +130,8 @@ final class CommandOverload{
 	}
 
 	/**
-	 * @return Parameter[]
-	 * @phpstan-return list<Parameter>
+	 * @return Parameter[]|string[]
+	 * @phpstan-return list<Parameter<*>|string>
 	 */
 	public function getParameters() : array{ return $this->parameters; }
 
