@@ -33,9 +33,7 @@ use pocketmine\command\utils\InvalidCommandSyntaxException;
 use pocketmine\lang\Translatable;
 use pocketmine\permission\PermissionManager;
 use pocketmine\utils\AssumptionFailedError;
-use pocketmine\utils\Utils;
-use function array_filter;
-use function array_map;
+use function array_key_last;
 use function count;
 use function get_class;
 use function implode;
@@ -43,8 +41,6 @@ use function is_string;
 use function preg_match;
 use function strlen;
 use function strpos;
-use function substr;
-use function var_dump;
 
 final class CommandOverload{
 
@@ -69,6 +65,11 @@ final class CommandOverload{
 		private \Closure $handler,
 		private bool $acceptsAliasUsed = false
 	){
+		foreach($this->parameters as $k => $parameter){
+			if(!is_string($parameter) && $parameter->consumesAllRemainingInputs() && $k !== array_key_last($this->parameters)){
+				throw new \InvalidArgumentException($parameter::class . " can only be used as the final argument, because it consumes all remaining inputs");
+			}
+		}
 		$permissions = is_string($permission) ? [$permission] : $permission;
 		if(count($permissions) === 0){
 			throw new \InvalidArgumentException("At least one permission must be provided");
@@ -83,24 +84,39 @@ final class CommandOverload{
 
 		//TODO: auto infer parameter infos if they aren't provided?
 		//TODO: allow the type of CommandSender to be constrained - this can be useful for player-only commands etc
-		$alwaysPresentArgs = self::alwaysPresentArgs($this->acceptsAliasUsed);
+		$nonInputParameters = self::alwaysPresentArgs($this->acceptsAliasUsed);
 
-		$passableParameters = array_filter($this->parameters, is_object(...));
+		$literalCount = 0;
+		$inputParameters = [];
+		foreach($this->parameters as $parameter){
+			if(is_string($parameter)){
+				$literalCount++;
+			}else{
+				$inputParameters[] = new ParameterInfo(
+					$parameter->getCodeName(),
+					$parameter->getCodeType(),
+					byReference: false,
+					isOptional: false,
+					isVariadic: false,
+				);
+			}
+		}
+
 		$expectedPrototype = new Prototype(
 			new ReturnInfo(new NamedType(BuiltInType::VOID), byReference: false),
-			...$alwaysPresentArgs,
-			...array_map(fn(Parameter $p) => new ParameterInfo(
-				$p->getCodeName(),
-				$p->getCodeType(),
-				byReference: false,
-				isOptional: false,
-				isVariadic: false,
-			), $passableParameters)
+			...$nonInputParameters,
+			...$inputParameters
 		);
 		$actualPrototype = Prototype::fromClosure($this->handler);
-		Utils::validateCallableSignature($expectedPrototype, $actualPrototype);
+		if(!$expectedPrototype->isSatisfiedBy($actualPrototype)){
+			//validateCallableSignature() not used because we want a custom error message
+			throw new \InvalidArgumentException("Expected handler signature $expectedPrototype from provided parameter info, but handler has signature $actualPrototype");
+		}
 
-		$this->requiredInputCount = $actualPrototype->getRequiredParameterCount() - count($alwaysPresentArgs);
+		//optionals are inferred from the prototype of the callable, not the parameter infos themselves
+		//contravariance allows them to be optional even if they're required in the prototype
+		//literals must always be provided
+		$this->requiredInputCount = $actualPrototype->getRequiredParameterCount() + $literalCount - count($nonInputParameters);
 	}
 
 	/**
@@ -171,14 +187,17 @@ final class CommandOverload{
 	public function invoke(CommandSender $sender, string $aliasUsed, string $commandLine) : void{
 		$offset = 0;
 		$args = [];
-		//skip preceding whitespace
+		$literals = 0;
 
+		//skip preceding whitespace
 		self::skipWhitespace($commandLine, $offset);
+
 		if($offset < strlen($commandLine)){
 			foreach($this->parameters as $parameter){
 				if(is_string($parameter)){
 					if(strpos($commandLine, $parameter, $offset) === $offset){
 						$offset += strlen($parameter);
+						$literals++;
 					}else{
 						throw new ParameterParseException("Literal \"$parameter\" expected");
 					}
@@ -200,7 +219,6 @@ final class CommandOverload{
 						if(is_string($parameter)){
 							throw new AssumptionFailedError();
 						}
-						var_dump(substr($commandLine, $offset));
 						throw new ParameterParseException("Parameter " . get_class($parameter) . " for \$" . $parameter->getCodeName() . " didn't stop on a whitespace character");
 					}
 				}
@@ -209,7 +227,7 @@ final class CommandOverload{
 		if($offset !== strlen($commandLine)){
 			throw new InvalidCommandSyntaxException("Too many arguments provided for overload");
 		}
-		if(count($args) < $this->requiredInputCount){
+		if(count($args) + $literals < $this->requiredInputCount){
 			throw new InvalidCommandSyntaxException("Not enough arguments provided for overload");
 		}
 		//Reflection magic here :)
