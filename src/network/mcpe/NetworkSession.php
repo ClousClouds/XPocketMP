@@ -1151,9 +1151,11 @@ class NetworkSession{
 						$translated = $name instanceof Translatable ? $language->translate($name) : $name;
 						if($suffix !== ""){
 							//umm... client only allows suffixes on integer params???
-							//TODO: as of 1.21.111, the client crashes if we try to provide actual suffixes for /xp and
-							//I can't be bothered to debug it. Fill this with string for now.
-							//$parameters[] = CommandParameter::postfixed($translated, strtolower($suffix), flags: 0, optional: $k >= $required);
+							//TODO: as of 1.21.111, the client crashes if we try to provide actual suffixes for /xp.
+							//The cause for this seems to be undefined behaviour on the client linked to the order and
+							//number of certain hardcoded enums like GameMode, IntParam etc which we don't provided. I
+							//wasn't able to make a reliable workaround, so this gets disabled for now. SAD!
+							//$parameters[] = CommandParameter::postfixed($translated, strtolower($suffix), optional: $k >= $required);
 							$parameters[] = CommandParameter::standard($translated, CommandParameterTypes::ID, optional: $k >= $required);
 						}else{
 							$parameters[] = CommandParameter::standard($translated, $simpleArgType, optional: $k >= $required);
