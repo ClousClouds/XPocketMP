@@ -1122,7 +1122,7 @@ class NetworkSession{
 			//use filtered aliases for command name discovery - this allows /help to still be shown as /pocketmine:help
 			//on the client without conflicting with the client's built-in /help command
 			$lname = strtolower($firstNetworkAlias);
-			$aliasObj = $command->getId() === "pocketmine:xp" ? new CommandEnum(ucfirst($firstNetworkAlias) . "Aliases", $aliases) : null;
+			$aliasObj = count($aliases) > 1 ? new CommandEnum(ucfirst($firstNetworkAlias) . "Aliases", $aliases) : null;
 
 			$overloads = [];
 			foreach($command->getOverloads() as $overload){
