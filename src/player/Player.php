@@ -1864,7 +1864,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 		$target = $this->getWorld()->getBlock($pos);
 
 		$ev = new PlayerInteractEvent($this, $this->inventory->getItemInHand(), $target, null, $face, PlayerInteractEvent::LEFT_CLICK_BLOCK);
-		if(!$this->hasPermission(DefaultPermissionNames::GAME_USE_BLOCK)){
+		if(!$this->hasPermission(DefaultPermissionNames::GAME_BLOCK_MINE)){
 			$ev->cancel();
 		}
 		$ev->call();
