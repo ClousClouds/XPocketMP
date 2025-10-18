@@ -25,10 +25,25 @@ namespace pocketmine\build\remove_dead_translations;
 
 use pocketmine\utils\Utils;
 use function array_filter;
+use function array_values;
+use function count;
 use function file_get_contents;
+use function file_put_contents;
 use function fwrite;
+use function is_array;
 use function is_int;
+use function is_string;
+use function json_decode;
+use function json_encode;
+use function parse_ini_file;
+use function preg_last_error_msg;
+use function preg_quote;
+use function preg_replace;
 use function scandir;
+use function str_ends_with;
+use const INI_SCANNER_RAW;
+use const JSON_PRETTY_PRINT;
+use const JSON_THROW_ON_ERROR;
 use const STDERR;
 
 require __DIR__ . "/../vendor/autoload.php";
@@ -44,6 +59,12 @@ function parse_language_file(string $path, string $file) : ?array{
 	}
 	return $lang;
 }
+
+if(count($argv) !== 2){
+	fwrite(STDERR, "Usage: php remove-dead-translations.php <translations folder>\n");
+	exit(1);
+}
+
 $base = parse_language_file($argv[1], "eng.ini");
 
 $fileList = scandir($argv[1]);
@@ -106,4 +127,3 @@ if(count($knownBadKeys) === count($oldKnownBadKeys)){
 }
 file_put_contents($argv[1] . "/known-bad-keys.json", json_encode(array_values($knownBadKeys), JSON_PRETTY_PRINT) . "\n");
 echo "Updated known-bad-keys.json, removed " . (count($oldKnownBadKeys) - count($knownBadKeys)) . " dead translations\n";
-
