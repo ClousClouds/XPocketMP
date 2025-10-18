@@ -139,6 +139,11 @@ function verify_keys(array $pocketmine, array $mojang, array $knownBadKeys) : ar
 			$wrong[] = $k;
 		}
 	}
+	foreach($knownBadKeys as $k => $_){
+		if(!isset($pocketmine[$k])){
+			fwrite(STDERR, "known-bad-keys.json contains key \"$k\" which does not exist in eng.ini\n");
+		}
+	}
 	return $wrong;
 }
 
