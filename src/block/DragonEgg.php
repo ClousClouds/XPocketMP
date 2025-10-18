@@ -50,7 +50,7 @@ class DragonEgg extends Transparent implements Fallable{
 	}
 
 	public function onAttack(Item $item, int $face, ?Player $player = null) : bool{
-		if($player !== null && !$player->hasPermission(DefaultPermissionNames::GAME_BLOCK_DELETE)){
+		if($player !== null && !$player->hasPermission(DefaultPermissionNames::GAME_BLOCK_INSTABREAK)){
 			$this->teleport();
 			return true;
 		}

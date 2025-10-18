@@ -2161,9 +2161,9 @@ class World implements ChunkManager{
 		}
 
 		if($player !== null){
-			$ev = new BlockBreakEvent($player, $target, $item, $player->hasPermission(DefaultPermissionNames::GAME_BLOCK_DELETE), $drops, $xpDrop);
+			$ev = new BlockBreakEvent($player, $target, $item, $player->hasPermission(DefaultPermissionNames::GAME_BLOCK_INSTABREAK), $drops, $xpDrop);
 
-			if($target instanceof Air || (!$player->hasPermission(DefaultPermissionNames::GAME_BLOCK_DELETE) && !$target->getBreakInfo()->isBreakable()) || !$player->hasPermission(DefaultPermissionNames::GAME_BLOCK_MINE)){
+			if($target instanceof Air || (!$player->hasPermission(DefaultPermissionNames::GAME_BLOCK_INSTABREAK) && !$target->getBreakInfo()->isBreakable()) || !$player->hasPermission(DefaultPermissionNames::GAME_BLOCK_MINE)){
 				$ev->cancel();
 			}
 
@@ -2274,7 +2274,7 @@ class World implements ChunkManager{
 				$ev->setUseItem(false);
 				$ev->setUseBlock($item->isNull()); //opening doors is still possible when sneaking if using an empty hand
 			}
-			if(!$player->hasPermission(DefaultPermissionNames::GAME_BLOCK_INTERACT)){
+			if(!$player->hasPermission(DefaultPermissionNames::GAME_USE_BLOCK)){
 				$ev->cancel(); //set it to cancelled so plugins can bypass this
 			}
 

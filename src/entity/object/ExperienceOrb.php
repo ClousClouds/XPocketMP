@@ -193,7 +193,7 @@ class ExperienceOrb extends Entity{
 			if($currentTarget === null){
 				$newTarget = $this->getWorld()->getNearestEntity($this->location, self::MAX_TARGET_DISTANCE, Human::class);
 
-				if($newTarget instanceof Human && !($newTarget instanceof Player && !$newTarget->hasPermission(DefaultPermissionNames::GAME_ITEM_PICKUP)) && $newTarget->getXpManager()->canAttractXpOrbs()){
+				if($newTarget instanceof Human && !($newTarget instanceof Player && !$newTarget->hasPermission(DefaultPermissionNames::GAME_INVENTORY_PICKUP)) && $newTarget->getXpManager()->canAttractXpOrbs()){
 					$currentTarget = $newTarget;
 				}
 			}

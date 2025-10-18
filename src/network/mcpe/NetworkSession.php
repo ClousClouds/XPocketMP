@@ -1085,10 +1085,10 @@ class NetworkSession{
 			AbilitiesLayer::ABILITY_LIGHTNING => false,
 			AbilitiesLayer::ABILITY_BUILD => $for->hasPermission(DefaultPermissionNames::GAME_BLOCK_PLACE),
 			AbilitiesLayer::ABILITY_MINE => $for->hasPermission(DefaultPermissionNames::GAME_BLOCK_MINE),
-			AbilitiesLayer::ABILITY_DOORS_AND_SWITCHES => $for->hasPermission(DefaultPermissionNames::GAME_BLOCK_INTERACT),
-			AbilitiesLayer::ABILITY_OPEN_CONTAINERS => $for->hasPermission(DefaultPermissionNames::GAME_BLOCK_INTERACT) || $for->hasPermission(DefaultPermissionNames::GAME_ENTITY_INTERACT), //not perfect, but this is a pain to implement right now
-			AbilitiesLayer::ABILITY_ATTACK_PLAYERS => $for->hasPermission(DefaultPermissionNames::GAME_PLAYER_ATTACK),
-			AbilitiesLayer::ABILITY_ATTACK_MOBS => $for->hasPermission(DefaultPermissionNames::GAME_ENTITY_ATTACK),
+			AbilitiesLayer::ABILITY_DOORS_AND_SWITCHES => $for->hasPermission(DefaultPermissionNames::GAME_USE_BLOCK),
+			AbilitiesLayer::ABILITY_OPEN_CONTAINERS => $for->hasPermission(DefaultPermissionNames::GAME_USE_BLOCK) || $for->hasPermission(DefaultPermissionNames::GAME_USE_ENTITY), //not perfect, but this is a pain to implement right now
+			AbilitiesLayer::ABILITY_ATTACK_PLAYERS => $for->hasPermission(DefaultPermissionNames::GAME_ATTACK_PLAYER),
+			AbilitiesLayer::ABILITY_ATTACK_MOBS => $for->hasPermission(DefaultPermissionNames::GAME_ATTACK_ENTITY),
 			AbilitiesLayer::ABILITY_PRIVILEGED_BUILDER => false,
 		];
 

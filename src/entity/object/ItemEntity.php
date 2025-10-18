@@ -329,7 +329,7 @@ class ItemEntity extends Entity{
 		};
 
 		$ev = new EntityItemPickupEvent($player, $this, $item, $playerInventory);
-		if(($player->hasFiniteResources() && $playerInventory === null) || !$player->hasPermission(DefaultPermissionNames::GAME_ITEM_PICKUP)){
+		if(($player->hasFiniteResources() && $playerInventory === null) || !$player->hasPermission(DefaultPermissionNames::GAME_INVENTORY_PICKUP)){
 			$ev->cancel();
 		}
 

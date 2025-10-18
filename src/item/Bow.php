@@ -86,7 +86,7 @@ class Bow extends Tool implements Releasable{
 		}
 		$ev = new EntityShootBowEvent($player, $this, $entity, $baseForce * 3);
 
-		if($baseForce < 0.1 || $diff < 5 || !$player->hasPermission(DefaultPermissionNames::GAME_ITEM_USE)){
+		if($baseForce < 0.1 || $diff < 5 || !$player->hasPermission(DefaultPermissionNames::GAME_USE_ITEM)){
 			$ev->cancel();
 		}
 

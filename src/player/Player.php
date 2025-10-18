@@ -473,10 +473,10 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 	 * {@link Player::setFlying()} for that purpose.
 	 *
 	 * @deprecated This is now controlled by setting a permission, which allows more fine-tuned control.
-	 * @see DefaultPermissionNames::GAME_FLIGHT
+	 * @see DefaultPermissionNames::GAME_MOVE_FLIGHT
 	 */
 	public function setAllowFlight(bool $value) : void{
-		$this->setBasePermission(DefaultPermissionNames::GAME_FLIGHT, $value);
+		$this->setBasePermission(DefaultPermissionNames::GAME_MOVE_FLIGHT, $value);
 		$this->getNetworkSession()->syncAbilities($this);
 	}
 
@@ -487,7 +487,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 	 * enter or exit flight mode will be prevented.
 	 */
 	public function getAllowFlight() : bool{
-		return $this->hasPermission(DefaultPermissionNames::GAME_FLIGHT);
+		return $this->hasPermission(DefaultPermissionNames::GAME_MOVE_FLIGHT);
 	}
 
 	/**
@@ -499,10 +499,10 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 	 * @see Player::setFlying()
 	 *
 	 * @deprecated This is now controlled by setting a permission, which allows more fine-tuned control.
-	 * @see DefaultPermissionNames::GAME_NOCOLLISION
+	 * @see DefaultPermissionNames::GAME_MOVE_NOCLIP
 	 */
 	public function setHasBlockCollision(bool $value) : void{
-		$this->setBasePermission(DefaultPermissionNames::GAME_NOCOLLISION, !$value);
+		$this->setBasePermission(DefaultPermissionNames::GAME_MOVE_NOCLIP, !$value);
 		$this->getNetworkSession()->syncAbilities($this);
 	}
 
@@ -511,7 +511,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 	 * If false, the player can move through any block unobstructed.
 	 */
 	public function hasBlockCollision() : bool{
-		return !$this->hasPermission(DefaultPermissionNames::GAME_NOCOLLISION);
+		return !$this->hasPermission(DefaultPermissionNames::GAME_MOVE_NOCLIP);
 	}
 
 	public function setFlying(bool $value) : void{
@@ -1205,8 +1205,8 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 
 		//TODO: this preserves old behaviour of gamemode changes overriding setAllowFlight and setHasBlockCollision
 		//we should get rid of these when the deprecated setters are removed
-		$this->unsetBasePermission(DefaultPermissionNames::GAME_FLIGHT);
-		$this->unsetBasePermission(DefaultPermissionNames::GAME_NOCOLLISION);
+		$this->unsetBasePermission(DefaultPermissionNames::GAME_MOVE_FLIGHT);
+		$this->unsetBasePermission(DefaultPermissionNames::GAME_MOVE_NOCLIP);
 
 		$this->hungerManager->setEnabled($this->isSurvival());
 
@@ -1219,7 +1219,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 			//this is a yucky hack but we don't have any other options :(
 			$this->sendPosition($this->location, null, null, MovePlayerPacket::MODE_TELEPORT);
 		}else{
-			if(!$this->hasPermission(DefaultPermissionNames::GAME_FLIGHT)){
+			if(!$this->hasPermission(DefaultPermissionNames::GAME_MOVE_FLIGHT)){
 				$this->setFlying(false);
 			}
 			$this->setSilent(false);
@@ -1288,7 +1288,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 	}
 
 	public function hasFiniteResources() : bool{
-		return !$this->hasPermission(DefaultPermissionNames::GAME_ITEM_CREATE);
+		return !$this->hasPermission(DefaultPermissionNames::GAME_INVENTORY_CREATIVE);
 	}
 
 	public function getDrops() : array{
@@ -1678,7 +1678,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 		foreach($this->inventory->addItem(...$extraReturnedItems) as $drop){
 			//TODO: we can't generate a transaction for this since the items aren't coming from an inventory :(
 			$ev = new PlayerDropItemEvent($this, $drop);
-			if(!$this->hasPermission(DefaultPermissionNames::GAME_ITEM_DROP)){
+			if(!$this->hasPermission(DefaultPermissionNames::GAME_INVENTORY_DROP)){
 				$ev->cancel();
 			}
 			$ev->call();
@@ -1699,7 +1699,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 		$oldItem = clone $item;
 
 		$ev = new PlayerItemUseEvent($this, $item, $directionVector);
-		if($this->hasItemCooldown($item) || !$this->hasPermission(DefaultPermissionNames::GAME_ITEM_USE)){
+		if($this->hasItemCooldown($item) || !$this->hasPermission(DefaultPermissionNames::GAME_USE_ITEM)){
 			$ev->cancel();
 		}
 
@@ -1763,7 +1763,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 	public function releaseHeldItem() : bool{
 		try{
 			$item = $this->inventory->getItemInHand();
-			if(!$this->isUsingItem() || $this->hasItemCooldown($item) || !$this->hasPermission(DefaultPermissionNames::GAME_ITEM_USE)){
+			if(!$this->isUsingItem() || $this->hasItemCooldown($item) || !$this->hasPermission(DefaultPermissionNames::GAME_USE_ITEM)){
 				return false;
 			}
 
@@ -1864,7 +1864,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 		$target = $this->getWorld()->getBlock($pos);
 
 		$ev = new PlayerInteractEvent($this, $this->inventory->getItemInHand(), $target, null, $face, PlayerInteractEvent::LEFT_CLICK_BLOCK);
-		if(!$this->hasPermission(DefaultPermissionNames::GAME_BLOCK_INTERACT)){
+		if(!$this->hasPermission(DefaultPermissionNames::GAME_USE_BLOCK)){
 			$ev->cancel();
 		}
 		$ev->call();
@@ -1883,7 +1883,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 			return true;
 		}
 
-		if(!$this->hasPermission(DefaultPermissionNames::GAME_BLOCK_DELETE) && !$target->getBreakInfo()->breaksInstantly()){
+		if(!$this->hasPermission(DefaultPermissionNames::GAME_BLOCK_INSTABREAK) && !$target->getBreakInfo()->breaksInstantly()){
 			$this->blockBreakHandler = new SurvivalBlockBreakHandler($this, $pos, $target, $face, 16);
 		}
 
@@ -1974,7 +1974,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 		if(!$this->canInteract($entity->getLocation(), self::MAX_REACH_DISTANCE_ENTITY_INTERACTION)){
 			$this->logger->debug("Cancelled attack of entity " . $entity->getId() . " due to not currently being interactable");
 			$ev->cancel();
-		}elseif(!$this->hasPermission($entity instanceof Player ? DefaultPermissionNames::GAME_PLAYER_ATTACK : DefaultPermissionNames::GAME_ENTITY_ATTACK)){
+		}elseif(!$this->hasPermission($entity instanceof Player ? DefaultPermissionNames::GAME_ATTACK_PLAYER : DefaultPermissionNames::GAME_ATTACK_ENTITY)){
 			$this->logger->debug("Cancelled attack of entity " . $entity->getId() . " due to lack of attack permission");
 			$ev->cancel();
 		}elseif($entity instanceof Player && !$this->server->getConfigGroup()->getConfigBool(ServerProperties::PVP)){
@@ -2054,7 +2054,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 			$this->logger->debug("Cancelled interaction with entity " . $entity->getId() . " due to not currently being interactable");
 			$ev->cancel();
 		}
-		if(!$this->hasPermission($entity instanceof Player ? DefaultPermissionNames::GAME_PLAYER_INTERACT : DefaultPermissionNames::GAME_ENTITY_INTERACT)){
+		if(!$this->hasPermission(DefaultPermissionNames::GAME_USE_ENTITY)){
 			$this->logger->debug("Cancelled interaction with entity " . $entity->getId() . " due to lack of permission");
 			$ev->cancel();
 		}

@@ -50,7 +50,7 @@ class DropItemAction extends InventoryAction{
 
 	public function onPreExecute(Player $source) : bool{
 		$ev = new PlayerDropItemEvent($source, $this->targetItem);
-		if(!$source->hasPermission(DefaultPermissionNames::GAME_ITEM_DROP)){
+		if(!$source->hasPermission(DefaultPermissionNames::GAME_INVENTORY_DROP)){
 			$ev->cancel();
 		}
 		$ev->call();

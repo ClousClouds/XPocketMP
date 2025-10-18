@@ -41,7 +41,7 @@ class Ice extends Transparent{
 
 	public function onBreak(Item $item, ?Player $player = null, array &$returnedItems = []) : bool{
 		//TODO: we should probably pass instaBreak in here, since events can override it
-		if(($player === null || !$player->hasPermission(DefaultPermissionNames::GAME_BLOCK_DELETE)) && !$item->hasEnchantment(VanillaEnchantments::SILK_TOUCH())){
+		if(($player === null || !$player->hasPermission(DefaultPermissionNames::GAME_BLOCK_INSTABREAK)) && !$item->hasEnchantment(VanillaEnchantments::SILK_TOUCH())){
 			$this->position->getWorld()->setBlock($this->position, VanillaBlocks::WATER());
 			return true;
 		}
