@@ -573,7 +573,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 	}
 
 	public function spawnTo(Player $player) : void{
-		if($this->isAlive() && $player->isAlive() && $player->canSee($this) && !$this->isSpectator()){
+		if($this->isAlive() && $player->isAlive() && $player->canSee($this) && $this->gamemode !== GameMode::SPECTATOR){
 			parent::spawnTo($player);
 		}
 	}
@@ -620,7 +620,8 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 	}
 
 	public function canBeCollidedWith() : bool{
-		return !$this->isSpectator() && parent::canBeCollidedWith();
+		//TODO: maybe this should check blockCollision instead? although this is used for entity-entity collisions...
+		return $this->gamemode !== GameMode::SPECTATOR && parent::canBeCollidedWith();
 	}
 
 	public function resetFallDistance() : void{
@@ -1208,9 +1209,9 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 		$this->unsetBasePermission(DefaultPermissionNames::GAME_MOVE_FLIGHT);
 		$this->unsetBasePermission(DefaultPermissionNames::GAME_MOVE_NOCLIP);
 
-		$this->hungerManager->setEnabled($this->isSurvival());
+		$this->hungerManager->setEnabled(!$this->hasPermission(DefaultPermissionNames::GAME_INVULNERABLE));
 
-		if($this->isSpectator()){
+		if($this->gamemode === GameMode::SPECTATOR){
 			$this->setFlying(true);
 			$this->setSilent();
 			$this->onGround = false;
@@ -1243,7 +1244,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 
 		$this->internalSetGameMode($gm);
 
-		if($this->isSpectator()){
+		if($this->gamemode === GameMode::SPECTATOR){
 			$this->despawnFromAll();
 		}else{
 			$this->spawnToAll();
@@ -1254,6 +1255,12 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 	}
 
 	/**
+	 * @deprecated Consider checking ability permissions instead. See {@link self::hasPermission()} and GAME_* constants
+	 * in {@link DefaultPermissionNames}.
+	 *
+	 * If you must check game mode, use {@link self::getGamemode()} (check for SURVIVAL or ADVENTURE if you didn't pass
+	 * $literal or passed false).
+	 *
 	 * NOTE: Because Survival and Adventure Mode share some similar behaviour, this method will also return true if the player is
 	 * in Adventure Mode. Supply the $literal parameter as true to force a literal Survival Mode check.
 	 *
@@ -1264,6 +1271,12 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 	}
 
 	/**
+	 * @deprecated Consider checking ability permissions instead. See {@link self::hasPermission()} and GAME_* constants
+	 * in {@link DefaultPermissionNames}.
+	 *
+	 * If you must check game mode, use {@link self::getGamemode()} (check for CREATIVE or SPECTATOR if you didn't pass
+	 * $literal or passed false).
+	 *
 	 * NOTE: Because Creative and Spectator Mode share some similar behaviour, this method will also return true if the player is
 	 * in Spectator Mode. Supply the $literal parameter as true to force a literal Creative Mode check.
 	 *
@@ -1274,6 +1287,12 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 	}
 
 	/**
+	 * @deprecated Consider checking ability permissions instead. See {@link self::hasPermission()} and GAME_* constants
+	 * in {@link DefaultPermissionNames}.
+	 *
+	 * If you must check game mode, use {@link self::getGamemode()} (check for ADVENTURE or SPECTATOR if you didn't pass
+	 * $literal or passed false).
+	 *
 	 * NOTE: Because Adventure and Spectator Mode share some similar behaviour, this method will also return true if the player is
 	 * in Spectator Mode. Supply the $literal parameter as true to force a literal Adventure Mode check.
 	 *
@@ -1283,6 +1302,12 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 		return $this->gamemode === GameMode::ADVENTURE || (!$literal && $this->gamemode === GameMode::SPECTATOR);
 	}
 
+	/**
+	 * @deprecated Consider checking ability permissions instead. See {@link self::hasPermission()} and GAME_* constants
+	 * in {@link DefaultPermissionNames}.
+	 *
+	 * If you must check game mode, use {@link self::getGamemode()}.
+	 */
 	public function isSpectator() : bool{
 		return $this->gamemode === GameMode::SPECTATOR;
 	}
@@ -1551,7 +1576,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 	}
 
 	public function canEat() : bool{
-		return $this->isCreative() || parent::canEat();
+		return $this->hasPermission(DefaultPermissionNames::GAME_INVULNERABLE) || parent::canEat();
 	}
 
 	public function canBreathe() : bool{
@@ -1902,6 +1927,11 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 		}
 	}
 
+	private function getMaxBlockReachDistance() : int{
+		//TODO: it would be nice for this to not be hardcoded
+		return $this->gamemode === GameMode::CREATIVE ? self::MAX_REACH_DISTANCE_CREATIVE : self::MAX_REACH_DISTANCE_SURVIVAL;
+	}
+
 	/**
 	 * Breaks the block at the given position using the currently-held item.
 	 *
@@ -1910,7 +1940,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 	public function breakBlock(Vector3 $pos) : bool{
 		$this->removeCurrentWindow();
 
-		if($this->canInteract($pos->add(0.5, 0.5, 0.5), $this->isCreative() ? self::MAX_REACH_DISTANCE_CREATIVE : self::MAX_REACH_DISTANCE_SURVIVAL)){
+		if($this->canInteract($pos->add(0.5, 0.5, 0.5), $this->getMaxBlockReachDistance())){
 			$this->broadcastAnimation(new ArmSwingAnimation($this), $this->getViewers());
 			$this->stopBreakBlock($pos);
 			$item = $this->inventory->getItemInHand();
@@ -1936,7 +1966,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 	public function interactBlock(Vector3 $pos, int $face, Vector3 $clickOffset) : bool{
 		$this->setUsingItem(false);
 
-		if($this->canInteract($pos->add(0.5, 0.5, 0.5), $this->isCreative() ? self::MAX_REACH_DISTANCE_CREATIVE : self::MAX_REACH_DISTANCE_SURVIVAL)){
+		if($this->canInteract($pos->add(0.5, 0.5, 0.5), $this->getMaxBlockReachDistance())){
 			$this->broadcastAnimation(new ArmSwingAnimation($this), $this->getViewers());
 			$item = $this->inventory->getItemInHand(); //this is a copy of the real item
 			$oldItem = clone $item;
