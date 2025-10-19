@@ -536,6 +536,7 @@ final class KnownTranslationKeys{
 	public const POCKETMINE_PERMISSION_GAME_BLOCK_PLACE = "pocketmine.permission.game.block.place";
 	public const POCKETMINE_PERMISSION_GAME_CHAT = "pocketmine.permission.game.chat";
 	public const POCKETMINE_PERMISSION_GAME_EMOTE = "pocketmine.permission.game.emote";
+	public const POCKETMINE_PERMISSION_GAME_HIDDEN = "pocketmine.permission.game.hidden";
 	public const POCKETMINE_PERMISSION_GAME_INVENTORY_CREATIVE = "pocketmine.permission.game.inventory.creative";
 	public const POCKETMINE_PERMISSION_GAME_INVENTORY_DROP = "pocketmine.permission.game.inventory.drop";
 	public const POCKETMINE_PERMISSION_GAME_INVENTORY_PICKUP = "pocketmine.permission.game.inventory.pickup";
@@ -543,7 +544,8 @@ final class KnownTranslationKeys{
 	public const POCKETMINE_PERMISSION_GAME_ITEM_BYPASS_CANDESTROY = "pocketmine.permission.game.item.bypass.candestroy";
 	public const POCKETMINE_PERMISSION_GAME_ITEM_BYPASS_CANPLACEON = "pocketmine.permission.game.item.bypass.canplaceon";
 	public const POCKETMINE_PERMISSION_GAME_MOVE_FLIGHT = "pocketmine.permission.game.move.flight";
-	public const POCKETMINE_PERMISSION_GAME_MOVE_NOCLIP = "pocketmine.permission.game.move.noclip";
+	public const POCKETMINE_PERMISSION_GAME_MOVE_NOCLIP_BLOCK = "pocketmine.permission.game.move.noclip.block";
+	public const POCKETMINE_PERMISSION_GAME_MOVE_NOCLIP_ENTITY = "pocketmine.permission.game.move.noclip.entity";
 	public const POCKETMINE_PERMISSION_GAME_USE_BLOCK = "pocketmine.permission.game.use.block";
 	public const POCKETMINE_PERMISSION_GAME_USE_ENTITY = "pocketmine.permission.game.use.entity";
 	public const POCKETMINE_PERMISSION_GAME_USE_ITEM = "pocketmine.permission.game.use.item";

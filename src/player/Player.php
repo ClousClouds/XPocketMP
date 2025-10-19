@@ -499,10 +499,10 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 	 * @see Player::setFlying()
 	 *
 	 * @deprecated This is now controlled by setting a permission, which allows more fine-tuned control.
-	 * @see DefaultPermissionNames::GAME_MOVE_NOCLIP
+	 * @see DefaultPermissionNames::GAME_MOVE_NOCLIP_BLOCK
 	 */
 	public function setHasBlockCollision(bool $value) : void{
-		$this->setBasePermission(DefaultPermissionNames::GAME_MOVE_NOCLIP, !$value);
+		$this->setBasePermission(DefaultPermissionNames::GAME_MOVE_NOCLIP_BLOCK, !$value);
 		$this->getNetworkSession()->syncAbilities($this);
 	}
 
@@ -511,7 +511,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 	 * If false, the player can move through any block unobstructed.
 	 */
 	public function hasBlockCollision() : bool{
-		return !$this->hasPermission(DefaultPermissionNames::GAME_MOVE_NOCLIP);
+		return !$this->hasPermission(DefaultPermissionNames::GAME_MOVE_NOCLIP_BLOCK);
 	}
 
 	public function setFlying(bool $value) : void{
@@ -573,7 +573,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 	}
 
 	public function spawnTo(Player $player) : void{
-		if($this->isAlive() && $player->isAlive() && $player->canSee($this) && $this->gamemode !== GameMode::SPECTATOR){
+		if($this->isAlive() && $player->isAlive() && $player->canSee($this) && !$this->hasPermission(DefaultPermissionNames::GAME_HIDDEN)){
 			parent::spawnTo($player);
 		}
 	}
@@ -620,8 +620,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 	}
 
 	public function canBeCollidedWith() : bool{
-		//TODO: maybe this should check blockCollision instead? although this is used for entity-entity collisions...
-		return $this->gamemode !== GameMode::SPECTATOR && parent::canBeCollidedWith();
+		return !$this->hasPermission(DefaultPermissionNames::GAME_MOVE_NOCLIP_ENTITY) && parent::canBeCollidedWith();
 	}
 
 	public function resetFallDistance() : void{
@@ -945,6 +944,15 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 			if(isset($changedPermissionsOldValues[Server::BROADCAST_CHANNEL_ADMINISTRATIVE]) || isset($changedPermissionsOldValues[Server::BROADCAST_CHANNEL_USERS])){
 				$this->recheckBroadcastPermissions();
 			}
+			if(isset($changedPermissionsOldValues[DefaultPermissionNames::GAME_HIDDEN])){
+				$this->recheckHiddenPermissions();
+			}
+			if(isset($changedPermissionsOldValues[DefaultPermissionNames::GAME_MOVE_NOCLIP_BLOCK])){
+				$this->recheckBlockCollisionPermissions();
+			}
+			if(isset($changedPermissionsOldValues[DefaultPermissionNames::GAME_INVULNERABLE])){
+				$this->hungerManager->setEnabled(!$this->hasPermission(DefaultPermissionNames::GAME_INVULNERABLE));
+			}
 		});
 
 		$ev = new PlayerJoinEvent($this,
@@ -1207,13 +1215,22 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 		//TODO: this preserves old behaviour of gamemode changes overriding setAllowFlight and setHasBlockCollision
 		//we should get rid of these when the deprecated setters are removed
 		$this->unsetBasePermission(DefaultPermissionNames::GAME_MOVE_FLIGHT);
-		$this->unsetBasePermission(DefaultPermissionNames::GAME_MOVE_NOCLIP);
+		$this->unsetBasePermission(DefaultPermissionNames::GAME_MOVE_NOCLIP_BLOCK);
+	}
 
-		$this->hungerManager->setEnabled(!$this->hasPermission(DefaultPermissionNames::GAME_INVULNERABLE));
-
-		if($this->gamemode === GameMode::SPECTATOR){
-			$this->setFlying(true);
+	private function recheckHiddenPermissions() : void{
+		if($this->hasPermission(DefaultPermissionNames::GAME_HIDDEN)){
+			$this->despawnFromAll();
 			$this->setSilent();
+		}else{
+			$this->spawnToAll();
+			$this->setSilent(false);
+		}
+	}
+
+	private function recheckBlockCollisionPermissions() : void{
+		if($this->hasPermission(DefaultPermissionNames::GAME_MOVE_NOCLIP_BLOCK)){
+			$this->setFlying(true);
 			$this->onGround = false;
 
 			//TODO: HACK! this syncs the onground flag with the client so that flying works properly
@@ -1223,7 +1240,6 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 			if(!$this->hasPermission(DefaultPermissionNames::GAME_MOVE_FLIGHT)){
 				$this->setFlying(false);
 			}
-			$this->setSilent(false);
 			$this->checkGroundState(0, 0, 0, 0, 0, 0);
 		}
 	}
@@ -1243,12 +1259,6 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 		}
 
 		$this->internalSetGameMode($gm);
-
-		if($this->gamemode === GameMode::SPECTATOR){
-			$this->despawnFromAll();
-		}else{
-			$this->spawnToAll();
-		}
 
 		$this->getNetworkSession()->syncGameMode($this->gamemode);
 		return true;
@@ -1333,7 +1343,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 	}
 
 	protected function checkGroundState(float $wantedX, float $wantedY, float $wantedZ, float $dx, float $dy, float $dz) : void{
-		if($this->gamemode === GameMode::SPECTATOR){
+		if($this->hasPermission(DefaultPermissionNames::GAME_MOVE_NOCLIP_BLOCK)){
 			$this->onGround = false;
 		}else{
 			$bb = clone $this->boundingBox;

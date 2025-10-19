@@ -2399,6 +2399,10 @@ final class KnownTranslationFactory{
 		return new Translatable(KnownTranslationKeys::POCKETMINE_PERMISSION_GAME_EMOTE, []);
 	}
 
+	public static function pocketmine_permission_game_hidden() : Translatable{
+		return new Translatable(KnownTranslationKeys::POCKETMINE_PERMISSION_GAME_HIDDEN, []);
+	}
+
 	public static function pocketmine_permission_game_inventory_creative() : Translatable{
 		return new Translatable(KnownTranslationKeys::POCKETMINE_PERMISSION_GAME_INVENTORY_CREATIVE, []);
 	}
@@ -2427,8 +2431,12 @@ final class KnownTranslationFactory{
 		return new Translatable(KnownTranslationKeys::POCKETMINE_PERMISSION_GAME_MOVE_FLIGHT, []);
 	}
 
-	public static function pocketmine_permission_game_move_noclip() : Translatable{
-		return new Translatable(KnownTranslationKeys::POCKETMINE_PERMISSION_GAME_MOVE_NOCLIP, []);
+	public static function pocketmine_permission_game_move_noclip_block() : Translatable{
+		return new Translatable(KnownTranslationKeys::POCKETMINE_PERMISSION_GAME_MOVE_NOCLIP_BLOCK, []);
+	}
+
+	public static function pocketmine_permission_game_move_noclip_entity() : Translatable{
+		return new Translatable(KnownTranslationKeys::POCKETMINE_PERMISSION_GAME_MOVE_NOCLIP_ENTITY, []);
 	}
 
 	public static function pocketmine_permission_game_use_block() : Translatable{

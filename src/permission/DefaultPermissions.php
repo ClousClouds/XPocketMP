@@ -142,7 +142,10 @@ abstract class DefaultPermissions{
 		self::registerPermission(new Permission(Names::GAME_INVENTORY_CREATIVE, l10n::pocketmine_permission_game_inventory_creative()), [$creativeRoot]);
 		self::registerPermission(new Permission(Names::GAME_MOVE_FLIGHT, l10n::pocketmine_permission_game_move_flight()), [$creativeRoot]);
 
-		self::registerPermission(new Permission(Names::GAME_MOVE_NOCLIP, l10n::pocketmine_permission_game_move_noclip()), [$spectatorRoot]);
+		self::registerPermission(new Permission(Names::GAME_HIDDEN, l10n::pocketmine_permission_game_hidden()), [$spectatorRoot]);
+		self::registerPermission(new Permission(Names::GAME_MOVE_NOCLIP_BLOCK, l10n::pocketmine_permission_game_move_noclip_block()), [$spectatorRoot]);
+		self::registerPermission(new Permission(Names::GAME_MOVE_NOCLIP_ENTITY, l10n::pocketmine_permission_game_move_noclip_entity()), [$spectatorRoot]);
+
 		self::registerPermission(new Permission(Names::GAME_INVULNERABLE, l10n::pocketmine_permission_game_invulnerable()), [$creativeRoot, $spectatorRoot]);
 	}
 }
