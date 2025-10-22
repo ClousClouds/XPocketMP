@@ -2,16 +2,16 @@
 #to trigger the branch merge workflow explicitly. This avoids the need for TOS-violating actions which we previously
 #used to keep the restricted action active, as the workflow depends on the activity of this repo anyway.
 
-name: Trigger branch sync
+name: Trigger Crowdin download
 
 on:
   schedule:
-    - cron: "0 21 * * *" #once per day so we don't spam merge commits on busy days
+    - cron: "0 21 * * *"
   workflow_dispatch: #for testing
 
 jobs:
   trigger:
-    name: Trigger branch sync RestrictedActions workflow
+    name: Trigger Crowdin download RestrictedActions workflow
     runs-on: ubuntu-22.04
 
     steps:
@@ -29,4 +29,4 @@ jobs:
         with:
           token: ${{ steps.generate-token.outputs.token }}
           repository: ${{ github.repository_owner }}/RestrictedActions
-          event-type: pocketmine_mp_branch_sync
+          event-type: pocketmine_mp_crowdin_download
