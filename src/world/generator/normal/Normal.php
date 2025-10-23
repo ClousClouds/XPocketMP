@@ -197,7 +197,7 @@ class Normal extends Generator{
 			}else{
 				$fillId = Block::EMPTY_STATE_ID;
 			}
-			$chunk->setSubChunk($y, new SubChunk(Block::EMPTY_STATE_ID, [new PalettedBlockArray($fillId)], clone $biomeArray));
+			$chunk->setSubChunk($y, new SubChunk(Block::EMPTY_STATE_ID, new PalettedBlockArray($fillId), null, clone $biomeArray));
 		}
 
 		for($x = 0; $x < Chunk::EDGE_LENGTH; ++$x){
