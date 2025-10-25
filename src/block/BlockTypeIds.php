@@ -832,8 +832,9 @@ final class BlockTypeIds{
 	public const NETHER_SPROUTS = 10802;
 	public const WARPED_FUNGUS = 10803;
 	public const WARPED_NYLIUM = 10804;
+	public const INFESTED_DEEPSLATE = 10805;
 
-	public const FIRST_UNUSED_BLOCK_ID = 10805;
+	public const FIRST_UNUSED_BLOCK_ID = 10806;
 
 	private static int $nextDynamicId = self::FIRST_UNUSED_BLOCK_ID;
 
