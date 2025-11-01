@@ -169,14 +169,16 @@ final class ExecutorOverload implements Overload{
 		$templates = [];
 		$args = [];
 		$pos = 0;
+		$processed = 0;
 		foreach($this->parameters as $parameter){
+			$processed++;
 			if(is_string($parameter)){
 				//literal token
 				$templates[] = $parameter;
 				continue;
 			}
 			//TODO: printable type info would be nice
-			if($pos < $this->requiredInputCount){
+			if($processed <= $this->requiredInputCount){
 				$template = "<{%$pos}>";
 			}else{
 				$template = "[{%$pos}]";
