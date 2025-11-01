@@ -29,18 +29,16 @@ use DaveRandom\CallbackValidator\ReturnInfo;
 use DaveRandom\CallbackValidator\Type\BuiltInType;
 use DaveRandom\CallbackValidator\Type\NamedType;
 use pocketmine\command\CommandSender;
+use pocketmine\command\utils\CommandStringHelper;
 use pocketmine\command\utils\InvalidCommandSyntaxException;
 use pocketmine\lang\Translatable;
 use pocketmine\permission\PermissionManager;
 use function array_key_last;
 use function array_slice;
 use function count;
-use function get_class;
 use function implode;
 use function is_string;
-use function preg_match;
 use function strlen;
-use function substr_compare;
 
 final class ExecutorOverload implements Overload{
 
@@ -185,17 +183,8 @@ final class ExecutorOverload implements Overload{
 		return new Translatable("/$aliasUsed " . implode(" ", $templates), $args);
 	}
 
-	public static function skipWhitespace(string $commandLine, int &$offset) : int{
-		if(preg_match('/\G\s+/', $commandLine, $matches, offset: $offset) > 0){
-			$offset += strlen($matches[0]);
-			return strlen($matches[0]);
-		}
-		return 0;
-	}
-
 	/**
-	 * @param CommandContext $context * @param mixed[]             $parentArgs
-	 *
+	 * @param mixed[] $parentArgs
 	 * @phpstan-param list<mixed> $parentArgs
 	 */
 	public function invoke(CommandContext $context, int $offset, array $parentArgs, int $parentParametersParsed) : bool{
@@ -203,7 +192,7 @@ final class ExecutorOverload implements Overload{
 
 		$commandLine = $context->getCommandLine();
 		try{
-			$myArgs = self::parseArgs($parameters, $commandLine, $offset);
+			$myArgs = CommandStringHelper::parseArguments($parameters, $commandLine, $offset);
 		}catch(ParameterParseException $e){
 			$context->invalidSyntax($this, $offset, $e->getMessage());
 			return false;
@@ -244,47 +233,4 @@ final class ExecutorOverload implements Overload{
 		return [$this];
 	}
 
-	/**
-	 * @phpstan-param list<Parameter<*>|string> $parameters
-	 * @phpstan-return list<mixed>
-	 */
-	public static function parseArgs(array $parameters, string $commandLine, int &$offset) : array{
-		$args = [];
-
-		//skip preceding whitespace
-		self::skipWhitespace($commandLine, $offset);
-
-		if($offset < strlen($commandLine)){
-			foreach($parameters as $parameter){
-				if(is_string($parameter)){
-					if(substr_compare($commandLine, $parameter, $offset, strlen($parameter)) === 0){
-						$offset += strlen($parameter);
-					}else{
-						throw new ParameterParseException("Literal \"$parameter\" expected");
-					}
-				}else{
-					try{
-						$args[] = $parameter->parse($commandLine, $offset);
-					}catch(ParameterParseException $e){
-						throw new ParameterParseException(
-							"Failed parsing argument \$" . $parameter->getCodeName() . ": " . $e->getMessage(),
-							previous: $e
-						);
-					}
-				}
-				if(self::skipWhitespace($commandLine, $offset) === 0){
-					if($offset === strlen($commandLine)){
-						//no more tokens, rest of the parameters must be optional
-						break;
-					}elseif(is_string($parameter)){
-						throw new ParameterParseException("Incorrect literal provided (should have been \"$parameter\" followed by whitespace)");
-					}else{
-						throw new ParameterParseException("Parameter " . get_class($parameter) . " for \$" . $parameter->getCodeName() . " didn't stop on a whitespace character");
-					}
-				}
-			}
-		}
-
-		return $args;
-	}
 }

@@ -23,12 +23,16 @@ declare(strict_types=1);
 
 namespace pocketmine\command\utils;
 
+use pocketmine\command\overload\ParameterParseException;
 use pocketmine\utils\AssumptionFailedError;
+use function get_class;
+use function is_string;
 use function preg_last_error_msg;
 use function preg_match;
 use function preg_match_all;
 use function preg_replace;
 use function strlen;
+use function substr_compare;
 
 final class CommandStringHelper{
 
@@ -76,5 +80,57 @@ final class CommandStringHelper{
 		}
 
 		return null;
+	}
+
+	public static function skipWhitespace(string $commandLine, int &$offset) : int{
+		if(preg_match('/\G\s+/', $commandLine, $matches, offset: $offset) > 0){
+			$offset += strlen($matches[0]);
+			return strlen($matches[0]);
+		}
+		return 0;
+	}
+
+	/**
+	 * @phpstan-param list<Parameter<*>|string> $parameters
+	 * @phpstan-return list<mixed>
+	 */
+	public static function parseArguments(array $parameters, string $commandLine, int &$offset) : array{
+		$args = [];
+
+		//skip preceding whitespace
+		CommandStringHelper::skipWhitespace($commandLine, $offset);
+
+		if($offset < strlen($commandLine)){
+			foreach($parameters as $parameter){
+				if(is_string($parameter)){
+					if(substr_compare($commandLine, $parameter, $offset, strlen($parameter)) === 0){
+						$offset += strlen($parameter);
+					}else{
+						throw new ParameterParseException("Literal \"$parameter\" expected");
+					}
+				}else{
+					try{
+						$args[] = $parameter->parse($commandLine, $offset);
+					}catch(ParameterParseException $e){
+						throw new ParameterParseException(
+							"Failed parsing argument \$" . $parameter->getCodeName() . ": " . $e->getMessage(),
+							previous: $e
+						);
+					}
+				}
+				if(CommandStringHelper::skipWhitespace($commandLine, $offset) === 0){
+					if($offset === strlen($commandLine)){
+						//no more tokens, rest of the parameters must be optional
+						break;
+					}elseif(is_string($parameter)){
+						throw new ParameterParseException("Incorrect literal provided (should have been \"$parameter\" followed by whitespace)");
+					}else{
+						throw new ParameterParseException("Parameter " . get_class($parameter) . " for \$" . $parameter->getCodeName() . " didn't stop on a whitespace character");
+					}
+				}
+			}
+		}
+
+		return $args;
 	}
 }

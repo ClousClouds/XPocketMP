@@ -63,7 +63,7 @@ final class BranchingOverload implements Overload{
 
 		$commandLine = $context->getCommandLine();
 		try{
-			$myArgs = ExecutorOverload::parseArgs($myParameters, $commandLine, $offset);
+			$myArgs = CommandStringHelper::parseArguments($myParameters, $commandLine, $offset);
 		}catch(InvalidCommandSyntaxException $e){
 			$context->invalidSyntax($this, $offset, $e->getMessage());
 			return false;
@@ -72,7 +72,7 @@ final class BranchingOverload implements Overload{
 		if(count($this->namedChildren) > 0){
 			//make sure we don't modify the offset until we're sure of success
 			$offsetCopy = $offset;
-			ExecutorOverload::skipWhitespace($commandLine, $offsetCopy);
+			CommandStringHelper::skipWhitespace($commandLine, $offsetCopy);
 			if($offset < strlen($commandLine)){
 				$childName = CommandStringHelper::parseQuoteAwareSingle($commandLine, $offsetCopy);
 				if(isset($this->namedChildren[$childName])){
