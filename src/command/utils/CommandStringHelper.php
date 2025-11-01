@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace pocketmine\command\utils;
 
+use pocketmine\command\overload\Parameter;
 use pocketmine\command\overload\ParameterParseException;
 use pocketmine\utils\AssumptionFailedError;
 use function get_class;

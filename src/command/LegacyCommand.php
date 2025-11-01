@@ -49,13 +49,14 @@ abstract class LegacyCommand extends Command{
 		string $namespace,
 		string $name,
 		Translatable|string $description = "",
-		private Translatable|string|null $usageMessage = null,
+		Translatable|string|null $usageMessage = null,
 	){
 		parent::__construct($namespace, $name, new ExecutorOverload(
 			[new RawParameter("args", "args")],
 			DefaultPermissionNames::GROUP_USER,
 			$this->handler(...),
-			acceptsAliasUsed: true
+			acceptsAliasUsed: true,
+			customUsageMessage: $usageMessage
 		), $description);
 	}
 
@@ -109,16 +110,6 @@ abstract class LegacyCommand extends Command{
 		}
 
 		return false;
-	}
-
-	public function getUsages(CommandSender $sender, string $aliasUsed) : array{
-		if($this->testPermissionSilent($sender)){
-			return $this->usageMessage instanceof Translatable ?
-				[$this->usageMessage] :
-				[new Translatable("{%0}", [$this->usageMessage ?? "/$aliasUsed"])];
-		}
-
-		return [];
 	}
 
 	private function handler(CommandSender $sender, string $aliasUsed, string $rawArgs = "") : void{

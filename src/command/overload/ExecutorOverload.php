@@ -39,6 +39,8 @@ use function count;
 use function implode;
 use function is_string;
 use function strlen;
+use function trigger_error;
+use const E_USER_DEPRECATED;
 
 final class ExecutorOverload implements Overload{
 
@@ -62,8 +64,12 @@ final class ExecutorOverload implements Overload{
 		private array $parameters,
 		string|array $permission,
 		private \Closure $handler,
-		private bool $acceptsAliasUsed = false
+		private bool $acceptsAliasUsed = false,
+		private Translatable|string|null $customUsageMessage = null
 	){
+		if($this->customUsageMessage !== null){
+			trigger_error("Overriding overload usage message is discouraged. A usage message can usually be generated from the parameter infos.", E_USER_DEPRECATED);
+		}
 		foreach($this->parameters as $k => $parameter){
 			if(!is_string($parameter) && $parameter->consumesAllRemainingInputs() && $k !== array_key_last($this->parameters)){
 				throw new \InvalidArgumentException($parameter::class . " can only be used as the final argument, because it consumes all remaining inputs");
@@ -157,6 +163,9 @@ final class ExecutorOverload implements Overload{
 	}
 
 	public function getUsage(string $aliasUsed) : Translatable{
+		if($this->customUsageMessage !== null){
+			return new Translatable("{%0}", [$this->customUsageMessage]);
+		}
 		$templates = [];
 		$args = [];
 		$pos = 0;
