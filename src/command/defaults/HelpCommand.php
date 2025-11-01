@@ -75,7 +75,7 @@ class HelpCommand extends Command{
 		$userAliasMap = $sender->getCommandAliasMap();
 		$commands = [];
 		foreach($commandMap->getUniqueCommands() as $command){
-			if(count($command->getUsages($sender, "")) > 0){
+			if(count($command->getPermittedOverloads($sender)) > 0){
 				$userAliases = $userAliasMap->getMergedAliases($command->getId(), $commandMap->getAliasMap());
 				$preferredAlias = $userAliases[array_key_first($userAliases)];
 				if(isset($commands[$preferredAlias])){

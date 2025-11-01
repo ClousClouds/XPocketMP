@@ -210,7 +210,7 @@ class SimpleCommandMap implements CommandMap{
 		$candidates = [];
 		$userAliasMap = $sender->getCommandAliasMap();
 		foreach($conflictedEntries as $c){
-			if(count($c->getUsages($sender, $alias)) > 0){
+			if(count($c->getPermittedOverloads($sender)) > 0){
 				$candidates[] = "/" . $c->getId();
 			}
 		}

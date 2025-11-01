@@ -41,7 +41,7 @@ use function str_replace;
 use function strtolower;
 use function trim;
 
-abstract class Command{
+class Command{
 	private readonly string $namespace;
 	private readonly string $name;
 
@@ -115,15 +115,30 @@ abstract class Command{
 	public function getOverloads() : array{ return $this->overloads; }
 
 	/**
+	 * @return CommandOverload[]
+	 * @phpstan-return list<CommandOverload>
+	 */
+	public function getPermittedOverloads(CommandSender $sender) : array{
+		$overloads = [];
+		foreach($this->overloads as $overload){
+			if($overload->senderHasAnyPermissions($sender)){
+				$overloads[] = $overload;
+			}
+		}
+		return $overloads;
+	}
+
+	/**
+	 * TODO: maybe we should get rid of this, it rarely makes sense to send all possible usages of the command
+	 * More likely we'll want to send the best matching usages based on the valid parameters we were able to match
+	 *
 	 * @return Translatable[]
 	 * @phpstan-return list<Translatable>
 	 */
 	public function getUsages(CommandSender $sender, string $aliasUsed) : array{
 		$usages = [];
-		foreach($this->overloads as $overload){
-			if($overload->senderHasAnyPermissions($sender)){
-				$usages[] = new Translatable("/$aliasUsed {%0}", [$overload->getUsage()]);
-			}
+		foreach($this->getPermittedOverloads($sender) as $overload){
+			$usages[] = new Translatable("/$aliasUsed {%0}", [$overload->getUsage()]);
 		}
 
 		return $usages;

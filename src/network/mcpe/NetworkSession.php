@@ -1142,8 +1142,8 @@ class NetworkSession{
 
 		$literals = [];
 		foreach($this->server->getCommandMap()->getUniqueCommands() as $command){
-			if(count($command->getUsages($this->player, "")) === 0){
-				//no permitted overloads
+			$overloads = $command->getPermittedOverloads($this->player);
+			if(count($overloads) === 0){
 				continue;
 			}
 
@@ -1159,9 +1159,8 @@ class NetworkSession{
 			$lname = strtolower($firstNetworkAlias);
 			$aliasObj = count($aliases) > 1 ? new CommandHardEnum(ucfirst($firstNetworkAlias) . "Aliases", $aliases) : null;
 
-			$overloads = [];
-			foreach($command->getOverloads() as $overload){
-				//TODO: we should only send permissible overloads here
+			$overloadData = [];
+			foreach($overloads as $overload){
 				$parameters = [];
 				$required = $overload->getRequiredParameterCount();
 				foreach($overload->getParameters() as $k => $parameter){
@@ -1188,7 +1187,7 @@ class NetworkSession{
 							//umm... client only allows suffixes on integer params???
 							//TODO: as of 1.21.111, the client crashes if we try to provide actual suffixes for /xp.
 							//The cause for this seems to be undefined behaviour on the client linked to the order and
-							//number of certain hardcoded enums like GameMode, IntParam etc which we don't provided. I
+							//number of certain hardcoded enums like GameMode, IntParam etc which we don't provide. I
 							//wasn't able to make a reliable workaround, so this gets disabled for now. SAD!
 							//$parameters[] = CommandParameter::postfixed($translated, strtolower($suffix), optional: $k >= $required);
 							$parameters[] = CommandParameter::standard($translated, CommandParameterTypes::ID, optional: $k >= $required);
@@ -1197,7 +1196,7 @@ class NetworkSession{
 						}
 					}
 				}
-				$overloads[] = new CommandOverload(chaining: false, parameters: $parameters);
+				$overloadData[] = new CommandOverload(chaining: false, parameters: $parameters);
 			}
 
 			$description = $command->getDescription();
@@ -1207,7 +1206,7 @@ class NetworkSession{
 				0,
 				0,
 				$aliasObj,
-				$overloads,
+				$overloadData,
 				chainedSubCommandData: []
 			);
 
