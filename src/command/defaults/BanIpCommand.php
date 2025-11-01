@@ -33,10 +33,13 @@ use pocketmine\permission\DefaultPermissionNames;
 use pocketmine\player\Player;
 use function inet_pton;
 
-class BanIpCommand extends Command{
+final class BanIpCommand{
+	private function __construct(){
+		//NOOP
+	}
 
-	public function __construct(string $namespace, string $name){
-		parent::__construct(
+	public static function create(string $namespace, string $name) : Command{
+		return new Command(
 			$namespace,
 			$name,
 			new ExecutorOverload(

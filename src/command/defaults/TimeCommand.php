@@ -36,10 +36,13 @@ use pocketmine\player\Player;
 use pocketmine\utils\Limits;
 use pocketmine\world\World;
 
-class TimeCommand extends Command{
+final class TimeCommand{
+	private function __construct(){
+		//NOOP
+	}
 
-	public function __construct(string $namespace, string $name){
-		parent::__construct(
+	public static function create(string $namespace, string $name) : Command{
+		return new Command(
 			$namespace,
 			$name,
 			BranchingOverloadBuilder::make()

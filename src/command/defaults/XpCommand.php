@@ -38,15 +38,19 @@ use function abs;
 use function max;
 use function min;
 
-class XpCommand extends Command{
+final class XpCommand{
 
 	private const SELF_PERM = DefaultPermissionNames::COMMAND_XP_SELF;
 	private const OTHER_PERM = DefaultPermissionNames::COMMAND_XP_OTHER;
 
 	private const OVERLOAD_PERMS = [self::SELF_PERM, self::OTHER_PERM];
 
-	public function __construct(string $namespace, string $name){
-		parent::__construct(
+	private function __construct(){
+		//NOOP
+	}
+
+	public static function create(string $namespace, string $name) : Command{
+		return new Command(
 			$namespace,
 			$name,
 			BranchingOverloadBuilder::make()
@@ -64,7 +68,7 @@ class XpCommand extends Command{
 	}
 
 	private static function addXp(CommandSender $sender, int $xp, ?string $playerName = null) : void{
-		$player = self::fetchPermittedPlayerTarget($sender, $playerName, self::SELF_PERM, self::OTHER_PERM);
+		$player = Command::fetchPermittedPlayerTarget($sender, $playerName, self::SELF_PERM, self::OTHER_PERM);
 		if($player === null){
 			return;
 		}
@@ -78,7 +82,7 @@ class XpCommand extends Command{
 	}
 
 	private static function addXpLevels(CommandSender $sender, int $xpLevels, ?string $playerName = null) : void{
-		$player = self::fetchPermittedPlayerTarget($sender, $playerName, self::SELF_PERM, self::OTHER_PERM);
+		$player = Command::fetchPermittedPlayerTarget($sender, $playerName, self::SELF_PERM, self::OTHER_PERM);
 		if($player === null){
 			return;
 		}

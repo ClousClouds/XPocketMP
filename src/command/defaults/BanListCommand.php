@@ -36,10 +36,14 @@ use function implode;
 use function sort;
 use const SORT_STRING;
 
-class BanListCommand extends Command{
+final class BanListCommand{
 
-	public function __construct(string $namespace, string $name){
-		parent::__construct(
+	private function __construct(){
+		//NOOP
+	}
+
+	public static function create(string $namespace, string $name) : Command{
+		return new Command(
 			$namespace,
 			$name,
 			BranchingOverloadBuilder::make()

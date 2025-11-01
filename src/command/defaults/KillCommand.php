@@ -31,15 +31,19 @@ use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\permission\DefaultPermissionNames;
 
-class KillCommand extends Command{
+final class KillCommand{
 
 	private const string SELF_PERM = DefaultPermissionNames::COMMAND_KILL_SELF;
 	private const string OTHER_PERM = DefaultPermissionNames::COMMAND_KILL_OTHER;
 
 	private const OVERLOAD_PERMS = [self::SELF_PERM, self::OTHER_PERM];
 
-	public function __construct(string $namespace, string $name){
-		parent::__construct(
+	private function __construct(){
+		//NOOP
+	}
+
+	public static function create(string $namespace, string $name) : Command{
+		return new Command(
 			$namespace,
 			$name,
 			new ExecutorOverload([
@@ -50,7 +54,7 @@ class KillCommand extends Command{
 	}
 
 	private static function execute(CommandSender $sender, ?string $target = null) : void{
-		$player = self::fetchPermittedPlayerTarget($sender, $target, self::SELF_PERM, self::OTHER_PERM);
+		$player = Command::fetchPermittedPlayerTarget($sender, $target, self::SELF_PERM, self::OTHER_PERM);
 		if($player === null){
 			return;
 		}

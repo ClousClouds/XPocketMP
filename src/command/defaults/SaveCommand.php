@@ -31,10 +31,13 @@ use pocketmine\permission\DefaultPermissionNames;
 use function microtime;
 use function round;
 
-class SaveCommand extends Command{
+final class SaveCommand{
+	private function __construct(){
+		//NOOP
+	}
 
-	public function __construct(string $namespace, string $name){
-		parent::__construct(
+	public static function create(string $namespace, string $name) : Command{
+		return new Command(
 			$namespace,
 			$name,
 			new ExecutorOverload([], DefaultPermissionNames::COMMAND_SAVE_PERFORM, self::execute(...)),

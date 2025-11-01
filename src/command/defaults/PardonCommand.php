@@ -30,10 +30,13 @@ use pocketmine\command\overload\StringParameter;
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\permission\DefaultPermissionNames;
 
-class PardonCommand extends Command{
+final class PardonCommand{
+	private function __construct(){
+		//NOOP
+	}
 
-	public function __construct(string $namespace, string $name){
-		parent::__construct(
+	public static function create(string $namespace, string $name) : Command{
+		return new Command(
 			$namespace,
 			$name,
 			new ExecutorOverload(

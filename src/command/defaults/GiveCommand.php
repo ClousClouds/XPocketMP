@@ -39,15 +39,19 @@ use pocketmine\nbt\NbtDataException;
 use pocketmine\nbt\NbtException;
 use pocketmine\permission\DefaultPermissionNames;
 
-class GiveCommand extends Command{
+final class GiveCommand{
 
 	private const string SELF_PERM = DefaultPermissionNames::COMMAND_GIVE_SELF;
 	private const string OTHER_PERM = DefaultPermissionNames::COMMAND_GIVE_OTHER;
 
 	private const OVERLOAD_PERMS = [self::SELF_PERM, self::OTHER_PERM];
 
-	public function __construct(string $namespace, string $name){
-		parent::__construct(
+	private function __construct(){
+		//NOOP
+	}
+
+	public static function create(string $namespace, string $name) : Command{
+		return new Command(
 			$namespace,
 			$name,
 			new ExecutorOverload([
@@ -61,7 +65,7 @@ class GiveCommand extends Command{
 	}
 
 	private static function execute(CommandSender $sender, string $target, string $itemName, ?int $count = null, ?string $nbt = null) : void{
-		$player = self::fetchPermittedPlayerTarget($sender, $target, self::SELF_PERM, self::OTHER_PERM);
+		$player = Command::fetchPermittedPlayerTarget($sender, $target, self::SELF_PERM, self::OTHER_PERM);
 		if($player === null){
 			return;
 		}

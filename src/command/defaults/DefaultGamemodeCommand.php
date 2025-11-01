@@ -33,10 +33,14 @@ use pocketmine\permission\DefaultPermissionNames;
 use pocketmine\player\GameMode;
 use pocketmine\ServerProperties;
 
-class DefaultGamemodeCommand extends Command{
+final class DefaultGamemodeCommand{
 
-	public function __construct(string $namespace, string $name){
-		parent::__construct(
+	private function __construct(){
+		//NOOP
+	}
+
+	public static function create(string $namespace, string $name) : Command{
+		return new Command(
 			$namespace,
 			$name,
 			new ExecutorOverload([
@@ -50,7 +54,7 @@ class DefaultGamemodeCommand extends Command{
 		);
 	}
 
-	public function execute(CommandSender $sender, GameMode $gameMode) : void{
+	private static function execute(CommandSender $sender, GameMode $gameMode) : void{
 		$sender->getServer()->getConfigGroup()->setConfigString(ServerProperties::GAME_MODE, $gameMode->name);
 		$sender->sendMessage(KnownTranslationFactory::commands_defaultgamemode_success($gameMode->getTranslatableName()));
 	}

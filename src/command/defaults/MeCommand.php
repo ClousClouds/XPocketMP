@@ -32,10 +32,13 @@ use pocketmine\permission\DefaultPermissionNames;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class MeCommand extends Command{
+final class MeCommand{
+	private function __construct(){
+		//NOOP
+	}
 
-	public function __construct(string $namespace, string $name){
-		parent::__construct(
+	public static function create(string $namespace, string $name) : Command{
+		return new Command(
 			$namespace,
 			$name,
 			new ExecutorOverload(

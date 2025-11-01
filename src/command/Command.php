@@ -178,7 +178,7 @@ class Command{
 		}
 	}
 
-	protected static function fetchPermittedPlayerTarget(
+	public static function fetchPermittedPlayerTarget(
 		CommandSender $sender,
 		?string $target,
 		string $selfPermission,

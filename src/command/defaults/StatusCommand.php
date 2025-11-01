@@ -36,10 +36,13 @@ use function microtime;
 use function number_format;
 use function round;
 
-class StatusCommand extends Command{
+final class StatusCommand{
+	private function __construct(){
+		//NOOP
+	}
 
-	public function __construct(string $namespace, string $name){
-		parent::__construct(
+	public static function create(string $namespace, string $name) : Command{
+		return new Command(
 			$namespace,
 			$name,
 			new ExecutorOverload([], DefaultPermissionNames::COMMAND_STATUS, self::execute(...)),

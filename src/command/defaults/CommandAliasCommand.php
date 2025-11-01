@@ -39,12 +39,16 @@ use function implode;
 use function is_array;
 use function ksort;
 
-final class CommandAliasCommand extends Command{
+final class CommandAliasCommand{
 	private const SELF_PERM = DefaultPermissionNames::COMMAND_CMDALIAS_EDIT_SELF;
 	private const GLOBAL_PERM = DefaultPermissionNames::COMMAND_CMDALIAS_EDIT_GLOBAL;
 	private const LIST_PERM = DefaultPermissionNames::COMMAND_CMDALIAS_LIST;
 
-	public function __construct(string $namespace, string $name){
+	private function __construct(){
+		//NOOP
+	}
+
+	public static function create(string $namespace, string $name) : Command{
 		$builder = BranchingOverloadBuilder::make();
 		foreach([false, true] as $global){
 			$prefix = $global ? ["global"] : [];
@@ -57,7 +61,7 @@ final class CommandAliasCommand extends Command{
 						new StringParameter("target", "target")
 					],
 					$editPerm,
-					fn(CommandSender $sender, string $alias, string $target) => $this->createAlias($sender, $alias, $target, $global)
+					fn(CommandSender $sender, string $alias, string $target) => self::createAlias($sender, $alias, $target, $global)
 				);
 				$childBuilder->executor(
 					[
@@ -65,17 +69,17 @@ final class CommandAliasCommand extends Command{
 						new StringParameter("alias", "alias")
 					],
 					$editPerm,
-					fn(CommandSender $sender, string $alias) => $this->deleteAlias($sender, $alias, $global)
+					fn(CommandSender $sender, string $alias) => self::deleteAlias($sender, $alias, $global)
 				);
 				$childBuilder->executor(
 					["list"],
 					self::LIST_PERM,
-					fn(CommandSender $sender) => $this->listAliases($sender, $global)
+					fn(CommandSender $sender) => self::listAliases($sender, $global)
 				);
 				return $childBuilder->build();
 			});
 		}
-		parent::__construct(
+		return new Command(
 			$namespace,
 			$name,
 			$builder->build(),
@@ -83,7 +87,7 @@ final class CommandAliasCommand extends Command{
 		);
 	}
 
-	private function createAlias(CommandSender $sender, string $alias, string $target, bool $global) : void{
+	private static function createAlias(CommandSender $sender, string $alias, string $target, bool $global) : void{
 		$commandMap = $sender->getServer()->getCommandMap();
 		if($global){
 			$aliasMap = $commandMap->getAliasMap();
@@ -116,7 +120,7 @@ final class CommandAliasCommand extends Command{
 		}
 	}
 
-	private function deleteAlias(CommandSender $sender, string $alias, bool $global) : void{
+	private static function deleteAlias(CommandSender $sender, string $alias, bool $global) : void{
 		$commandMap = $sender->getServer()->getCommandMap();
 		if($global){
 			$aliasMap = $commandMap->getAliasMap();
@@ -139,7 +143,7 @@ final class CommandAliasCommand extends Command{
 		}
 	}
 
-	private function listAliases(CommandSender $sender, bool $global) : void{
+	private static function listAliases(CommandSender $sender, bool $global) : void{
 		if($global){
 			$aliasMap = $sender->getServer()->getCommandMap()->getAliasMap();
 			$messageScope = fn(Translatable $t) => KnownTranslationFactory::pocketmine_command_cmdalias_template($t, KnownTranslationFactory::pocketmine_command_cmdalias_scope_global());

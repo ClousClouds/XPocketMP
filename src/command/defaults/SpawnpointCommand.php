@@ -35,15 +35,19 @@ use pocketmine\player\Player;
 use pocketmine\world\Position;
 use function round;
 
-class SpawnpointCommand extends Command{
+final class SpawnpointCommand{
 
 	private const string SELF_PERM = DefaultPermissionNames::COMMAND_SPAWNPOINT_SELF;
 	private const string OTHER_PERM = DefaultPermissionNames::COMMAND_SPAWNPOINT_OTHER;
 
 	private const OVERLOAD_PERMS = [self::SELF_PERM, self::OTHER_PERM];
 
-	public function __construct(string $namespace, string $name){
-		parent::__construct(
+	private function __construct(){
+		//NOOP
+	}
+
+	public static function create(string $namespace, string $name) : Command{
+		return new Command(
 			$namespace,
 			$name,
 			BranchingOverloadBuilder::make(commonParameters: [
@@ -59,7 +63,7 @@ class SpawnpointCommand extends Command{
 	}
 
 	private static function setSpawnHere(CommandSender $sender, ?string $target = null) : void{
-		$target = self::fetchPermittedPlayerTarget($sender, $target, self::SELF_PERM, self::OTHER_PERM);
+		$target = Command::fetchPermittedPlayerTarget($sender, $target, self::SELF_PERM, self::OTHER_PERM);
 		if($target === null){
 			return;
 		}
@@ -72,7 +76,7 @@ class SpawnpointCommand extends Command{
 	}
 
 	private static function setSpawnCoords(CommandSender $sender, string $target, RelativeXYZ $coordinates) : void{
-		$target = self::fetchPermittedPlayerTarget($sender, $target, self::SELF_PERM, self::OTHER_PERM);
+		$target = Command::fetchPermittedPlayerTarget($sender, $target, self::SELF_PERM, self::OTHER_PERM);
 		if($target === null){
 			return;
 		}

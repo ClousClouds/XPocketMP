@@ -38,15 +38,18 @@ use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\permission\DefaultPermissionNames;
 use pocketmine\utils\TextFormat;
 
-class EnchantCommand extends Command{
-
+final class EnchantCommand{
 	private const string SELF_PERM = DefaultPermissionNames::COMMAND_ENCHANT_SELF;
 	private const string OTHER_PERM = DefaultPermissionNames::COMMAND_ENCHANT_OTHER;
 
 	private const OVERLOAD_PERMS = [self::SELF_PERM, self::OTHER_PERM];
 
-	public function __construct(string $namespace, string $name){
-		parent::__construct(
+	private function __construct(){
+		//NOOP
+	}
+
+	public static function create(string $namespace, string $name) : Command{
+		return new Command(
 			$namespace,
 			$name,
 			new ExecutorOverload([
@@ -61,8 +64,8 @@ class EnchantCommand extends Command{
 		);
 	}
 
-	private function enchant(CommandSender $sender, string $target, Enchantment $enchantment, int $level = 1) : void{
-		$player = self::fetchPermittedPlayerTarget($sender, $target, self::SELF_PERM, self::OTHER_PERM);
+	private static function enchant(CommandSender $sender, string $target, Enchantment $enchantment, int $level = 1) : void{
+		$player = Command::fetchPermittedPlayerTarget($sender, $target, self::SELF_PERM, self::OTHER_PERM);
 		if($player === null){
 			return;
 		}
@@ -84,6 +87,6 @@ class EnchantCommand extends Command{
 		$enchantedItem = EnchantingHelper::enchantItem($item, [new EnchantmentInstance($enchantment, $level)]);
 		$player->setMainHandItem($enchantedItem);
 
-		self::broadcastCommandMessage($sender, KnownTranslationFactory::commands_enchant_success($player->getName()));
+		Command::broadcastCommandMessage($sender, KnownTranslationFactory::commands_enchant_success($player->getName()));
 	}
 }

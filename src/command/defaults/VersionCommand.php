@@ -41,10 +41,13 @@ use function stripos;
 use function strtolower;
 use const PHP_VERSION;
 
-class VersionCommand extends Command{
+final class VersionCommand{
+	private function __construct(){
+		//NOOP
+	}
 
-	public function __construct(string $namespace, string $name){
-		parent::__construct(
+	public static function create(string $namespace, string $name) : Command{
+		return new Command(
 			$namespace,
 			$name,
 			BranchingOverloadBuilder::make()

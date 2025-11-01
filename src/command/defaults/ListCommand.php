@@ -36,10 +36,13 @@ use function implode;
 use function sort;
 use const SORT_STRING;
 
-class ListCommand extends Command{
+final class ListCommand{
+	private function __construct(){
+		//NOOP
+	}
 
-	public function __construct(string $namespace, string $name){
-		parent::__construct(
+	public static function create(string $namespace, string $name) : Command{
+		return new Command(
 			$namespace,
 			$name,
 			new ExecutorOverload([], DefaultPermissionNames::COMMAND_LIST, self::execute(...)),

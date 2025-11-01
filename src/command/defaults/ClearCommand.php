@@ -41,15 +41,19 @@ use pocketmine\utils\TextFormat;
 use function count;
 use function min;
 
-class ClearCommand extends Command{
+final class ClearCommand{
 
 	private const SELF_PERM = DefaultPermissionNames::COMMAND_CLEAR_SELF;
 	private const OTHER_PERM = DefaultPermissionNames::COMMAND_CLEAR_OTHER;
 
 	private const OVERLOAD_PERMS = [self::SELF_PERM, self::OTHER_PERM];
 
-	public function __construct(string $namespace, string $name){
-		parent::__construct(
+	private function __construct(){
+		//NOOP
+	}
+
+	public static function create(string $namespace, string $name) : Command{
+		return new Command(
 			$namespace,
 			$name,
 			new ExecutorOverload([
@@ -68,7 +72,7 @@ class ClearCommand extends Command{
 	}
 
 	private static function execute(CommandSender $sender, ?string $playerName = null, ?Item $targetItem = null, int $maxCount = -1) : void{
-		$target = self::fetchPermittedPlayerTarget($sender, $playerName, self::SELF_PERM, self::OTHER_PERM);
+		$target = Command::fetchPermittedPlayerTarget($sender, $playerName, self::SELF_PERM, self::OTHER_PERM);
 		if($target === null){
 			return;
 		}

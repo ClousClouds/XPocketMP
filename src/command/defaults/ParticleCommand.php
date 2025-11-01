@@ -77,10 +77,13 @@ use function microtime;
 use function mt_rand;
 use function strtolower;
 
-class ParticleCommand extends Command{
+final class ParticleCommand{
+	private function __construct(){
+		//NOOP
+	}
 
-	public function __construct(string $namespace, string $name){
-		parent::__construct(
+	public static function create(string $namespace, string $name) : Command{
+		return new Command(
 			$namespace,
 			$name,
 			new ExecutorOverload(

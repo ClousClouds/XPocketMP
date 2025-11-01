@@ -39,15 +39,19 @@ use pocketmine\permission\DefaultPermissionNames;
 use pocketmine\utils\Limits;
 use function count;
 
-class EffectCommand extends Command{
+final class EffectCommand{
 
 	private const SELF_PERM = DefaultPermissionNames::COMMAND_EFFECT_OTHER;
 	private const OTHER_PERM = DefaultPermissionNames::COMMAND_EFFECT_OTHER;
 
 	private const OVERLOAD_PERMS = [self::SELF_PERM, self::OTHER_PERM];
 
-	public function __construct(string $namespace, string $name){
-		parent::__construct(
+	private function __construct(){
+		//NOOP
+	}
+
+	public static function create(string $namespace, string $name) : Command{
+		return new Command(
 			$namespace,
 			$name,
 			BranchingOverloadBuilder::make(commonParameters: [
@@ -78,7 +82,7 @@ class EffectCommand extends Command{
 	}
 
 	private static function removeEffect(CommandSender $sender, string $target) : void{
-		$player = self::fetchPermittedPlayerTarget($sender, $target, self::SELF_PERM, self::OTHER_PERM);
+		$player = Command::fetchPermittedPlayerTarget($sender, $target, self::SELF_PERM, self::OTHER_PERM);
 		if($player === null){
 			return;
 		}
@@ -88,7 +92,7 @@ class EffectCommand extends Command{
 		$sender->sendMessage(KnownTranslationFactory::commands_effect_success_removed_all($player->getDisplayName()));
 	}
 
-	private function modifyEffect(
+	private static function modifyEffect(
 		CommandSender $sender,
 		string $target,
 		Effect $effect,
@@ -96,7 +100,7 @@ class EffectCommand extends Command{
 		int $amplifier = 0,
 		bool $bubbles = true
 	) : void{
-		$player = self::fetchPermittedPlayerTarget($sender, $target, self::SELF_PERM, self::OTHER_PERM);
+		$player = Command::fetchPermittedPlayerTarget($sender, $target, self::SELF_PERM, self::OTHER_PERM);
 		if($player === null){
 			return;
 		}
@@ -117,7 +121,7 @@ class EffectCommand extends Command{
 		}else{
 			$instance = new EffectInstance($effect, $duration !== null ? $duration * 20 : null, $amplifier, $bubbles);
 			$effectManager->add($instance);
-			self::broadcastCommandMessage($sender, KnownTranslationFactory::commands_effect_success($effect->getName(), (string) $instance->getAmplifier(), $player->getDisplayName(), (string) ($instance->getDuration() / 20)));
+			Command::broadcastCommandMessage($sender, KnownTranslationFactory::commands_effect_success($effect->getName(), (string) $instance->getAmplifier(), $player->getDisplayName(), (string) ($instance->getDuration() / 20)));
 		}
 	}
 }

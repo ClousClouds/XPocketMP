@@ -34,17 +34,21 @@ use pocketmine\permission\DefaultPermissionNames;
 use pocketmine\player\Player;
 use pocketmine\utils\Limits;
 
-class TitleCommand extends Command{
+final class TitleCommand{
 
 	private const string SELF_PERM = DefaultPermissionNames::COMMAND_TITLE_SELF;
 	private const string OTHER_PERM = DefaultPermissionNames::COMMAND_TITLE_OTHER;
 
 	private const OVERLOAD_PERMS = [self::SELF_PERM, self::OTHER_PERM];
 
-	public function __construct(string $namespace, string $name){
+	private function __construct(){
+		//NOOP
+	}
+
+	public static function create(string $namespace, string $name) : Command{
 		$playerParameter = new StringParameter("playerName", "player name");
 		$textParameter = new RawParameter("text", "text");
-		parent::__construct(
+		return new Command(
 			$namespace,
 			$name,
 			BranchingOverloadBuilder::make(commonParameters: [$playerParameter])
@@ -68,7 +72,7 @@ class TitleCommand extends Command{
 	 * @phpstan-param \Closure(Player) : void $action
 	 */
 	private static function doTitleAction(CommandSender $sender, string $playerName, \Closure $action) : void{
-		$player = self::fetchPermittedPlayerTarget($sender, $playerName, self::SELF_PERM, self::OTHER_PERM);
+		$player = Command::fetchPermittedPlayerTarget($sender, $playerName, self::SELF_PERM, self::OTHER_PERM);
 		if($player === null){
 			return;
 		}

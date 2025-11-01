@@ -49,10 +49,13 @@ use const PHP_INT_MAX;
 use const SORT_FLAG_CASE;
 use const SORT_NATURAL;
 
-class HelpCommand extends Command{
+final class HelpCommand{
+	private function __construct(){
+		//NOOP
+	}
 
-	public function __construct(string $namespace, string $name){
-		parent::__construct(
+	public static function create(string $namespace, string $name) : Command{
+		return new Command(
 			$namespace,
 			$name,
 			BranchingOverloadBuilder::make()

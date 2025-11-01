@@ -29,10 +29,13 @@ use pocketmine\command\overload\ExecutorOverload;
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\permission\DefaultPermissionNames;
 
-class SaveOffCommand extends Command{
+final class SaveOffCommand{
+	private function __construct(){
+		//NOOP
+	}
 
-	public function __construct(string $namespace, string $name){
-		parent::__construct(
+	public static function create(string $namespace, string $name) : Command{
+		return new Command(
 			$namespace,
 			$name,
 			new ExecutorOverload([], DefaultPermissionNames::COMMAND_SAVE_DISABLE, self::execute(...)),

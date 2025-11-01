@@ -39,10 +39,13 @@ use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 use function round;
 
-class TeleportCommand extends Command{
+final class TeleportCommand{
+	private function __construct(){
+		//NOOP
+	}
 
-	public function __construct(string $namespace, string $name){
-		parent::__construct(
+	public static function create(string $namespace, string $name) : Command{
+		return new Command(
 			$namespace,
 			$name,
 			BranchingOverloadBuilder::make()
@@ -127,7 +130,7 @@ class TeleportCommand extends Command{
 		float $yaw = 0.0,
 		float $pitch = 0.0
 	) : void{
-		$subject = self::fetchPermittedPlayerTarget($sender, $teleportedPlayerName, DefaultPermissionNames::COMMAND_TELEPORT_SELF, DefaultPermissionNames::COMMAND_TELEPORT_OTHER);
+		$subject = Command::fetchPermittedPlayerTarget($sender, $teleportedPlayerName, DefaultPermissionNames::COMMAND_TELEPORT_SELF, DefaultPermissionNames::COMMAND_TELEPORT_OTHER);
 		if($subject === null){
 			return;
 		}
@@ -156,7 +159,7 @@ class TeleportCommand extends Command{
 	}
 
 	private static function tpOtherToPlayer(CommandSender $sender, string $teleportedPlayerName, string $destinationPlayerName) : void{
-		$subject = self::fetchPermittedPlayerTarget($sender, $teleportedPlayerName, DefaultPermissionNames::COMMAND_TELEPORT_SELF, DefaultPermissionNames::COMMAND_TELEPORT_OTHER);
+		$subject = Command::fetchPermittedPlayerTarget($sender, $teleportedPlayerName, DefaultPermissionNames::COMMAND_TELEPORT_SELF, DefaultPermissionNames::COMMAND_TELEPORT_OTHER);
 		if($subject === null){
 			return;
 		}
