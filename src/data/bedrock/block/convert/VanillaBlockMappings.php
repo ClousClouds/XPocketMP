@@ -43,6 +43,7 @@ use pocketmine\block\ChiseledBookshelf;
 use pocketmine\block\ChorusFlower;
 use pocketmine\block\CocoaBlock;
 use pocketmine\block\Copper;
+use pocketmine\block\CopperLantern;
 use pocketmine\block\DaylightSensor;
 use pocketmine\block\DetectorRail;
 use pocketmine\block\Dirt;
@@ -440,6 +441,7 @@ final class VanillaBlockMappings{
 		$reg->mapSimple(Blocks::SPORE_BLOSSOM(), Ids::SPORE_BLOSSOM);
 		$reg->mapSimple(Blocks::STONE(), Ids::STONE);
 		$reg->mapSimple(Blocks::STONE_BRICKS(), Ids::STONE_BRICKS);
+		$reg->mapSimple(Blocks::STRUCTURE_VOID(), Ids::STRUCTURE_VOID);
 		$reg->mapSimple(Blocks::TALL_GRASS(), Ids::SHORT_GRASS);  //no, this is not a typo - tall_grass is now the double block, just to be confusing :(
 		$reg->mapSimple(Blocks::TINTED_GLASS(), Ids::TINTED_GLASS);
 		$reg->mapSimple(Blocks::TORCHFLOWER(), Ids::TORCHFLOWER);
@@ -460,6 +462,13 @@ final class VanillaBlockMappings{
 		$reg->mapSimple(Blocks::PINK_TULIP(), Ids::PINK_TULIP);
 		$reg->mapSimple(Blocks::RED_TULIP(), Ids::RED_TULIP);
 		$reg->mapSimple(Blocks::WHITE_TULIP(), Ids::WHITE_TULIP);
+
+		$reg->mapSimple(Blocks::CACTUS_FLOWER(), Ids::CACTUS_FLOWER);
+		$reg->mapSimple(Blocks::CRIMSON_FUNGUS(), Ids::CRIMSON_FUNGUS);
+		$reg->mapSimple(Blocks::WARPED_FUNGUS(), Ids::WARPED_FUNGUS);
+		$reg->mapSimple(Blocks::NETHER_SPROUTS(), Ids::NETHER_SPROUTS);
+		$reg->mapSimple(Blocks::CRIMSON_NYLIUM(), Ids::CRIMSON_NYLIUM);
+		$reg->mapSimple(Blocks::WARPED_NYLIUM(), Ids::WARPED_NYLIUM);
 	}
 
 	private static function registerColoredMappings(BlockSerializerDeserializerRegistrar $reg, CommonProperties $commonProperties) : void{
@@ -664,6 +673,25 @@ final class VanillaBlockMappings{
 				"cut_copper_slab"
 			])
 			->properties([$commonProperties->slabPositionProperty])
+		);
+
+		$reg->mapFlattenedId(FlattenedIdModel::create(Blocks::COPPER_BARS())->idComponents([...$commonProperties->copperIdPrefixes, "copper_bars"]));
+		$reg->mapFlattenedId(FlattenedIdModel::create(Blocks::COPPER_CHAIN())
+			->idComponents([...$commonProperties->copperIdPrefixes, "copper_chain"])
+			->properties([$commonProperties->pillarAxis])
+		);
+		$reg->mapFlattenedId(FlattenedIdModel::create(Blocks::COPPER_LANTERN())
+			->idComponents([...$commonProperties->copperIdPrefixes, "copper_lantern"])
+			->properties([
+				new BoolProperty(StateNames::HANGING, fn(CopperLantern $b) => $b->isHanging(), fn(CopperLantern $b, bool $v) => $b->setHanging($v))
+			])
+		);
+		$reg->mapFlattenedId(FlattenedIdModel::create(Blocks::LIGHTNING_ROD())
+			->idComponents([...$commonProperties->copperIdPrefixes, "lightning_rod"])
+			->properties([
+				$commonProperties->anyFacingClassic,
+				new DummyProperty(StateNames::POWERED_BIT, false) //TODO
+			])
 		);
 	}
 
@@ -1188,6 +1216,7 @@ final class VanillaBlockMappings{
 	private static function registerTorchMappings(BlockSerializerDeserializerRegistrar $reg, CommonProperties $commonProperties) : void{
 		foreach([
 			[Blocks::BLUE_TORCH(), Ids::COLORED_TORCH_BLUE],
+			[Blocks::COPPER_TORCH(), Ids::COPPER_TORCH],
 			[Blocks::GREEN_TORCH(), Ids::COLORED_TORCH_GREEN],
 			[Blocks::PURPLE_TORCH(), Ids::COLORED_TORCH_PURPLE],
 			[Blocks::RED_TORCH(), Ids::COLORED_TORCH_RED],
@@ -1342,6 +1371,7 @@ final class VanillaBlockMappings{
 		]));
 
 		//I
+		$reg->mapModel(Model::create(Blocks::INFESTED_DEEPSLATE(), Ids::INFESTED_DEEPSLATE)->properties([$commonProperties->pillarAxis]));
 		$reg->mapModel(Model::create(Blocks::IRON_DOOR(), Ids::IRON_DOOR)->properties($commonProperties->doorProperties));
 		$reg->mapModel(Model::create(Blocks::IRON_TRAPDOOR(), Ids::IRON_TRAPDOOR)->properties($commonProperties->trapdoorProperties));
 		$reg->mapModel(Model::create(Blocks::ITEM_FRAME(), Ids::FRAME)->properties($commonProperties->itemFrameProperties));
@@ -1358,10 +1388,6 @@ final class VanillaBlockMappings{
 		$reg->mapModel(Model::create(Blocks::LEVER(), Ids::LEVER)->properties([
 			new ValueFromStringProperty(StateNames::LEVER_DIRECTION, ValueMappings::getInstance()->leverFacing, fn(Lever $b) => $b->getFacing(), fn(Lever $b, LeverFacing $v) => $b->setFacing($v)),
 			new BoolProperty(StateNames::OPEN_BIT, fn(Lever $b) => $b->isActivated(), fn(Lever $b, bool $v) => $b->setActivated($v)),
-		]));
-		$reg->mapModel(Model::create(Blocks::LIGHTNING_ROD(), Ids::LIGHTNING_ROD)->properties([
-			$commonProperties->anyFacingClassic,
-			new DummyProperty(StateNames::POWERED_BIT, false) //TODO
 		]));
 		$reg->mapModel(Model::create(Blocks::LIT_PUMPKIN(), Ids::LIT_PUMPKIN)->properties([$commonProperties->horizontalFacingCardinal]));
 		$reg->mapModel(Model::create(Blocks::LOOM(), Ids::LOOM)->properties([$commonProperties->horizontalFacingSWNE]));

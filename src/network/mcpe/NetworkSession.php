@@ -43,6 +43,7 @@ use pocketmine\lang\Translatable;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\StringTag;
+use pocketmine\network\FilterNoisyPacketException;
 use pocketmine\network\mcpe\cache\ChunkCache;
 use pocketmine\network\mcpe\compression\CompressBatchPromise;
 use pocketmine\network\mcpe\compression\Compressor;
@@ -76,6 +77,7 @@ use pocketmine\network\mcpe\protocol\PlayerListPacket;
 use pocketmine\network\mcpe\protocol\PlayerStartItemCooldownPacket;
 use pocketmine\network\mcpe\protocol\PlayStatusPacket;
 use pocketmine\network\mcpe\protocol\ProtocolInfo;
+use pocketmine\network\mcpe\protocol\serializer\AvailableCommandsPacketAssembler;
 use pocketmine\network\mcpe\protocol\serializer\PacketBatch;
 use pocketmine\network\mcpe\protocol\ServerboundPacket;
 use pocketmine\network\mcpe\protocol\ServerToClientHandshakePacket;
@@ -91,7 +93,7 @@ use pocketmine\network\mcpe\protocol\types\AbilitiesData;
 use pocketmine\network\mcpe\protocol\types\AbilitiesLayer;
 use pocketmine\network\mcpe\protocol\types\BlockPosition;
 use pocketmine\network\mcpe\protocol\types\command\CommandData;
-use pocketmine\network\mcpe\protocol\types\command\CommandEnum;
+use pocketmine\network\mcpe\protocol\types\command\CommandHardEnum;
 use pocketmine\network\mcpe\protocol\types\command\CommandOverload;
 use pocketmine\network\mcpe\protocol\types\command\CommandParameter;
 use pocketmine\network\mcpe\protocol\types\command\CommandParameterTypes;
@@ -150,6 +152,8 @@ class NetworkSession{
 	private const INCOMING_GAME_PACKETS_PER_TICK = 2;
 	private const INCOMING_GAME_PACKETS_BUFFER_TICKS = 100;
 
+	private const INCOMING_PACKET_BATCH_HARD_LIMIT = 300;
+
 	private PacketRateLimiter $packetBatchLimiter;
 	private PacketRateLimiter $gamePacketLimiter;
 
@@ -199,6 +203,9 @@ class NetworkSession{
 	 * @phpstan-var ObjectSet<\Closure() : void>
 	 */
 	private ObjectSet $disposeHooks;
+
+	private string $noisyPacketBuffer = "";
+	private int $noisyPacketsDropped = 0;
 
 	public function __construct(
 		private Server $server,
@@ -356,6 +363,20 @@ class NetworkSession{
 		}
 	}
 
+	private function checkRepeatedPacketFilter(string $buffer) : bool{
+		if($buffer === $this->noisyPacketBuffer){
+			$this->noisyPacketsDropped++;
+			return true;
+		}
+		//stop filtering once we see a packet with a different buffer
+		//this won't be any good for interleaved spammy packets, but we haven't seen any of those so far, and this
+		//is the simplest and most conservative filter we can do
+		$this->noisyPacketBuffer = "";
+		$this->noisyPacketsDropped = 0;
+
+		return false;
+	}
+
 	/**
 	 * @throws PacketHandlingException
 	 */
@@ -406,9 +427,21 @@ class NetworkSession{
 				$decompressed = $payload;
 			}
 
+			$count = 0;
 			try{
 				$stream = new ByteBufferReader($decompressed);
 				foreach(PacketBatch::decodeRaw($stream) as $buffer){
+					if(++$count >= self::INCOMING_PACKET_BATCH_HARD_LIMIT){
+						//this should be well more than enough; under normal conditions the game packet rate limiter
+						//will kick in well before this. This is only here to make sure we can't get huge batches of
+						//noisy packets to bog down the server, since those aren't counted by the regular limiter.
+						throw new PacketHandlingException("Reached hard limit of " . self::INCOMING_PACKET_BATCH_HARD_LIMIT . " per batch packet");
+					}
+
+					if($this->checkRepeatedPacketFilter($buffer)){
+						continue;
+					}
+
 					$this->gamePacketLimiter->decrement();
 					$packet = $this->packetPool->getPacket($buffer);
 					if($packet === null){
@@ -420,6 +453,8 @@ class NetworkSession{
 					}catch(PacketHandlingException $e){
 						$this->logger->debug($packet->getName() . ": " . base64_encode($buffer));
 						throw PacketHandlingException::wrap($e, "Error processing " . $packet->getName());
+					}catch(FilterNoisyPacketException){
+						$this->noisyPacketBuffer = $buffer;
 					}
 					if(!$this->isConnected()){
 						//handling this packet may have caused a disconnection
@@ -438,6 +473,7 @@ class NetworkSession{
 
 	/**
 	 * @throws PacketHandlingException
+	 * @throws FilterNoisyPacketException
 	 */
 	public function handleDataPacket(Packet $packet, string $buffer) : void{
 		if(!($packet instanceof ServerboundPacket)){
@@ -1122,7 +1158,7 @@ class NetworkSession{
 			//use filtered aliases for command name discovery - this allows /help to still be shown as /pocketmine:help
 			//on the client without conflicting with the client's built-in /help command
 			$lname = strtolower($firstNetworkAlias);
-			$aliasObj = count($aliases) > 1 ? new CommandEnum(ucfirst($firstNetworkAlias) . "Aliases", $aliases) : null;
+			$aliasObj = count($aliases) > 1 ? new CommandHardEnum(ucfirst($firstNetworkAlias) . "Aliases", $aliases) : null;
 
 			$overloads = [];
 			foreach($command->getOverloads() as $overload){
@@ -1131,7 +1167,7 @@ class NetworkSession{
 				$required = $overload->getRequiredParameterCount();
 				foreach($overload->getParameters() as $k => $parameter){
 					if(is_string($parameter)){
-						$literalEnum = $literals[$parameter] ??= new CommandEnum("Literal_$parameter", [$parameter], isSoft: false);
+						$literalEnum = $literals[$parameter] ??= new CommandHardEnum("Literal_$parameter", [$parameter]);
 						$parameters[] = CommandParameter::enum(
 							$parameter,
 							$literalEnum,
@@ -1179,7 +1215,7 @@ class NetworkSession{
 			$commandData[] = $data;
 		}
 
-		$this->sendDataPacket(AvailableCommandsPacket::create($commandData, [], [], []));
+		$this->sendDataPacket(AvailableCommandsPacketAssembler::assemble($commandData, [], []));
 	}
 
 	/**
