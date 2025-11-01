@@ -332,6 +332,8 @@ final class KnownTranslationKeys{
 	public const POCKETMINE_COMMAND_ERROR_ALIASCONFLICT = "pocketmine.command.error.aliasConflict";
 	public const POCKETMINE_COMMAND_ERROR_ALIASCONFLICTTIP = "pocketmine.command.error.aliasConflictTip";
 	public const POCKETMINE_COMMAND_ERROR_PERMISSION = "pocketmine.command.error.permission";
+	public const POCKETMINE_COMMAND_ERROR_PERMISSION_TARGETOTHER = "pocketmine.command.error.permission.targetOther";
+	public const POCKETMINE_COMMAND_ERROR_PERMISSION_TARGETSELF = "pocketmine.command.error.permission.targetSelf";
 	public const POCKETMINE_COMMAND_ERROR_PLAYERNOTFOUND = "pocketmine.command.error.playerNotFound";
 	public const POCKETMINE_COMMAND_GAMEMODE_DESCRIPTION = "pocketmine.command.gamemode.description";
 	public const POCKETMINE_COMMAND_GAMEMODE_FAILURE = "pocketmine.command.gamemode.failure";

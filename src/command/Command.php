@@ -216,7 +216,10 @@ class Command{
 
 		$permission = $player === $sender ? $selfPermission : $otherPermission;
 		if(!$sender->hasPermission($permission)){
-			$sender->sendMessage(TextFormat::RED . "You don't have permission to use this command on others");
+			$message = $player === $sender ?
+				KnownTranslationFactory::pocketmine_command_error_permission_targetSelf() :
+				KnownTranslationFactory::pocketmine_command_error_permission_targetOther();
+			$sender->sendMessage($message->prefix(TextFormat::RED));
 			return null;
 		}
 		return $player;

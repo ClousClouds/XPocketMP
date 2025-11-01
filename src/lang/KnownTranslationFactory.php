@@ -1494,6 +1494,14 @@ final class KnownTranslationFactory{
 		]);
 	}
 
+	public static function pocketmine_command_error_permission_targetOther() : Translatable{
+		return new Translatable(KnownTranslationKeys::POCKETMINE_COMMAND_ERROR_PERMISSION_TARGETOTHER, []);
+	}
+
+	public static function pocketmine_command_error_permission_targetSelf() : Translatable{
+		return new Translatable(KnownTranslationKeys::POCKETMINE_COMMAND_ERROR_PERMISSION_TARGETSELF, []);
+	}
+
 	public static function pocketmine_command_error_playerNotFound(Translatable|string $playerName) : Translatable{
 		return new Translatable(KnownTranslationKeys::POCKETMINE_COMMAND_ERROR_PLAYERNOTFOUND, [
 			"playerName" => $playerName,
