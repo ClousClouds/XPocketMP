@@ -25,7 +25,7 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\ExecutorOverload;
 use pocketmine\command\overload\RawParameter;
 use pocketmine\console\ConsoleCommandSender;
 use pocketmine\lang\KnownTranslationFactory;
@@ -39,9 +39,9 @@ class SayCommand extends Command{
 		parent::__construct(
 			$namespace,
 			$name,
-			[new CommandOverload([
+			new ExecutorOverload([
 				new RawParameter("message", "message")
-			], DefaultPermissionNames::COMMAND_SAY, self::execute(...))],
+			], DefaultPermissionNames::COMMAND_SAY, self::execute(...)),
 			KnownTranslationFactory::pocketmine_command_say_description(),
 		);
 	}

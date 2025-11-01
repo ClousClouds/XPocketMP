@@ -33,6 +33,7 @@ use pocketmine\command\utils\InvalidCommandSyntaxException;
 use pocketmine\lang\Translatable;
 use pocketmine\permission\PermissionManager;
 use function array_key_last;
+use function array_slice;
 use function count;
 use function get_class;
 use function implode;
@@ -41,9 +42,10 @@ use function preg_match;
 use function strlen;
 use function substr_compare;
 
-final class CommandOverload{
+final class ExecutorOverload implements Overload{
 
 	private int $requiredInputCount;
+	private int $requiredCallbackArgumentCount;
 
 	/**
 	 * @var string[]
@@ -116,6 +118,7 @@ final class CommandOverload{
 		//contravariance allows them to be optional even if they're required in the prototype
 		//literals must always be provided
 		$this->requiredInputCount = $actualPrototype->getRequiredParameterCount() + $literalCount - count($nonInputParameters);
+		$this->requiredCallbackArgumentCount = $actualPrototype->getRequiredParameterCount() - count($nonInputParameters);
 	}
 
 	/**
@@ -155,7 +158,7 @@ final class CommandOverload{
 		return false;
 	}
 
-	public function getUsage() : Translatable{
+	public function getUsage(string $aliasUsed) : Translatable{
 		$templates = [];
 		$args = [];
 		$pos = 0;
@@ -179,10 +182,10 @@ final class CommandOverload{
 			$pos++;
 		}
 
-		return new Translatable(implode(" ", $templates), $args);
+		return new Translatable("/$aliasUsed " . implode(" ", $templates), $args);
 	}
 
-	private static function skipWhitespace(string $commandLine, int &$offset) : int{
+	public static function skipWhitespace(string $commandLine, int &$offset) : int{
 		if(preg_match('/\G\s+/', $commandLine, $matches, offset: $offset) > 0){
 			$offset += strlen($matches[0]);
 			return strlen($matches[0]);
@@ -191,22 +194,71 @@ final class CommandOverload{
 	}
 
 	/**
-	 * @throws InvalidCommandSyntaxException
+	 * @param CommandContext $context * @param mixed[]             $parentArgs
+	 *
+	 * @phpstan-param list<mixed> $parentArgs
 	 */
-	public function invoke(CommandSender $sender, string $aliasUsed, string $commandLine) : void{
-		$offset = 0;
+	public function invoke(CommandContext $context, int $offset, array $parentArgs, int $parentParametersParsed) : bool{
+		$parameters = $parentParametersParsed > 0 ? array_slice($this->parameters, $parentParametersParsed) : $this->parameters;
+
+		$commandLine = $context->getCommandLine();
+		try{
+			$myArgs = self::parseArgs($parameters, $commandLine, $offset);
+		}catch(ParameterParseException $e){
+			$context->invalidSyntax($this, $offset, $e->getMessage());
+			return false;
+		}
+		if($offset !== strlen($commandLine)){
+			$context->invalidSyntax($this, $offset, "Too many inputs provided for overload");
+			return false;
+		}
+		if(count($parentArgs) + count($myArgs) < $this->requiredCallbackArgumentCount){
+			$context->invalidSyntax($this, $offset, "Not enough arguments resolved for overload");
+			return false;
+		}
+		//Reflection magic here :)
+		//TODO: maybe we don't want to invoke this directly, but hand the args back to the caller?
+		//this would allow resolving by more than just overload order
+		$sender = $context->getSender();
+		if(!$this->senderHasAnyPermissions($sender)){
+			$context->permissionDenied($this);
+			return false;
+		}
+		try{
+			if($this->acceptsAliasUsed){
+				// @phpstan-ignore-next-line
+				($this->handler)($sender, $context->getAliasUsed(), ...$parentArgs, ...$myArgs);
+			}else{
+				// @phpstan-ignore-next-line
+				($this->handler)($sender, ...$parentArgs, ...$myArgs);
+			}
+		}catch(InvalidCommandSyntaxException $e){
+			$context->invalidSyntax($this, $offset, $e->getMessage());
+			return false;
+		}
+
+		return true;
+	}
+
+	public function collectExecutors() : array{
+		return [$this];
+	}
+
+	/**
+	 * @phpstan-param list<Parameter<*>|string> $parameters
+	 * @phpstan-return list<mixed>
+	 */
+	public static function parseArgs(array $parameters, string $commandLine, int &$offset) : array{
 		$args = [];
-		$literals = 0;
 
 		//skip preceding whitespace
 		self::skipWhitespace($commandLine, $offset);
 
 		if($offset < strlen($commandLine)){
-			foreach($this->parameters as $parameter){
+			foreach($parameters as $parameter){
 				if(is_string($parameter)){
 					if(substr_compare($commandLine, $parameter, $offset, strlen($parameter)) === 0){
 						$offset += strlen($parameter);
-						$literals++;
 					}else{
 						throw new ParameterParseException("Literal \"$parameter\" expected");
 					}
@@ -232,21 +284,7 @@ final class CommandOverload{
 				}
 			}
 		}
-		if($offset !== strlen($commandLine)){
-			throw new InvalidCommandSyntaxException("Too many arguments provided for overload");
-		}
-		if(count($args) + $literals < $this->requiredInputCount){
-			throw new InvalidCommandSyntaxException("Not enough arguments provided for overload");
-		}
-		//Reflection magic here :)
-		//TODO: maybe we don't want to invoke this directly, but hand the args back to the caller?
-		//this would allow resolving by more than just overload order
-		if($this->acceptsAliasUsed){
-			// @phpstan-ignore-next-line
-			($this->handler)($sender, $aliasUsed, ...$args);
-		}else{
-			// @phpstan-ignore-next-line
-			($this->handler)($sender, ...$args);
-		}
+
+		return $args;
 	}
 }

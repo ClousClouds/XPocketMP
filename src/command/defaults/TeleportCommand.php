@@ -25,7 +25,8 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\BranchingOverload;
+use pocketmine\command\overload\BranchingOverloadBuilder;
 use pocketmine\command\overload\FloatRangeParameter;
 use pocketmine\command\overload\RelativeFloat;
 use pocketmine\command\overload\RelativeFloatParameter;
@@ -46,32 +47,47 @@ class TeleportCommand extends Command{
 		parent::__construct(
 			$namespace,
 			$name,
-			[
-				new CommandOverload([
-					new RelativeFloatParameter("xIn", "x"),
-					new RelativeFloatParameter("yIn", "y"),
-					new RelativeFloatParameter("zIn", "z"),
-					new FloatRangeParameter("yaw", "yaw", 0, 360),
-					new FloatRangeParameter("pitch", "pitch", -90, 90)
-				], DefaultPermissionNames::COMMAND_TELEPORT_SELF, self::tpSelfCoords(...)),
-				new CommandOverload([
-					new StringParameter("teleportedPlayerName", "player to teleport"),
-					new RelativeFloatParameter("xIn", "x"),
-					new RelativeFloatParameter("yIn", "y"),
-					new RelativeFloatParameter("zIn", "z"),
-					new FloatRangeParameter("yaw", "yaw", 0, 360),
-					new FloatRangeParameter("pitch", "pitch", -90, 90)
-				], DefaultPermissionNames::COMMAND_TELEPORT_OTHER, self::tpOtherCoords(...)),
-				new CommandOverload([
-					new StringParameter("destinationPlayerName", "destination player")
-				], DefaultPermissionNames::COMMAND_TELEPORT_SELF, self::tpSelfToPlayer(...)),
-				new CommandOverload([
-					new StringParameter("teleportedPlayerName", "player to teleport"),
-					new StringParameter("destinationPlayerName", "destination player")
-				], DefaultPermissionNames::COMMAND_TELEPORT_OTHER, self::tpOtherToPlayer(...))
-			],
+			BranchingOverloadBuilder::make()
+				->branch(
+					[new StringParameter("teleportedPlayerName", "player to teleport")],
+					fn(BranchingOverloadBuilder $childBuilder) : BranchingOverload => self::buildOverloads(
+						$childBuilder,
+						DefaultPermissionNames::COMMAND_TELEPORT_OTHER,
+						self::tpOtherToPlayer(...),
+						self::tpOtherCoords(...)
+					)
+				)
+				->branch(
+					[],
+					fn(BranchingOverloadBuilder $childBuilder) : BranchingOverload => self::buildOverloads(
+						$childBuilder,
+						DefaultPermissionNames::COMMAND_TELEPORT_SELF,
+						self::tpSelfToPlayer(...),
+						self::tpSelfCoords(...)
+					)
+				)
+				->build(),
 			KnownTranslationFactory::pocketmine_command_tp_description()
 		);
+	}
+
+	/**
+	 * @phpstan-param anyClosure $tpToPlayer
+	 * @phpstan-param anyClosure $tpToCoords
+	 */
+	private static function buildOverloads(BranchingOverloadBuilder $childBuilder, string $permission, \Closure $tpToPlayer, \Closure $tpToCoords) : BranchingOverload{
+		return $childBuilder
+			->executor([
+				new StringParameter("destinationPlayerName", "destination player")
+			], $permission, $tpToPlayer)
+			->executor([
+				new RelativeFloatParameter("xIn", "x"),
+				new RelativeFloatParameter("yIn", "y"),
+				new RelativeFloatParameter("zIn", "z"),
+				new FloatRangeParameter("yaw", "yaw", 0, 360),
+				new FloatRangeParameter("pitch", "pitch", -90, 90)
+			], $permission, $tpToCoords)
+			->build();
 	}
 
 	private static function tpCoords(

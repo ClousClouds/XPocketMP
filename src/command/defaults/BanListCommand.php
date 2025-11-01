@@ -25,7 +25,7 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\BranchingOverloadBuilder;
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\permission\BanEntry;
 use pocketmine\permission\BanList;
@@ -42,10 +42,10 @@ class BanListCommand extends Command{
 		parent::__construct(
 			$namespace,
 			$name,
-			[
-				new CommandOverload(["ips"], DefaultPermissionNames::COMMAND_BAN_LIST, self::listIPBans(...)),
-				new CommandOverload(["players"], DefaultPermissionNames::COMMAND_BAN_LIST, self::listNameBans(...))
-			],
+			BranchingOverloadBuilder::make()
+				->executor(["ips"], DefaultPermissionNames::COMMAND_BAN_LIST, self::listIPBans(...))
+				->executor(["players"], DefaultPermissionNames::COMMAND_BAN_LIST, self::listNameBans(...))
+				->build(),
 			KnownTranslationFactory::pocketmine_command_banlist_description(),
 		);
 	}

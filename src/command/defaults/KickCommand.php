@@ -25,7 +25,7 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\ExecutorOverload;
 use pocketmine\command\overload\RawParameter;
 use pocketmine\command\overload\StringParameter;
 use pocketmine\lang\KnownTranslationFactory;
@@ -39,10 +39,10 @@ class KickCommand extends Command{
 		parent::__construct(
 			$namespace,
 			$name,
-			[new CommandOverload([
+			new ExecutorOverload([
 				new StringParameter("playerName", "player name"),
 				new RawParameter("reason", "reason")
-			], DefaultPermissionNames::COMMAND_KICK, self::execute(...))],
+			], DefaultPermissionNames::COMMAND_KICK, self::execute(...)),
 			KnownTranslationFactory::pocketmine_command_kick_description(),
 		);
 	}

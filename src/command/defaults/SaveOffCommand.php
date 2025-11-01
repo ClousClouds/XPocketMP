@@ -25,7 +25,7 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\ExecutorOverload;
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\permission\DefaultPermissionNames;
 
@@ -35,7 +35,7 @@ class SaveOffCommand extends Command{
 		parent::__construct(
 			$namespace,
 			$name,
-			[new CommandOverload([], DefaultPermissionNames::COMMAND_SAVE_DISABLE, self::execute(...))],
+			new ExecutorOverload([], DefaultPermissionNames::COMMAND_SAVE_DISABLE, self::execute(...)),
 			KnownTranslationFactory::pocketmine_command_saveoff_description()
 		);
 	}

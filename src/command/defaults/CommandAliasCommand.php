@@ -25,7 +25,8 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\BranchingOverload;
+use pocketmine\command\overload\BranchingOverloadBuilder;
 use pocketmine\command\overload\StringParameter;
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\lang\Translatable;
@@ -44,37 +45,40 @@ final class CommandAliasCommand extends Command{
 	private const LIST_PERM = DefaultPermissionNames::COMMAND_CMDALIAS_LIST;
 
 	public function __construct(string $namespace, string $name){
-		$overloads = [];
+		$builder = BranchingOverloadBuilder::make();
 		foreach([false, true] as $global){
 			$prefix = $global ? ["global"] : [];
 			$editPerm = $global ? self::GLOBAL_PERM : self::SELF_PERM;
-			$overloads[] = new CommandOverload(
-				[...$prefix, ...[
-					"create",
-					new StringParameter("alias", "alias"),
-					new StringParameter("target", "target")
-				]],
-				$editPerm,
-				fn(CommandSender $sender, string $alias, string $target) => $this->createAlias($sender, $alias, $target, $global)
-			);
-			$overloads[] = new CommandOverload(
-				[...$prefix, ...[
-					"delete",
-					new StringParameter("alias", "alias")
-				]],
-				$editPerm,
-				fn(CommandSender $sender, string $alias) => $this->deleteAlias($sender, $alias, $global)
-			);
-			$overloads[] = new CommandOverload(
-				[...$prefix, "list"],
-				self::LIST_PERM,
-				fn(CommandSender $sender) => $this->listAliases($sender, $global)
-			);
+			$builder->branch($prefix, function(BranchingOverloadBuilder $childBuilder) use ($global, $editPerm) : BranchingOverload{
+				$childBuilder->executor(
+					[
+						"create",
+						new StringParameter("alias", "alias"),
+						new StringParameter("target", "target")
+					],
+					$editPerm,
+					fn(CommandSender $sender, string $alias, string $target) => $this->createAlias($sender, $alias, $target, $global)
+				);
+				$childBuilder->executor(
+					[
+						"delete",
+						new StringParameter("alias", "alias")
+					],
+					$editPerm,
+					fn(CommandSender $sender, string $alias) => $this->deleteAlias($sender, $alias, $global)
+				);
+				$childBuilder->executor(
+					["list"],
+					self::LIST_PERM,
+					fn(CommandSender $sender) => $this->listAliases($sender, $global)
+				);
+				return $childBuilder->build();
+			});
 		}
 		parent::__construct(
 			$namespace,
 			$name,
-			$overloads,
+			$builder->build(),
 			KnownTranslationFactory::pocketmine_command_cmdalias_description(),
 		);
 	}

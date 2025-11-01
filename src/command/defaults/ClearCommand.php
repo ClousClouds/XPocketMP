@@ -25,7 +25,7 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\ExecutorOverload;
 use pocketmine\command\overload\IntRangeParameter;
 use pocketmine\command\overload\MappedParameter;
 use pocketmine\command\overload\ParameterParseException;
@@ -52,7 +52,7 @@ class ClearCommand extends Command{
 		parent::__construct(
 			$namespace,
 			$name,
-			[new CommandOverload([
+			new ExecutorOverload([
 				new StringParameter("playerName", "player name"),
 				new MappedParameter("targetItem", "item name", static function(string $v) : Item{
 					try{
@@ -62,7 +62,7 @@ class ClearCommand extends Command{
 					}
 				}),
 				new IntRangeParameter("maxCount", "max count", -1, 32767)
-			], self::OVERLOAD_PERMS, self::execute(...))],
+			], self::OVERLOAD_PERMS, self::execute(...)),
 			KnownTranslationFactory::pocketmine_command_clear_description()
 		);
 	}

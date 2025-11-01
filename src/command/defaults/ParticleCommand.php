@@ -27,7 +27,7 @@ use pocketmine\block\BlockTypeIds;
 use pocketmine\color\Color;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\ExecutorOverload;
 use pocketmine\command\overload\FloatRangeParameter;
 use pocketmine\command\overload\IntRangeParameter;
 use pocketmine\command\overload\RelativeFloat;
@@ -85,7 +85,7 @@ class ParticleCommand extends Command{
 		parent::__construct(
 			$namespace,
 			$name,
-			[new CommandOverload(
+			new ExecutorOverload(
 				[
 					new StringParameter("particleName", "particle name"),
 					new RelativeFloatParameter("x", "x"),
@@ -99,7 +99,7 @@ class ParticleCommand extends Command{
 				],
 				DefaultPermissionNames::COMMAND_PARTICLE,
 				self::execute(...)
-			)],
+			),
 			KnownTranslationFactory::pocketmine_command_particle_description()
 		);
 	}

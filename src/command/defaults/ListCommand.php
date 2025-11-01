@@ -25,7 +25,7 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\ExecutorOverload;
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\permission\DefaultPermissionNames;
 use pocketmine\player\Player;
@@ -42,7 +42,7 @@ class ListCommand extends Command{
 		parent::__construct(
 			$namespace,
 			$name,
-			[new CommandOverload([], DefaultPermissionNames::COMMAND_LIST, self::execute(...))],
+			new ExecutorOverload([], DefaultPermissionNames::COMMAND_LIST, self::execute(...)),
 			KnownTranslationFactory::pocketmine_command_list_description()
 		);
 	}

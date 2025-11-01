@@ -25,7 +25,8 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\BranchingOverload;
+use pocketmine\command\overload\BranchingOverloadBuilder;
 use pocketmine\command\overload\IntRangeParameter;
 use pocketmine\command\overload\MappedParameter;
 use pocketmine\command\overload\ParameterParseException;
@@ -41,32 +42,32 @@ class TimeCommand extends Command{
 		parent::__construct(
 			$namespace,
 			$name,
-			[
-				new CommandOverload(["start"], DefaultPermissionNames::COMMAND_TIME_START, self::startTime(...)),
-				new CommandOverload(["stop"], DefaultPermissionNames::COMMAND_TIME_STOP, self::stopTime(...)),
-				new CommandOverload(["query"], DefaultPermissionNames::COMMAND_TIME_QUERY, self::queryTime(...)),
-				new CommandOverload([
-					"set",
-					new MappedParameter("time", "time name", static fn(string $v) : int => match($v){
-						"day" => World::TIME_DAY,
-						"noon" => World::TIME_NOON,
-						"sunset" => World::TIME_SUNSET,
-						"night" => World::TIME_NIGHT,
-						"midnight" => World::TIME_MIDNIGHT,
-						"sunrise" => World::TIME_SUNRISE,
-						//numeric times are handled in a separate overload, for clarity's sake
-						default => throw new ParameterParseException("Invalid time name: $v")
-					})
-				], DefaultPermissionNames::COMMAND_TIME_SET, self::setTime(...)),
-				new CommandOverload([
-					"set",
-					new IntRangeParameter("time", "timestamp", 0, Limits::INT32_MAX)
-				], DefaultPermissionNames::COMMAND_TIME_SET, self::setTime(...)),
-				new CommandOverload([
+			BranchingOverloadBuilder::make()
+				->executor(["start"], DefaultPermissionNames::COMMAND_TIME_START, self::startTime(...))
+				->executor(["stop"], DefaultPermissionNames::COMMAND_TIME_STOP, self::stopTime(...))
+				->executor(["query"], DefaultPermissionNames::COMMAND_TIME_QUERY, self::queryTime(...))
+				->executor([
 					"add",
 					new IntRangeParameter("ticks", "ticks", 0, Limits::INT32_MAX),
 				], DefaultPermissionNames::COMMAND_TIME_ADD, self::addTime(...))
-			],
+				->branch(["set"], fn(BranchingOverloadBuilder $builder) : BranchingOverload => $builder
+					->executor([
+						new MappedParameter("time", "time name", static fn(string $v) : int => match ($v) {
+							"day" => World::TIME_DAY,
+							"noon" => World::TIME_NOON,
+							"sunset" => World::TIME_SUNSET,
+							"night" => World::TIME_NIGHT,
+							"midnight" => World::TIME_MIDNIGHT,
+							"sunrise" => World::TIME_SUNRISE,
+							//numeric times are handled in a separate overload, for clarity's sake
+							default => throw new ParameterParseException("Invalid time name: $v")
+						})
+					], DefaultPermissionNames::COMMAND_TIME_SET, self::setTime(...))
+					->executor([
+						new IntRangeParameter("time", "timestamp", 0, Limits::INT32_MAX)
+					], DefaultPermissionNames::COMMAND_TIME_SET, self::setTime(...))
+					->build())
+				->build(),
 			KnownTranslationFactory::pocketmine_command_time_description()
 		);
 	}

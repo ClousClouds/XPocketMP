@@ -25,7 +25,7 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\BranchingOverloadBuilder;
 use pocketmine\command\overload\StringParameter;
 use pocketmine\command\utils\InvalidCommandSyntaxException;
 use pocketmine\lang\KnownTranslationFactory;
@@ -44,20 +44,20 @@ class WhitelistCommand extends Command{
 		parent::__construct(
 			$namespace,
 			$name,
-			[
-				new CommandOverload(["reload"], DefaultPermissionNames::COMMAND_WHITELIST_RELOAD, self::reloadWhitelist(...)),
-				new CommandOverload(["enable"], DefaultPermissionNames::COMMAND_WHITELIST_ENABLE, self::enableWhitelist(...)),
-				new CommandOverload(["disable"], DefaultPermissionNames::COMMAND_WHITELIST_DISABLE, self::disableWhitelist(...)),
-				new CommandOverload(["list"], DefaultPermissionNames::COMMAND_WHITELIST_LIST, self::listWhitelist(...)),
-				new CommandOverload([
+			BranchingOverloadBuilder::make()
+				->executor(["reload"], DefaultPermissionNames::COMMAND_WHITELIST_RELOAD, self::reloadWhitelist(...))
+				->executor(["enable"], DefaultPermissionNames::COMMAND_WHITELIST_ENABLE, self::enableWhitelist(...))
+				->executor(["disable"], DefaultPermissionNames::COMMAND_WHITELIST_DISABLE, self::disableWhitelist(...))
+				->executor(["list"], DefaultPermissionNames::COMMAND_WHITELIST_LIST, self::listWhitelist(...))
+				->executor([
 					"add",
 					new StringParameter("playerName", "player name")
-				], DefaultPermissionNames::COMMAND_WHITELIST_ADD, self::addWhitelistedPlayer(...)),
-				new CommandOverload([
+				], DefaultPermissionNames::COMMAND_WHITELIST_ADD, self::addWhitelistedPlayer(...))
+				->executor([
 					"remove",
 					new StringParameter("playerName", "player name"),
 				], DefaultPermissionNames::COMMAND_WHITELIST_REMOVE, self::removeWhitelistedPlayer(...))
-			],
+				->build(),
 			KnownTranslationFactory::pocketmine_command_whitelist_description()
 		);
 	}

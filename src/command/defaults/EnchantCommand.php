@@ -25,7 +25,7 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\ExecutorOverload;
 use pocketmine\command\overload\IntRangeParameter;
 use pocketmine\command\overload\MappedParameter;
 use pocketmine\command\overload\ParameterParseException;
@@ -49,14 +49,14 @@ class EnchantCommand extends Command{
 		parent::__construct(
 			$namespace,
 			$name,
-			[new CommandOverload([
+			new ExecutorOverload([
 				new StringParameter("target", "target"),
 				new MappedParameter("enchantment", "enchantment", static fn(string $v) : Enchantment => StringToEnchantmentParser::getInstance()->parse($v) ??
 					throw new ParameterParseException("Invalid enchantment name")
 				),
 				//sad, this one depends on previous parameters :(
 				new IntRangeParameter("level", "level", 1, 10)
-			], self::OVERLOAD_PERMS, self::enchant(...))],
+			], self::OVERLOAD_PERMS, self::enchant(...)),
 			KnownTranslationFactory::pocketmine_command_enchant_description()
 		);
 	}

@@ -26,7 +26,7 @@ namespace pocketmine\command\defaults;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\command\overload\BoolParameter;
-use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\BranchingOverloadBuilder;
 use pocketmine\command\overload\IntRangeParameter;
 use pocketmine\command\overload\MappedParameter;
 use pocketmine\command\overload\ParameterParseException;
@@ -50,17 +50,17 @@ class EffectCommand extends Command{
 		parent::__construct(
 			$namespace,
 			$name,
-			[
-				new CommandOverload([
-					//TODO: this should be a target param in the future
-					new StringParameter("target", "target"),
-					"clear"
+			BranchingOverloadBuilder::make(commonParameters: [
+				new StringParameter("target", "target")
+			])
+				->executor(
+					["clear"],
 
 					//TODO: our permission system isn't granular enough for this right now - the permission required
 					//differs not by the usage, but by the target selected
-				], self::OVERLOAD_PERMS, self::removeEffect(...)),
-				new CommandOverload([
-					new StringParameter("target", "target"),
+					self::OVERLOAD_PERMS, self::removeEffect(...),
+				)
+				->executor([
 					new MappedParameter("effect", "effect name", static fn(string $v) : Effect =>
 						StringToEffectParser::getInstance()->parse($v) ??
 						throw new ParameterParseException("Invalid effect name")
@@ -72,7 +72,7 @@ class EffectCommand extends Command{
 					//TODO: our permission system isn't granular enough for this right now - the permission required
 					//differs not by the usage, but by the target selected
 				], self::OVERLOAD_PERMS, self::modifyEffect(...))
-			],
+				->build(),
 			KnownTranslationFactory::pocketmine_command_effect_description(),
 		);
 	}

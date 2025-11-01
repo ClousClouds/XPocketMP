@@ -23,7 +23,7 @@ declare(strict_types=1);
 
 namespace pocketmine\command;
 
-use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\ExecutorOverload;
 use pocketmine\command\overload\RawParameter;
 use pocketmine\command\utils\CommandException;
 use pocketmine\command\utils\CommandStringHelper;
@@ -51,12 +51,12 @@ abstract class LegacyCommand extends Command{
 		Translatable|string $description = "",
 		private Translatable|string|null $usageMessage = null,
 	){
-		parent::__construct($namespace, $name, [new CommandOverload(
+		parent::__construct($namespace, $name, new ExecutorOverload(
 			[new RawParameter("args", "args")],
 			DefaultPermissionNames::GROUP_USER,
 			$this->handler(...),
 			acceptsAliasUsed: true
-		)], $description);
+		), $description);
 	}
 
 	/**

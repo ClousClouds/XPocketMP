@@ -25,7 +25,7 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\BranchingOverloadBuilder;
 use pocketmine\command\overload\RelativeFloat;
 use pocketmine\command\overload\RelativeFloatParameter;
 use pocketmine\command\overload\StringParameter;
@@ -48,17 +48,16 @@ class SpawnpointCommand extends Command{
 		parent::__construct(
 			$namespace,
 			$name,
-			[
-				new CommandOverload([
-					new StringParameter("target", "target")
-				], self::OVERLOAD_PERMS, self::setSpawnHere(...)),
-				new CommandOverload([
-					new StringParameter("target", "target"),
+			BranchingOverloadBuilder::make(commonParameters: [
+				new StringParameter("target", "target")
+			])
+				->executor([], self::OVERLOAD_PERMS, self::setSpawnHere(...))
+				->executor([
 					new RelativeFloatParameter("x", "x"),
 					new RelativeFloatParameter("y", "y"),
 					new RelativeFloatParameter("z", "z")
 				], self::OVERLOAD_PERMS, self::setSpawnCoords(...))
-			],
+				->build(),
 			KnownTranslationFactory::pocketmine_command_spawnpoint_description()
 		);
 	}

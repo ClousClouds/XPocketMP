@@ -26,7 +26,9 @@ declare(strict_types=1);
  */
 namespace pocketmine\command;
 
-use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\CommandContext;
+use pocketmine\command\overload\ExecutorOverload;
+use pocketmine\command\overload\Overload;
 use pocketmine\command\utils\InvalidCommandSyntaxException;
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\lang\Translatable;
@@ -47,19 +49,12 @@ class Command{
 
 	private Translatable|string|null $permissionMessage = null;
 
-	/**
-	 * @param CommandOverload[] $overloads
-	 * @phpstan-param list<CommandOverload> $overloads
-	 */
 	public function __construct(
 		string $namespace,
 		string $name,
-		private array $overloads,
+		private Overload $overload,
 		private Translatable|string $description = "",
 	){
-		if(count($this->overloads) === 0){
-			throw new \InvalidArgumentException("At least one overload must be provided (extend LegacyCommand for classic execute())");
-		}
 		if($namespace === ""){
 			throw new \InvalidArgumentException("Command namespace cannot be empty (set it to, for example, your plugin's name)");
 		}
@@ -72,26 +67,20 @@ class Command{
 	}
 
 	final public function executeOverloaded(CommandSender $sender, string $aliasUsed, string $rawArgs) : bool{
-		foreach($this->overloads as $k => $overload){
-			if(!$overload->senderHasAnyPermissions($sender)){
-				continue;
-			}
-			try{
-				$overload->invoke($sender, $aliasUsed, $rawArgs);
-				return true;
-			}catch(InvalidCommandSyntaxException $e){
-				\GlobalLogger::get()->debug("Overload $k of /$aliasUsed rejected: " . $e->getMessage());
-			}
+		$context = new CommandContext($sender, $aliasUsed, $rawArgs);
+
+		if($this->overload->invoke($context, 0, [], 0)){
+			return true;
 		}
 
-		$usages = $this->getUsages($sender, $aliasUsed);
-		if(count($usages) === 0){
+		$mostSuccessful = $context->getMostSuccessfulFailedOverloads();
+		if(count($mostSuccessful) === 0){ //all overloads denied permissions
 			$message = $this->permissionMessage ?? KnownTranslationFactory::pocketmine_command_error_permission($aliasUsed);
 			if($message instanceof Translatable){
 				$sender->sendMessage($message->prefix(TextFormat::RED));
 			}elseif($message !== ""){
 				$permissions = [];
-				foreach($this->overloads as $overload){
+				foreach($context->getPermissionDeniedOverloads() as $overload){
 					foreach($overload->getPermissions() as $permission){
 						$permissions[] = $permission;
 					}
@@ -102,25 +91,20 @@ class Command{
 			return false;
 		}
 
-		foreach($usages as $usageMessage){
+		foreach($mostSuccessful as $overload){
+			$usageMessage = $overload->getUsage($aliasUsed);
 			$sender->sendMessage($sender->getLanguage()->translate(KnownTranslationFactory::commands_generic_usage($usageMessage)));
 		}
 		return false;
 	}
 
 	/**
-	 * @return CommandOverload[]
-	 * @phpstan-return list<CommandOverload>
-	 */
-	public function getOverloads() : array{ return $this->overloads; }
-
-	/**
-	 * @return CommandOverload[]
-	 * @phpstan-return list<CommandOverload>
+	 * @return ExecutorOverload[]
+	 * @phpstan-return list<ExecutorOverload>
 	 */
 	public function getPermittedOverloads(CommandSender $sender) : array{
 		$overloads = [];
-		foreach($this->overloads as $overload){
+		foreach($this->overload->collectExecutors() as $overload){
 			if($overload->senderHasAnyPermissions($sender)){
 				$overloads[] = $overload;
 			}
@@ -138,7 +122,7 @@ class Command{
 	public function getUsages(CommandSender $sender, string $aliasUsed) : array{
 		$usages = [];
 		foreach($this->getPermittedOverloads($sender) as $overload){
-			$usages[] = new Translatable("/$aliasUsed {%0}", [$overload->getUsage()]);
+			$usages[] = $overload->getUsage($aliasUsed);
 		}
 
 		return $usages;

@@ -25,7 +25,7 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\BranchingOverloadBuilder;
 use pocketmine\command\overload\IntRangeParameter;
 use pocketmine\command\overload\StringParameter;
 use pocketmine\command\SimpleCommandMap;
@@ -55,14 +55,14 @@ class HelpCommand extends Command{
 		parent::__construct(
 			$namespace,
 			$name,
-			[
-				new CommandOverload([
+			BranchingOverloadBuilder::make()
+				->executor([
 					new IntRangeParameter("pageNumber", "page", 1, PHP_INT_MAX)
-				], DefaultPermissionNames::COMMAND_HELP, self::commandListPage(...)),
-				new CommandOverload([
+				], DefaultPermissionNames::COMMAND_HELP, self::commandListPage(...))
+				->executor([
 					new StringParameter("commandName", "command name")
 				], DefaultPermissionNames::COMMAND_HELP, self::commandSpecificInfo(...))
-			],
+				->build(),
 			KnownTranslationFactory::pocketmine_command_help_description(),
 		);
 	}

@@ -25,7 +25,7 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\ExecutorOverload;
 use pocketmine\command\overload\RawParameter;
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\permission\DefaultPermissionNames;
@@ -38,11 +38,11 @@ class DumpMemoryCommand extends Command{
 		parent::__construct(
 			$namespace,
 			$name,
-			[new CommandOverload(
+			new ExecutorOverload(
 				[new RawParameter("path", "path")],
 				DefaultPermissionNames::COMMAND_DUMPMEMORY,
 				self::execute(...)
-			)],
+			),
 			KnownTranslationFactory::pocketmine_command_dumpmemory_description(),
 		);
 	}

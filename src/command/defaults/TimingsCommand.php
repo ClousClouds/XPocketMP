@@ -25,7 +25,7 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\BranchingOverloadBuilder;
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\permission\DefaultPermissionNames;
 use pocketmine\player\Player;
@@ -55,13 +55,13 @@ class TimingsCommand extends Command{
 		parent::__construct(
 			$namespace,
 			$name,
-			[
-				new CommandOverload(["on"], DefaultPermissionNames::COMMAND_TIMINGS, self::enableTimings(...)),
-				new CommandOverload(["off"], DefaultPermissionNames::COMMAND_TIMINGS, self::disableTimings(...)),
-				new CommandOverload(["reset"], DefaultPermissionNames::COMMAND_TIMINGS, self::resetTimings(...)),
-				new CommandOverload(["paste"], DefaultPermissionNames::COMMAND_TIMINGS, self::requestTimingsUpload(...)),
-				new CommandOverload(["report"], DefaultPermissionNames::COMMAND_TIMINGS, self::requestTimingsFile(...))
-			],
+			BranchingOverloadBuilder::make()
+				->executor(["on"], DefaultPermissionNames::COMMAND_TIMINGS, self::enableTimings(...))
+				->executor(["off"], DefaultPermissionNames::COMMAND_TIMINGS, self::disableTimings(...))
+				->executor(["reset"], DefaultPermissionNames::COMMAND_TIMINGS, self::resetTimings(...))
+				->executor(["paste"], DefaultPermissionNames::COMMAND_TIMINGS, self::requestTimingsUpload(...))
+				->executor(["report"], DefaultPermissionNames::COMMAND_TIMINGS, self::requestTimingsFile(...))
+				->build(),
 			KnownTranslationFactory::pocketmine_command_timings_description(),
 		);
 	}

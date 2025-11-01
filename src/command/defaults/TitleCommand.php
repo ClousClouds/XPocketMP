@@ -25,7 +25,7 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\BranchingOverloadBuilder;
 use pocketmine\command\overload\IntRangeParameter;
 use pocketmine\command\overload\RawParameter;
 use pocketmine\command\overload\StringParameter;
@@ -47,20 +47,19 @@ class TitleCommand extends Command{
 		parent::__construct(
 			$namespace,
 			$name,
-			[
-				new CommandOverload([$playerParameter, "clear"], self::OVERLOAD_PERMS, self::clearTitles(...)),
-				new CommandOverload([$playerParameter, "reset"], self::OVERLOAD_PERMS, self::resetTitles(...)),
-				new CommandOverload([$playerParameter, "title", $textParameter], self::OVERLOAD_PERMS, self::sendTitle(...)),
-				new CommandOverload([$playerParameter, "subtitle", $textParameter], self::OVERLOAD_PERMS, self::sendSubTitle(...)),
-				new CommandOverload([$playerParameter, "actionbar", $textParameter], self::OVERLOAD_PERMS, self::sendActionBar(...)),
-				new CommandOverload([
-					$playerParameter,
+			BranchingOverloadBuilder::make(commonParameters: [$playerParameter])
+				->executor(["clear"], self::OVERLOAD_PERMS, self::clearTitles(...))
+				->executor(["reset"], self::OVERLOAD_PERMS, self::resetTitles(...))
+				->executor(["title", $textParameter], self::OVERLOAD_PERMS, self::sendTitle(...))
+				->executor(["subtitle", $textParameter], self::OVERLOAD_PERMS, self::sendSubTitle(...))
+				->executor(["actionbar", $textParameter], self::OVERLOAD_PERMS, self::sendActionBar(...))
+				->executor([
 					"times",
 					new IntRangeParameter("fadeInTicks", "fade-in ticks", 0, Limits::INT32_MAX),
 					new IntRangeParameter("stayTicks", "stay ticks", 0, Limits::INT32_MAX),
 					new IntRangeParameter("fadeOutTicks", "fade-out ticks", 0, Limits::INT32_MAX)
 				], self::OVERLOAD_PERMS, self::setTitleDuration(...))
-			],
+				->build(),
 			KnownTranslationFactory::pocketmine_command_title_description(),
 		);
 	}

@@ -25,7 +25,7 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\ExecutorOverload;
 use pocketmine\command\overload\RawParameter;
 use pocketmine\command\overload\StringParameter;
 use pocketmine\lang\KnownTranslationFactory;
@@ -39,10 +39,10 @@ class TellCommand extends Command{
 		parent::__construct(
 			$namespace,
 			$name,
-			[new CommandOverload([
+			new ExecutorOverload([
 				new StringParameter("recipientName", "recipient player"),
 				new RawParameter("message", "message")
-			], DefaultPermissionNames::COMMAND_TELL, self::execute(...))],
+			], DefaultPermissionNames::COMMAND_TELL, self::execute(...)),
 			KnownTranslationFactory::pocketmine_command_tell_description(),
 		);
 	}

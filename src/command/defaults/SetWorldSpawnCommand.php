@@ -25,7 +25,7 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\BranchingOverloadBuilder;
 use pocketmine\command\overload\RelativeFloat;
 use pocketmine\command\overload\RelativeFloatParameter;
 use pocketmine\lang\KnownTranslationFactory;
@@ -42,14 +42,14 @@ class SetWorldSpawnCommand extends Command{
 		parent::__construct(
 			$namespace,
 			$name,
-			[
-				new CommandOverload([], DefaultPermissionNames::COMMAND_SETWORLDSPAWN, self::setSpawnHere(...)),
-				new CommandOverload([
+			BranchingOverloadBuilder::make()
+				->executor([], DefaultPermissionNames::COMMAND_SETWORLDSPAWN, self::setSpawnHere(...))
+				->executor([
 					new RelativeFloatParameter("x", "x"),
 					new RelativeFloatParameter("y", "y"),
 					new RelativeFloatParameter("z", "z")
 				], DefaultPermissionNames::COMMAND_SETWORLDSPAWN, self::setSpawnCoordinates(...))
-			],
+				->build(),
 			KnownTranslationFactory::pocketmine_command_setworldspawn_description()
 		);
 	}

@@ -25,7 +25,7 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\BranchingOverloadBuilder;
 use pocketmine\command\overload\IntRangeParameter;
 use pocketmine\command\overload\StringParameter;
 use pocketmine\entity\Attribute;
@@ -49,16 +49,16 @@ class XpCommand extends Command{
 		parent::__construct(
 			$namespace,
 			$name,
-			[
-				new CommandOverload([
+			BranchingOverloadBuilder::make()
+				->executor([
 					new IntRangeParameter("xp", "xp", 0, Limits::INT32_MAX),
 					new StringParameter("playerName", "player name"),
-				], self::OVERLOAD_PERMS, self::addXp(...)),
-				new CommandOverload([
+				], self::OVERLOAD_PERMS, self::addXp(...))
+				->executor([
 					new IntRangeParameter("xpLevels", "xp levels", Limits::INT32_MIN, Limits::INT32_MAX, "L"),
 					new StringParameter("playerName", "player name"),
 				], self::OVERLOAD_PERMS, self::addXpLevels(...))
-			],
+				->build(),
 			KnownTranslationFactory::pocketmine_command_xp_description()
 		);
 	}

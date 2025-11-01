@@ -25,7 +25,7 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\ExecutorOverload;
 use pocketmine\command\overload\StringParameter;
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\permission\DefaultPermissionNames;
@@ -36,11 +36,11 @@ class PardonCommand extends Command{
 		parent::__construct(
 			$namespace,
 			$name,
-			[new CommandOverload(
+			new ExecutorOverload(
 				[new StringParameter("playerName", "player name")],
 				DefaultPermissionNames::COMMAND_UNBAN_PLAYER,
 				self::execute(...)
-			)],
+			),
 			KnownTranslationFactory::pocketmine_command_unban_player_description(),
 		);
 	}

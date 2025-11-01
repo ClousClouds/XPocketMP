@@ -25,7 +25,7 @@ namespace pocketmine\command\defaults;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\overload\CommandOverload;
+use pocketmine\command\overload\ExecutorOverload;
 use pocketmine\command\overload\IntRangeParameter;
 use pocketmine\command\overload\ParameterParseException;
 use pocketmine\command\overload\RawParameter;
@@ -50,12 +50,12 @@ class GiveCommand extends Command{
 		parent::__construct(
 			$namespace,
 			$name,
-			[new CommandOverload([
+			new ExecutorOverload([
 				new StringParameter("target", "target"),
 				new StringParameter("itemName", "item"),
 				new IntRangeParameter("count", "count", 1, 32767),
 				new RawParameter("nbt", "nbt")
-			], self::OVERLOAD_PERMS, self::execute(...))],
+			], self::OVERLOAD_PERMS, self::execute(...)),
 			KnownTranslationFactory::pocketmine_command_give_description(),
 		);
 	}
