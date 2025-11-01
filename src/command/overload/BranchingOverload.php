@@ -28,7 +28,9 @@ use pocketmine\command\utils\InvalidCommandSyntaxException;
 use function array_push;
 use function array_slice;
 use function count;
+use function ksort;
 use function strlen;
+use const SORT_NATURAL;
 
 final class BranchingOverload implements Overload{
 
@@ -49,6 +51,7 @@ final class BranchingOverload implements Overload{
 		if(count($this->anonymousChildren) + count($this->namedChildren) < 2){
 			throw new \InvalidArgumentException("Branching overload must have at least 2 child overloads");
 		}
+		ksort($this->namedChildren, SORT_NATURAL);
 	}
 
 	/**
