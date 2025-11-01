@@ -26,15 +26,13 @@ namespace pocketmine\command\defaults;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\command\overload\BranchingOverloadBuilder;
-use pocketmine\command\overload\RelativeFloat;
-use pocketmine\command\overload\RelativeFloatParameter;
+use pocketmine\command\overload\RelativeXYZ;
+use pocketmine\command\overload\RelativeXYZParameter;
 use pocketmine\command\overload\StringParameter;
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\permission\DefaultPermissionNames;
 use pocketmine\player\Player;
-use pocketmine\utils\Limits;
 use pocketmine\world\Position;
-use pocketmine\world\World;
 use function round;
 
 class SpawnpointCommand extends Command{
@@ -53,9 +51,7 @@ class SpawnpointCommand extends Command{
 			])
 				->executor([], self::OVERLOAD_PERMS, self::setSpawnHere(...))
 				->executor([
-					new RelativeFloatParameter("x", "x"),
-					new RelativeFloatParameter("y", "y"),
-					new RelativeFloatParameter("z", "z")
+					new RelativeXYZParameter("coordinates", "coordinates"),
 				], self::OVERLOAD_PERMS, self::setSpawnCoords(...))
 				->build(),
 			KnownTranslationFactory::pocketmine_command_spawnpoint_description()
@@ -75,20 +71,18 @@ class SpawnpointCommand extends Command{
 		Command::broadcastCommandMessage($sender, KnownTranslationFactory::commands_spawnpoint_success($target->getName(), (string) round($pos->x, 2), (string) round($pos->y, 2), (string) round($pos->z, 2)));
 	}
 
-	private static function setSpawnCoords(CommandSender $sender, string $target, RelativeFloat $x, RelativeFloat $y, RelativeFloat $z) : void{
+	private static function setSpawnCoords(CommandSender $sender, string $target, RelativeXYZ $coordinates) : void{
 		$target = self::fetchPermittedPlayerTarget($sender, $target, self::SELF_PERM, self::OTHER_PERM);
 		if($target === null){
 			return;
 		}
 
 		$world = $target->getWorld();
-		$pos = $sender instanceof Player ? $sender->getPosition() : $world->getSpawnLocation();
-		$x = $x->resolve($pos->x, Limits::INT32_MIN, Limits::INT32_MAX);
-		$y = $y->resolve($pos->y, World::Y_MIN, World::Y_MAX);
-		$z = $z->resolve($pos->z, Limits::INT32_MIN, Limits::INT32_MAX);
-		$target->setSpawn(new Position($x, $y, $z, $world));
+		$basePos = $sender instanceof Player ? $sender->getPosition() : $world->getSpawnLocation();
+		$pos = $coordinates->resolve($basePos);
+		$target->setSpawn(Position::fromObject($pos, $world));
 
-		Command::broadcastCommandMessage($sender, KnownTranslationFactory::commands_spawnpoint_success($target->getName(), (string) round($x, 2), (string) round($y, 2), (string) round($z, 2)));
+		Command::broadcastCommandMessage($sender, KnownTranslationFactory::commands_spawnpoint_success($target->getName(), (string) round($pos->x, 2), (string) round($pos->y, 2), (string) round($pos->z, 2)));
 
 	}
 }

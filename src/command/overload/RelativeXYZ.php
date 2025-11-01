@@ -23,19 +23,24 @@ declare(strict_types=1);
 
 namespace pocketmine\command\overload;
 
-use DaveRandom\CallbackValidator\Type\NamedType;
-use pocketmine\lang\Translatable;
+use pocketmine\math\Vector3;
+use pocketmine\utils\Limits;
+use pocketmine\world\World;
 
-/**
- * @phpstan-extends Parameter<RelativeFloat>
- */
-final class RelativeFloatParameter extends Parameter{
+final class RelativeXYZ{
 
-	public function __construct(string $codeName, Translatable|string $printableName){
-		parent::__construct($codeName, $printableName, new NamedType(RelativeFloat::class));
-	}
+	public function __construct(
+		private RelativeFloat $x,
+		private RelativeFloat $y,
+		private RelativeFloat $z
+	){}
 
-	public function parse(string $buffer, int &$offset) : RelativeFloat{
-		return RelativeFloat::parse($buffer, $offset);
+	public function resolve(Vector3 $base) : Vector3{
+		return new Vector3(
+			//TODO: these bounds should be parameterised somehow
+			$this->x->resolve($base->x, Limits::INT32_MIN, Limits::INT32_MAX),
+			$this->y->resolve($base->y, World::Y_MIN, World::Y_MAX),
+			$this->z->resolve($base->z, Limits::INT32_MIN, Limits::INT32_MAX)
+		);
 	}
 }

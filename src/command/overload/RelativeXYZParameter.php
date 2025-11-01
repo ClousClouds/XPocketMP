@@ -24,18 +24,30 @@ declare(strict_types=1);
 namespace pocketmine\command\overload;
 
 use DaveRandom\CallbackValidator\Type\NamedType;
+use pocketmine\command\utils\CommandStringHelper;
 use pocketmine\lang\Translatable;
 
 /**
- * @phpstan-extends Parameter<RelativeFloat>
+ * @phpstan-extends Parameter<RelativeXYZ>
  */
-final class RelativeFloatParameter extends Parameter{
+final class RelativeXYZParameter extends Parameter{
 
 	public function __construct(string $codeName, Translatable|string $printableName){
-		parent::__construct($codeName, $printableName, new NamedType(RelativeFloat::class));
+		parent::__construct($codeName, $printableName, new NamedType(RelativeXYZ::class));
 	}
 
-	public function parse(string $buffer, int &$offset) : RelativeFloat{
-		return RelativeFloat::parse($buffer, $offset);
+	public function parse(string $buffer, int &$offset) : mixed{
+		//TODO: maybe this could use RelativeFloatParameter subparameters to avoid some boilerplate?
+		$x = RelativeFloat::parse($buffer, $offset);
+		if(CommandStringHelper::skipWhitespace($buffer, $offset) === 0){
+			throw new ParameterParseException("No Y coordinate passed");
+		}
+		$y = RelativeFloat::parse($buffer, $offset);
+		if(CommandStringHelper::skipWhitespace($buffer, $offset) === 0){
+			throw new ParameterParseException("No Z coordinate passed");
+		}
+		$z = RelativeFloat::parse($buffer, $offset);
+
+		return new RelativeXYZ($x, $y, $z);
 	}
 }

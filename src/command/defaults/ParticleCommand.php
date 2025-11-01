@@ -30,8 +30,8 @@ use pocketmine\command\CommandSender;
 use pocketmine\command\overload\ExecutorOverload;
 use pocketmine\command\overload\FloatRangeParameter;
 use pocketmine\command\overload\IntRangeParameter;
-use pocketmine\command\overload\RelativeFloat;
-use pocketmine\command\overload\RelativeFloatParameter;
+use pocketmine\command\overload\RelativeXYZ;
+use pocketmine\command\overload\RelativeXYZParameter;
 use pocketmine\command\overload\StringParameter;
 use pocketmine\item\StringToItemParser;
 use pocketmine\item\VanillaItems;
@@ -39,7 +39,6 @@ use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\math\Vector3;
 use pocketmine\permission\DefaultPermissionNames;
 use pocketmine\player\Player;
-use pocketmine\utils\Limits;
 use pocketmine\utils\Random;
 use pocketmine\utils\TextFormat;
 use pocketmine\world\particle\AngryVillagerParticle;
@@ -72,7 +71,6 @@ use pocketmine\world\particle\SporeParticle;
 use pocketmine\world\particle\TerrainParticle;
 use pocketmine\world\particle\WaterDripParticle;
 use pocketmine\world\particle\WaterParticle;
-use pocketmine\world\World;
 use function count;
 use function explode;
 use function microtime;
@@ -88,9 +86,7 @@ class ParticleCommand extends Command{
 			new ExecutorOverload(
 				[
 					new StringParameter("particleName", "particle name"),
-					new RelativeFloatParameter("x", "x"),
-					new RelativeFloatParameter("y", "y"),
-					new RelativeFloatParameter("z", "z"),
+					new RelativeXYZParameter("baseCoords", "base coordinates"),
 					new FloatRangeParameter("xd", "xd", -1000, 1000),
 					new FloatRangeParameter("yd", "yd", -1000, 1000),
 					new FloatRangeParameter("zd", "zd", -1000, 1000),
@@ -107,9 +103,7 @@ class ParticleCommand extends Command{
 	private static function execute(
 		CommandSender $sender,
 		string $particleName,
-		RelativeFloat $x,
-		RelativeFloat $y,
-		RelativeFloat $z,
+		RelativeXYZ $baseCoords,
 		float $xd = 0.0,
 		float $yd = 0.0,
 		float $zd = 0.0,
@@ -120,17 +114,12 @@ class ParticleCommand extends Command{
 		if($sender instanceof Player){
 			$senderPos = $sender->getPosition();
 			$world = $senderPos->getWorld();
-			[$senderX, $senderY, $senderZ] = [$senderPos->getX(), $senderPos->getY(), $senderPos->getZ()];
 		}else{
 			$world = $sender->getServer()->getWorldManager()->getDefaultWorld();
-			[$senderX, $senderY, $senderZ] = [0, 0, 0];
+			$senderPos = new Vector3(0, 0, 0);
 		}
 
-		$pos = new Vector3(
-			$x->resolve($senderX, Limits::INT32_MIN, Limits::INT32_MAX),
-			$y->resolve($senderY, World::Y_MIN, World::Y_MAX),
-			$z->resolve($senderZ, Limits::INT32_MIN, Limits::INT32_MAX)
-		);
+		$pos = $baseCoords->resolve($senderPos);
 
 		$particle = self::getParticle(strtolower($particleName), $data);
 

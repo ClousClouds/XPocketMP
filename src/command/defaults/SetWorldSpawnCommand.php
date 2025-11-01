@@ -26,15 +26,13 @@ namespace pocketmine\command\defaults;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\command\overload\BranchingOverloadBuilder;
-use pocketmine\command\overload\RelativeFloat;
-use pocketmine\command\overload\RelativeFloatParameter;
+use pocketmine\command\overload\RelativeXYZ;
+use pocketmine\command\overload\RelativeXYZParameter;
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\math\Vector3;
 use pocketmine\permission\DefaultPermissionNames;
 use pocketmine\player\Player;
-use pocketmine\utils\Limits;
 use pocketmine\utils\TextFormat;
-use pocketmine\world\World;
 
 class SetWorldSpawnCommand extends Command{
 
@@ -45,9 +43,7 @@ class SetWorldSpawnCommand extends Command{
 			BranchingOverloadBuilder::make()
 				->executor([], DefaultPermissionNames::COMMAND_SETWORLDSPAWN, self::setSpawnHere(...))
 				->executor([
-					new RelativeFloatParameter("x", "x"),
-					new RelativeFloatParameter("y", "y"),
-					new RelativeFloatParameter("z", "z")
+					new RelativeXYZParameter("coordinates", "coordinates"),
 				], DefaultPermissionNames::COMMAND_SETWORLDSPAWN, self::setSpawnCoordinates(...))
 				->build(),
 			KnownTranslationFactory::pocketmine_command_setworldspawn_description()
@@ -68,7 +64,7 @@ class SetWorldSpawnCommand extends Command{
 		Command::broadcastCommandMessage($sender, KnownTranslationFactory::commands_setworldspawn_success((string) $pos->x, (string) $pos->y, (string) $pos->z));
 	}
 
-	private static function setSpawnCoordinates(CommandSender $sender, RelativeFloat $x, RelativeFloat $y, RelativeFloat $z) : void{
+	private static function setSpawnCoordinates(CommandSender $sender, RelativeXYZ $coordinates) : void{
 		if($sender instanceof Player){
 			$base = $sender->getPosition();
 			$world = $base->getWorld();
@@ -76,11 +72,7 @@ class SetWorldSpawnCommand extends Command{
 			$base = new Vector3(0.0, 0.0, 0.0);
 			$world = $sender->getServer()->getWorldManager()->getDefaultWorld();
 		}
-		$pos = (new Vector3(
-			$x->resolve($base->x, Limits::INT32_MIN, Limits::INT32_MAX),
-			$y->resolve($base->y, World::Y_MIN, World::Y_MAX),
-			$z->resolve($base->z, Limits::INT32_MIN, Limits::INT32_MAX)
-		))->floor();
+		$pos = $coordinates->resolve($base)->floor();
 
 		$world->setSpawnLocation($pos);
 

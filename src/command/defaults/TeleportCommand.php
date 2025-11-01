@@ -28,17 +28,15 @@ use pocketmine\command\CommandSender;
 use pocketmine\command\overload\BranchingOverload;
 use pocketmine\command\overload\BranchingOverloadBuilder;
 use pocketmine\command\overload\FloatRangeParameter;
-use pocketmine\command\overload\RelativeFloat;
-use pocketmine\command\overload\RelativeFloatParameter;
+use pocketmine\command\overload\RelativeXYZ;
+use pocketmine\command\overload\RelativeXYZParameter;
 use pocketmine\command\overload\StringParameter;
 use pocketmine\command\utils\InvalidCommandSyntaxException;
 use pocketmine\entity\Location;
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\permission\DefaultPermissionNames;
 use pocketmine\player\Player;
-use pocketmine\utils\Limits;
 use pocketmine\utils\TextFormat;
-use pocketmine\world\World;
 use function round;
 
 class TeleportCommand extends Command{
@@ -81,9 +79,7 @@ class TeleportCommand extends Command{
 				new StringParameter("destinationPlayerName", "destination player")
 			], $permission, $tpToPlayer)
 			->executor([
-				new RelativeFloatParameter("xIn", "x"),
-				new RelativeFloatParameter("yIn", "y"),
-				new RelativeFloatParameter("zIn", "z"),
+				new RelativeXYZParameter("coordinates", "coordinates"),
 				new FloatRangeParameter("yaw", "yaw", 0, 360),
 				new FloatRangeParameter("pitch", "pitch", -90, 90)
 			], $permission, $tpToCoords)
@@ -93,18 +89,14 @@ class TeleportCommand extends Command{
 	private static function tpCoords(
 		CommandSender $sender,
 		Player $subject,
-		RelativeFloat $xIn,
-		RelativeFloat $yIn,
-		RelativeFloat $zIn,
+		RelativeXYZ $coordinates,
 		float $yaw,
 		float $pitch
 	) : void{
 		$base = $subject->getLocation();
 
-		$x = $xIn->resolve($base->x, Limits::INT32_MIN, Limits::INT32_MAX);
-		$y = $yIn->resolve($base->y, World::Y_MIN, World::Y_MAX);
-		$z = $zIn->resolve($base->z, Limits::INT32_MIN, Limits::INT32_MAX);
-		$targetLocation = new Location($x, $y, $z, $base->getWorld(), $yaw, $pitch);
+		$pos = $coordinates->resolve($base);
+		$targetLocation = new Location($pos->x, $pos->y, $pos->z, $base->getWorld(), $yaw, $pitch);
 
 		$subject->teleport($targetLocation);
 		Command::broadcastCommandMessage($sender, KnownTranslationFactory::commands_tp_success_coordinates(
@@ -117,9 +109,7 @@ class TeleportCommand extends Command{
 
 	private static function tpSelfCoords(
 		CommandSender $sender,
-		RelativeFloat $xIn,
-		RelativeFloat $yIn,
-		RelativeFloat $zIn,
+		RelativeXYZ $coordinates,
 		float $yaw = 0.0,
 		float $pitch = 0.0
 	) : void{
@@ -127,15 +117,13 @@ class TeleportCommand extends Command{
 			throw new InvalidCommandSyntaxException("This syntax can only be used as a player");
 		}
 
-		self::tpCoords($sender, $sender, $xIn, $yIn, $zIn, $yaw, $pitch);
+		self::tpCoords($sender, $sender, $coordinates, $yaw, $pitch);
 	}
 
 	private static function tpOtherCoords(
 		CommandSender $sender,
 		string $teleportedPlayerName,
-		RelativeFloat $xIn,
-		RelativeFloat $yIn,
-		RelativeFloat $zIn,
+		RelativeXYZ $coordinates,
 		float $yaw = 0.0,
 		float $pitch = 0.0
 	) : void{
@@ -144,7 +132,7 @@ class TeleportCommand extends Command{
 			return;
 		}
 
-		self::tpCoords($sender, $subject, $xIn, $yIn, $zIn, $yaw, $pitch);
+		self::tpCoords($sender, $subject, $coordinates, $yaw, $pitch);
 	}
 
 	private static function tpToPlayer(CommandSender $sender, Player $teleportedPlayer, string $destinationPlayerName) : void{

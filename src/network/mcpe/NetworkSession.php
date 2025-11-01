@@ -30,6 +30,7 @@ use pocketmine\command\overload\FloatRangeParameter;
 use pocketmine\command\overload\IntRangeParameter;
 use pocketmine\command\overload\RawParameter;
 use pocketmine\command\overload\RelativeFloatParameter;
+use pocketmine\command\overload\RelativeXYZParameter;
 use pocketmine\entity\effect\EffectInstance;
 use pocketmine\event\player\PlayerDuplicateLoginEvent;
 use pocketmine\event\player\PlayerResourcePackOfferEvent;
@@ -1178,6 +1179,7 @@ class NetworkSession{
 							$parameter instanceof IntRangeParameter => CommandParameterTypes::INT,
 							$parameter instanceof RawParameter => CommandParameterTypes::RAWTEXT,
 							$parameter instanceof RelativeFloatParameter => CommandParameterTypes::RVAL,
+							$parameter instanceof RelativeXYZParameter => CommandParameterTypes::POSITION_FLOAT,
 							default => CommandParameterTypes::ID //string
 						};
 						$suffix = $parameter->getSuffix();

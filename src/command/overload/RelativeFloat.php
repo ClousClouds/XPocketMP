@@ -25,6 +25,8 @@ namespace pocketmine\command\overload;
 
 use function max;
 use function min;
+use function preg_match;
+use function strlen;
 
 final class RelativeFloat{
 
@@ -40,5 +42,23 @@ final class RelativeFloat{
 	public function resolve(float $base, float $min, float $max) : float{
 		//TODO: this should probably bail on out of bounds values
 		return min($max, max($min, $this->relative ? $base + $this->value : $this->value));
+	}
+
+	/**
+	 * @throws ParameterParseException
+	 */
+	public static function parse(string $buffer, int &$offset) : self{
+		if(preg_match('/\G(~)?(-?\d+\.?\d*)?/', $buffer, $matches, offset: $offset) > 0){
+			$relativeRaw = $matches[1] ?? "";
+			$valueRaw = $matches[2] ?? "";
+			if($valueRaw !== "" || $relativeRaw !== ""){
+				$offset += strlen($matches[0]);
+				$relative = $relativeRaw === "~";
+				$value = (float) $valueRaw;
+				return new RelativeFloat($value, $relative);
+			}
+		}
+
+		throw new ParameterParseException("Expected a float, possibly preceded by a ~ symbol");
 	}
 }
