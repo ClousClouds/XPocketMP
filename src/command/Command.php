@@ -112,22 +112,6 @@ class Command{
 		return $overloads;
 	}
 
-	/**
-	 * TODO: maybe we should get rid of this, it rarely makes sense to send all possible usages of the command
-	 * More likely we'll want to send the best matching usages based on the valid parameters we were able to match
-	 *
-	 * @return Translatable[]
-	 * @phpstan-return list<Translatable>
-	 */
-	public function getUsages(CommandSender $sender, string $aliasUsed) : array{
-		$usages = [];
-		foreach($this->getPermittedOverloads($sender) as $overload){
-			$usages[] = $overload->getUsage($aliasUsed);
-		}
-
-		return $usages;
-	}
-
 	final public function getNamespace() : string{
 		return $this->namespace;
 	}

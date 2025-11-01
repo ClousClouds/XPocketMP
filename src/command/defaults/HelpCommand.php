@@ -112,7 +112,10 @@ class HelpCommand extends Command{
 			}
 
 			$lang = $sender->getLanguage();
-			$usages = $command->getUsages($sender, $commandName);
+			$usages = [];
+			foreach($command->getPermittedOverloads($sender) as $overload){
+				$usages[] = $overload->getUsage($commandName);
+			}
 
 			if(count($usages) > 0){ //only permitted usages are shown
 				$description = $command->getDescription();
