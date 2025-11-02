@@ -23,8 +23,9 @@ declare(strict_types=1);
 
 namespace pocketmine\command;
 
+use pocketmine\command\overload\ExecutorOverload;
+use pocketmine\command\overload\RawParameter;
 use pocketmine\command\utils\CommandStringHelper;
-use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\utils\TextFormat;
 use function addcslashes;
 use function count;
@@ -35,7 +36,7 @@ use function strlen;
 use function strpos;
 use function substr;
 
-class FormattedCommandAlias extends LegacyCommand{
+final class FormattedCommandAlias{
 	/**
 	 * - matches a $
 	 * - captures an optional second $ to indicate required/optional
@@ -44,28 +45,47 @@ class FormattedCommandAlias extends LegacyCommand{
 	 */
 	private const FORMAT_STRING_REGEX = '/\G\$(\$)?((?!0)+\d+)(-)?/';
 
-	/**
-	 * @param string[] $formatStrings
-	 */
-	public function __construct(
-		string $namespace,
-		string $name,
-		private array $formatStrings
-	){
-		parent::__construct($namespace, $name, KnownTranslationFactory::pocketmine_command_userDefined_description());
+	private function __construct(){
+		//NOOP
 	}
 
-	public function execute(CommandSender $sender, string $commandLabel, array $args){
-		$commands = [];
-		$result = true;
+	/**
+	 * @param string[] $formatStrings
+	 * @phpstan-param list<string> $formatStrings
+	 */
+	public static function create(
+		string $namespace,
+		string $name,
+		string $permission,
+		array $formatStrings
+	) : Command{
+		return new Command(
+			$namespace,
+			$name,
+			new ExecutorOverload(
+				[new RawParameter("args", "args")],
+				$permission,
+				fn(CommandSender $sender, string $args) => self::execute($sender, CommandStringHelper::parseQuoteAware($args), $formatStrings)
+			)
+		);
+	}
 
-		foreach($this->formatStrings as $formatString){
+	/**
+	 * @param string[] $args
+	 * @param string[] $formatStrings
+	 * @phpstan-param list<string> $args
+	 * @phpstan-param list<string> $formatStrings
+	 */
+	private static function execute(CommandSender $sender, array $args, array $formatStrings) : void{
+		$commands = [];
+
+		foreach($formatStrings as $formatString){
 			try{
 				$formatArgs = CommandStringHelper::parseQuoteAware($formatString);
 				$unresolved = [];
 				$processedArgs = [];
 				foreach($formatArgs as $formatArg){
-					$processedArg = $this->buildCommand($formatArg, $args);
+					$processedArg = self::buildCommand($formatArg, $args);
 					if($processedArg === null){
 						$unresolved[] = $formatArg;
 					}elseif(count($unresolved) !== 0){
@@ -78,30 +98,23 @@ class FormattedCommandAlias extends LegacyCommand{
 				$commands[] = implode(" ", $processedArgs);
 			}catch(\InvalidArgumentException $e){
 				$sender->sendMessage(TextFormat::RED . $e->getMessage());
-				return false;
+				return;
 			}
 		}
 
 		$commandMap = $sender->getServer()->getCommandMap();
 		foreach($commands as $commandLine){
 			$sender->getServer()->getLogger()->debug("Dispatching formatted command: $commandLine");
-			if(!$commandMap->dispatch($sender, $commandLine)){
-				//to match the behaviour of SimpleCommandMap::dispatch()
-				//this shouldn't normally happen, but might happen if the command was unregistered or modified after
-				//the alias was installed
-				//TODO: maybe we should abort command processing if there was an error???
-				$result = false;
-			}
+			$commandMap->dispatch($sender, $commandLine);
+			//TODO: maybe we should abort command processing if there was an error???
 		}
-
-		return $result;
 	}
 
 	/**
 	 * @param string[] $args
 	 * @phpstan-param list<string> $args
 	 */
-	private function buildCommand(string $formatString, array $args) : ?string{
+	private static function buildCommand(string $formatString, array $args) : ?string{
 		$index = 0;
 		while(($index = strpos($formatString, '$', $index)) !== false){
 			$start = $index;

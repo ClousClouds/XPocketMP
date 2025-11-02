@@ -67,6 +67,7 @@ use pocketmine\command\defaults\WhitelistCommand;
 use pocketmine\command\defaults\XpCommand;
 use pocketmine\command\utils\CommandStringHelper;
 use pocketmine\lang\KnownTranslationFactory;
+use pocketmine\permission\DefaultPermissionNames;
 use pocketmine\Server;
 use pocketmine\timings\Timings;
 use pocketmine\utils\TextFormat;
@@ -305,9 +306,12 @@ class SimpleCommandMap implements CommandMap{
 			//These registered commands have absolute priority
 			$lowerAlias = strtolower($alias);
 			if(count($targets) > 0){
-				$aliasInstance = new FormattedCommandAlias("pocketmine-config-defined", $lowerAlias, $targets);
+				//TODO: HACK HACK HACK - We really should declare permissions for each custom command declared
+				//Previously we just weren't declaring a permission at all, but that's no longer possible with the new overload system
+				$aliasInstance = FormattedCommandAlias::create("pocketmine-config-defined", $lowerAlias, DefaultPermissionNames::GROUP_USER, $targets);
+
+				$this->register($aliasInstance);
 				$this->aliasMap->bindAlias($aliasInstance->getId(), $lowerAlias, override: true);
-				$this->uniqueCommands[$aliasInstance->getId()] = $aliasInstance;
 			}else{
 				//no targets blackholes the alias - this allows config to delete unwanted aliases
 				$this->aliasMap->unbindAlias($lowerAlias);
