@@ -81,8 +81,7 @@ abstract class AsyncEvent{
 			}
 
 			$currentPriority = $priority;
-			$handlerId = spl_object_id($handler) << 3 | $priority;
-			if(!isset(self::$handlersCallState[$handlerId])){
+			if(!isset(self::$handlersCallState[$handlerId = spl_object_id($handler)])){
 				self::$handlersCallState[$handlerId] = 0;
 			}
 			if(self::$handlersCallState[$handlerId] >= self::MAX_CONCURRENT_CALLS){
