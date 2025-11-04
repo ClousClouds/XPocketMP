@@ -89,7 +89,9 @@ abstract class AsyncEvent{
 					Utils::getNiceClosureName($handler->getHandler()) . "(" . Utils::getNiceClassName($this) . ")" .
 					" (max: " . self::MAX_CONCURRENT_CALLS . ")");
 			}
-			$removeCallback = static fn() => --self::$handlersCallState[$handlerId];
+			$removeCallback = static function() use ($handlerId) : void{
+				--self::$handlersCallState[$handlerId];
+			};
 			if($handler->canBeCalledConcurrently()){
 				unset($handlers[$k]);
 				++self::$handlersCallState[$handlerId];
