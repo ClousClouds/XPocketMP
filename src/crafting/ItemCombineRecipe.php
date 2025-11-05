@@ -87,8 +87,8 @@ abstract class ItemCombineRecipe implements AnvilRecipe{
 				$xpCost += (int) floor($costAddition * $levelDifference);
 				$result->addEnchantment($instance);
 
-				$xpCost += 2 ** $input->getAnvilRepairCost() - 1;
-				$xpCost += 2 ** $material->getAnvilRepairCost() - 1;
+				$xpCost += (2 ** $input->getAnvilRepairCost()) - 1;
+				$xpCost += (2 ** $material->getAnvilRepairCost()) - 1;
 				$result->setAnvilRepairCost(
 					max($result->getAnvilRepairCost(), $material->getAnvilRepairCost()) + 1
 				);

@@ -36,7 +36,6 @@ final class AnvilHelper{
 	 * Returns null if the operation can't do anything.
 	 */
 	public static function calculateResult(Item $base, Item $material, ?string $customName, bool $isCreative) : ?AnvilCraftResult{
-
 		$recipe = Server::getInstance()->getCraftingManager()->matchAnvilRecipe($base, $material);
 		if($recipe === null){
 			return null;

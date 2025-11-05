@@ -145,7 +145,7 @@ class AnvilTransaction extends InventoryTransaction{
 
 	protected function callExecuteEvent() : bool{
 		if($this->baseItem === null){
-			throw new AssumptionFailedError("Expected that baseItem are not null before executing the event");
+			throw new AssumptionFailedError("Expected that baseItem is not null before executing the event");
 		}
 
 		$ev = new PlayerUseAnvilEvent($this->source, $this->baseItem, $this->materialItem, $this->expectedResult->getOutput(), $this->customName, $this->expectedResult->getXpCost());
