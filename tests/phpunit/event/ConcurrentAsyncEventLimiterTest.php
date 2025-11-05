@@ -30,6 +30,7 @@ use pocketmine\plugin\PluginManager;
 use pocketmine\promise\Promise;
 use pocketmine\promise\PromiseResolver;
 use pocketmine\Server;
+use function is_int;
 
 final class ConcurrentAsyncEventLimiterTest extends TestCase{
 
