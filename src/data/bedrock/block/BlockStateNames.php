@@ -109,10 +109,12 @@ final class BlockStateNames{
 	public const PILLAR_AXIS = "pillar_axis";
 	public const PORTAL_AXIS = "portal_axis";
 	public const POWERED_BIT = "powered_bit";
+	public const POWERED_SHELF_TYPE = "powered_shelf_type";
 	public const PROPAGULE_STAGE = "propagule_stage";
 	public const RAIL_DATA_BIT = "rail_data_bit";
 	public const RAIL_DIRECTION = "rail_direction";
 	public const REDSTONE_SIGNAL = "redstone_signal";
+	public const REHYDRATION_LEVEL = "rehydration_level";
 	public const REPEATER_DELAY = "repeater_delay";
 	public const RESPAWN_ANCHOR_CHARGE = "respawn_anchor_charge";
 	public const ROTATION = "rotation";
