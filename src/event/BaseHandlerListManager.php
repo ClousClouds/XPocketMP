@@ -143,7 +143,7 @@ abstract class BaseHandlerListManager{
 	public function getHandlersFor(string $event) : array{
 		$cache = $this->handlerCaches[$event] ?? null;
 		//getListFor() will populate the cache for the next call
-		return $cache?->list ?? $this->getListFor($event)->getListenerList();
+		return $cache->list ?? $this->getListFor($event)->getListenerList();
 	}
 
 	/**

@@ -98,6 +98,7 @@ final class AsyncEventTest extends TestCase{
 			TestGrandchildAsyncEvent::class,
 			function(TestGrandchildAsyncEvent $event) use (&$resolver, &$firstCompleted, &$run) : Promise{
 				$run++;
+				/** @var PromiseResolver<null> $resolver */
 				$resolver = new PromiseResolver();
 
 				$resolver->getPromise()->onCompletion(

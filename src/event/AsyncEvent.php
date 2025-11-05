@@ -28,6 +28,7 @@ use pocketmine\promise\PromiseResolver;
 use pocketmine\timings\Timings;
 use pocketmine\utils\Utils;
 use function count;
+use function spl_object_id;
 
 /**
  * This class is used to permit asynchronous event handling.
@@ -66,7 +67,7 @@ abstract class AsyncEvent{
 
 	/**
 	 * @param AsyncRegisteredListener[] $handlers
-	 * @phpstan-param list<AsyncRegisteredListener> $handlers
+	 * @phpstan-param array<int, AsyncRegisteredListener> $handlers
 	 * @phpstan-param \Closure() : void $resolve
 	 * @phpstan-param \Closure() : void $reject
 	 */

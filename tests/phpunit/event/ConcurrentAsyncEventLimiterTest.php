@@ -73,8 +73,10 @@ final class ConcurrentAsyncEventLimiterTest extends TestCase{
 		$this->expectConcurrentCallLimitReached();
 		$this->pluginManager->registerAsyncEvent(
 			TestParentAsyncEvent::class,
-			function(TestParentAsyncEvent $e) : ?Promise{
-				return (new PromiseResolver())->getPromise();
+			function(TestParentAsyncEvent $e) : Promise{
+				/** @var PromiseResolver<null> $resolver */
+				$resolver = new PromiseResolver();
+				return $resolver->getPromise();
 			},
 			EventPriority::NORMAL,
 			$this->mockPlugin,
@@ -93,6 +95,7 @@ final class ConcurrentAsyncEventLimiterTest extends TestCase{
 				if($this->handlerA){
 					return null;
 				}
+				/** @var PromiseResolver<null> $resolver */
 				$resolver = new PromiseResolver();
 				$resolvers[] = $resolver;
 				return $resolver->getPromise();
@@ -106,6 +109,7 @@ final class ConcurrentAsyncEventLimiterTest extends TestCase{
 				if(!$this->handlerA){
 					return null;
 				}
+				/** @var PromiseResolver<null> $resolver */
 				$resolver = new PromiseResolver();
 				$resolvers[] = $resolver;
 				return $resolver->getPromise();
@@ -135,7 +139,8 @@ final class ConcurrentAsyncEventLimiterTest extends TestCase{
 
 	private function getMaxConcurrentCalls() : int{
 		$refClass = new \ReflectionClass(AsyncEvent::class);
-		return $refClass->getConstant('MAX_CONCURRENT_CALLS');
+		$value = $refClass->getConstant('MAX_CONCURRENT_CALLS');
+		return is_int($value) ? $value : throw new \AssertionError("Max concurrent calls should be an integer");
 	}
 
 	private function expectConcurrentCallLimitReached() : void{

@@ -41,7 +41,7 @@ final class AsyncEventConcurrencyTest extends TestCase{
 
 	/**
 	 * @var PromiseResolver[]
-	 * @phpstan-var list<PromiseResolver<null>>
+	 * @phpstan-var array<int, PromiseResolver<null>>
 	 */
 	private array $resolvers = [];
 
@@ -70,6 +70,7 @@ final class AsyncEventConcurrencyTest extends TestCase{
 	 */
 	private function handler(bool &$flag, string $label) : Promise{
 		$flag = true;
+		/** @var PromiseResolver<null> $resolver */
 		$resolver = new PromiseResolver();
 		$this->resolvers[] = $resolver;
 		$resolver->getPromise()->onCompletion(
