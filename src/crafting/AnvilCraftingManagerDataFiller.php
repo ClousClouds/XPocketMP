@@ -25,7 +25,6 @@ namespace pocketmine\crafting;
 
 use pocketmine\data\bedrock\item\ItemTypeNames;
 use pocketmine\item\Durable;
-use pocketmine\item\ItemTypeIds;
 use pocketmine\item\ToolTier;
 use pocketmine\item\VanillaArmorMaterials;
 use pocketmine\item\VanillaItems;

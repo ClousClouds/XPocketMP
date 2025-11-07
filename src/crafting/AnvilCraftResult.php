@@ -30,8 +30,8 @@ use pocketmine\item\Item;
  */
 final class AnvilCraftResult{
 	/**
-	 * @param int $xpCost The experience points cost required to craft the output item. (positive integer, 0 means no cost)
-	 * @param Item $output The item given as output of the crafting process.
+	 * @param int       $xpCost          The experience points cost required to craft the output item. (positive integer, 0 means no cost)
+	 * @param Item      $output          The item given as output of the crafting process.
 	 * @param Item|null $sacrificeResult If the given item is considered as null (count <= 0), the value will be set to null.
 	 */
 	public function __construct(
