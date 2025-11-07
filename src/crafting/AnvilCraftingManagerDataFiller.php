@@ -77,7 +77,7 @@ final class AnvilCraftingManagerDataFiller{
 				));
 				$manager->registerAnvilRecipe(new ItemDifferentCombineRecipe(
 					new MetaWildcardRecipeIngredient($itemId),
-					new EnchantedBookRecipeIngredient($item)
+					new MetaWildcardRecipeIngredient(ItemTypeNames::ENCHANTED_BOOK)
 				));
 			}
 		}
