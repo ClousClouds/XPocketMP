@@ -28,6 +28,7 @@ use pocketmine\block\inventory\AnvilInventory;
 use pocketmine\block\utils\AnvilHelper;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\crafting\AnvilCraftResult;
+use pocketmine\event\block\AnvilUseEvent;
 use pocketmine\event\player\PlayerUseAnvilEvent;
 use pocketmine\item\Item;
 use pocketmine\item\VanillaItems;
@@ -125,21 +126,25 @@ class AnvilTransaction extends InventoryTransaction{
 		$inventory = $this->source->getCurrentWindow();
 		if($inventory instanceof AnvilInventory){
 			$world = $inventory->getHolder()->getWorld();
-			if(mt_rand(0, 12) === 0){
-				$anvilBlock = $world->getBlock($inventory->getHolder());
-				if($anvilBlock instanceof Anvil){
-					$newDamage = $anvilBlock->getDamage() + 1;
-					if($newDamage > Anvil::VERY_DAMAGED){
-						$newBlock = VanillaBlocks::AIR();
-						$world->addSound($inventory->getHolder(), new AnvilBreakSound());
-					}else{
-						$newBlock = $anvilBlock->setDamage($newDamage);
+			$anvilBlock = $world->getBlock($inventory->getHolder());
+			$event = new AnvilUseEvent($anvilBlock, mt_rand(0, 12) === 0);
+			$event->call();
+			if(!$event->isCancelled()){
+				if($event->shouldTakeDamage()){
+					if($anvilBlock instanceof Anvil){
+						$newDamage = $anvilBlock->getDamage() + 1;
+						if($newDamage > Anvil::VERY_DAMAGED){
+							$newBlock = VanillaBlocks::AIR();
+							$world->addSound($inventory->getHolder(), new AnvilBreakSound());
+						}else{
+							$newBlock = $anvilBlock->setDamage($newDamage);
+						}
+						$world->setBlock($inventory->getHolder(), $newBlock);
 					}
-					$world->setBlock($inventory->getHolder(), $newBlock);
-				}
 
+				}
+				$world->addSound($inventory->getHolder(), new AnvilUseSound());
 			}
-			$world->addSound($inventory->getHolder(), new AnvilUseSound());
 		}
 	}
 
