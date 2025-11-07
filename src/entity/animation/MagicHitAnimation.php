@@ -21,22 +21,17 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\command;
+namespace pocketmine\entity\animation;
 
-use pocketmine\plugin\PluginBase;
+use pocketmine\entity\Living;
+use pocketmine\network\mcpe\protocol\AnimatePacket;
 
-/**
- * @deprecated
- *
- * Interface implemented by things that want to execute commands via {@link PluginCommand}.
- * This is implemented by {@link PluginBase} by default to allow automagically registering
- * {@link PluginBase::onCommand()} to receive commands defined in `plugin.yml`.
- */
-interface CommandExecutor{
+class MagicHitAnimation implements Animation{
+	public function __construct(private Living $entity, private int $particleCount = 15){}
 
-	/**
-	 * @param string[] $args
-	 */
-	public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool;
-
+	public function encode() : array{
+		return [
+			AnimatePacket::create($this->entity->getId(), AnimatePacket::ACTION_MAGICAL_CRITICAL_HIT, $this->particleCount)
+		];
+	}
 }
