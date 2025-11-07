@@ -23,7 +23,9 @@ declare(strict_types=1);
 
 namespace pocketmine\crafting;
 
+use pocketmine\data\bedrock\item\ItemTypeNames;
 use pocketmine\item\Durable;
+use pocketmine\item\ItemTypeIds;
 use pocketmine\item\ToolTier;
 use pocketmine\item\VanillaArmorMaterials;
 use pocketmine\item\VanillaItems;
@@ -64,11 +66,19 @@ final class AnvilCraftingManagerDataFiller{
 			}
 		}
 
+		$manager->registerAnvilRecipe(new ItemSelfCombineRecipe(
+			new MetaWildcardRecipeIngredient(ItemTypeNames::ENCHANTED_BOOK)
+		));
+
 		foreach(VanillaItems::getAll() as $item){
 			if($item instanceof Durable){
 				$itemId = GlobalItemDataHandlers::getSerializer()->serializeType($item)->getName();
 				$manager->registerAnvilRecipe(new ItemSelfCombineRecipe(
 					new MetaWildcardRecipeIngredient($itemId)
+				));
+				$manager->registerAnvilRecipe(new ItemDifferentCombineRecipe(
+					new MetaWildcardRecipeIngredient($itemId),
+					new EnchantedBookRecipeIngredient($item)
 				));
 			}
 		}
