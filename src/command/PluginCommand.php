@@ -29,10 +29,12 @@ use pocketmine\command\utils\CommandStringHelper;
 use pocketmine\command\utils\InvalidCommandSyntaxException;
 use pocketmine\lang\Translatable;
 use pocketmine\plugin\Plugin;
+use pocketmine\plugin\PluginBase;
 use pocketmine\plugin\PluginOwned;
 
 /**
- * @deprecated
+ * @internal Only used to route plugin.yml commands to {@link PluginBase::onCommand()}.
+ * Use {@link Command} instead of this class.
  */
 final class PluginCommand extends Command implements PluginOwned{
 	public function __construct(
