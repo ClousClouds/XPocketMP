@@ -15,6 +15,7 @@ use pocketmine\plugin\PluginBase;
  * @api 5.37.0
  * @version 1.0.0
  * @name ExampleScriptPlugin
+ * @load STARTUP
  */
 class Main extends PluginBase{
 	public function onEnable() : void{
