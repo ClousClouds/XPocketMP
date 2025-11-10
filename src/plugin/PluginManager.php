@@ -669,6 +669,9 @@ class PluginManager{
 				}
 				$this->registerAsyncEvent($eventClass, $handlerClosure, $priority, $plugin, $handleCancelled, $exclusiveCall);
 			}else{
+				if(!is_subclass_of($eventClass, Event::class)){
+					throw new AssumptionFailedError();
+				}
 				$this->registerEvent($eventClass, $handlerClosure, $priority, $plugin, $handleCancelled);
 			}
 		}
