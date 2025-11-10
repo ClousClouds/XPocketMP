@@ -127,4 +127,9 @@ final class AsyncEventTest extends TestCase{
 		$resolver->resolve(null);
 		self::assertSame(2, $run, "Expected feedback from 2 handlers");
 	}
+
+	public function testAsyncHandlerFromListener() : void {
+		self::expectNotToPerformAssertions();
+		$this->pluginManager->registerEvents(new TestAsyncListener(), $this->mockPlugin);
+	}
 }
