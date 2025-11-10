@@ -562,7 +562,7 @@ class PluginManager{
 	 * completely. Invalid annotations on candidate listener methods should result in an error, so those aren't checked
 	 * here.
 	 *
-	 * @phpstan-return class-string<Event>|null
+	 * @phpstan-return class-string<Event|AsyncEvent>|null
 	 */
 	private function getEventsHandledBy(\ReflectionMethod $method) : ?string{
 		if($method->isStatic() || !$method->getDeclaringClass()->implementsInterface(Listener::class)){
@@ -591,7 +591,7 @@ class PluginManager{
 			return null;
 		}
 
-		/** @var \ReflectionClass<Event> $eventClass */
+		/** @var \ReflectionClass<Event|AsyncEvent> $eventClass */
 		return $eventClass->getName();
 	}
 
