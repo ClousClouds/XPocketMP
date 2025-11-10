@@ -591,7 +591,7 @@ class PluginManager{
 			return null;
 		}
 
-		/** @var \ReflectionClass<Event|AsyncEvent> $eventClass */
+		/** @var \ReflectionClass<Event>|\ReflectionClass<AsyncEvent> $eventClass */
 		return $eventClass->getName();
 	}
 
