@@ -26,7 +26,6 @@ namespace pocketmine\command\defaults;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\command\overload\FloatRangeParameter;
-use pocketmine\command\overload\Overload;
 use pocketmine\command\overload\OverloadBuilder;
 use pocketmine\command\overload\RelativeXYZ;
 use pocketmine\command\overload\RelativeXYZParameter;

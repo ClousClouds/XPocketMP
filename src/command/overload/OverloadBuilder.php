@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace pocketmine\command\overload;
 
+use pocketmine\lang\Translatable;
 use pocketmine\utils\AssumptionFailedError;
 use pocketmine\utils\Utils;
 use function array_push;
@@ -58,21 +59,70 @@ final class OverloadBuilder{
 	}
 
 	/**
+	 * Shorthand to create a single executor for a non-overloaded command
+	 *
+	 * @param Parameter[]|string[] $parameters
+	 * @param string|string[]      $permission       Sender must have at least one of these permissions to run this handler
+	 * @param bool                 $acceptsAliasUsed Whether the alias used should be passed to the callback between the sender and the first input argument
+	 *
+	 * @phpstan-param list<Parameter<*>|string> $parameters
+	 * @phpstan-param string|list<string>       $permission
+	 * @phpstan-param anyClosure                $handler
+	 */
+	public static function single(
+		array $parameters,
+		string|array $permission,
+		\Closure $handler,
+		bool $acceptsAliasUsed = false,
+		Translatable|string|null $customUsageMessage = null
+	) : Overload{
+		return new ExecutorOverload($parameters, $permission, $handler, $acceptsAliasUsed, $customUsageMessage);
+	}
+
+	/**
+	 * Run a callback when the given parameters are used.
+	 * Do not pass the parent overload parameters here - they will be prepended automatically.
+	 *
 	 * @param Parameter[]|string[] $uniqueParameters
-	 * @param string|string[]      $permission
+	 * @param string|string[]      $permission       Sender must have at least one of these permissions to run this handler
+	 * @param bool                 $acceptsAliasUsed Whether the alias used should be passed to the callback between the sender and the first input argument
 	 *
 	 * @phpstan-param list<Parameter<*>|string> $uniqueParameters
 	 * @phpstan-param string|list<string> $permission
 	 * @phpstan-param anyClosure $handler
 	 */
-	public function executor(array $uniqueParameters, string|array $permission, \Closure $handler, bool $acceptsAliasUsed = false) : static{
+	public function executor(
+		array $uniqueParameters,
+		string|array $permission,
+		\Closure $handler,
+		bool $acceptsAliasUsed = false,
+		Translatable|string|null $customUsageMessage = null
+	) : static{
 		$mergedParameters = $this->commonParameters;
 		array_push($mergedParameters, ...$uniqueParameters);
-		$this->insertOverload(new ExecutorOverload($mergedParameters, $permission, $handler, acceptsAliasUsed: $acceptsAliasUsed), $uniqueParameters);
+		$this->insertOverload(new ExecutorOverload(
+			$mergedParameters,
+			$permission,
+			$handler,
+			acceptsAliasUsed: $acceptsAliasUsed,
+			customUsageMessage: $customUsageMessage
+		), $uniqueParameters);
 		return $this;
 	}
 
 	/**
+	 * This can be used when you have:
+	 * - Multiple overloads with the same leading arguments
+	 * - A subcommand that you want to give multiple executors with different parameters
+	 * - Subcommands inside subcommands
+	 *
+	 * For example, subcommands inside subcommands would share a leading literal, but then have a different executor
+	 * for each sub-subcommand registered inside the callback.
+	 * This is also used in the "time set" subcommand to accept both time names and time numbers.
+	 *
+	 * @param Parameter[]|string[] $uniqueParameters Parameters shared by all nested overloads
+	 * @param \Closure             $builderProcessor Callback to register overloads - it must add at least 1
+	 *
 	 * @phpstan-param list<Parameter<*>|string> $uniqueParameters
 	 * @phpstan-param \Closure(OverloadBuilder) : (void|OverloadBuilder) $builderProcessor
 	 */
