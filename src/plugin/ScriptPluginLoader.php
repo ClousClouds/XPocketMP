@@ -36,8 +36,7 @@ use const FILE_SKIP_EMPTY_LINES;
 use const PATHINFO_FILENAME;
 
 /**
- * Simple script loader, not for plugin development
- * For an example see https://gist.github.com/shoghicp/516105d470cf7d140757
+ * @see examples/plugins/ExampleScriptPlugin.php
  */
 class ScriptPluginLoader implements PluginLoader{
 
