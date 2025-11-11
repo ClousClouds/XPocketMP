@@ -26,9 +26,9 @@ namespace pocketmine\command\defaults;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\command\overload\BoolParameter;
-use pocketmine\command\overload\BranchingOverloadBuilder;
 use pocketmine\command\overload\IntRangeParameter;
 use pocketmine\command\overload\MappedParameter;
+use pocketmine\command\overload\OverloadBuilder;
 use pocketmine\command\overload\ParameterParseException;
 use pocketmine\command\overload\StringParameter;
 use pocketmine\entity\effect\Effect;
@@ -54,7 +54,7 @@ final class EffectCommand{
 		return new Command(
 			$namespace,
 			$name,
-			BranchingOverloadBuilder::make(commonParameters: [
+			OverloadBuilder::make(commonParameters: [
 				new StringParameter("target", "target")
 			])
 				->executor(

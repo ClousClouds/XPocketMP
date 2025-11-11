@@ -23,12 +23,13 @@ declare(strict_types=1);
 
 namespace pocketmine\command\overload;
 
+use pocketmine\utils\AssumptionFailedError;
 use pocketmine\utils\Utils;
 use function array_push;
 use function count;
 use function is_string;
 
-final class BranchingOverloadBuilder{
+final class OverloadBuilder{
 
 	/**
 	 * @var Overload[]
@@ -73,20 +74,21 @@ final class BranchingOverloadBuilder{
 
 	/**
 	 * @phpstan-param list<Parameter<*>|string> $uniqueParameters
-	 * @phpstan-param \Closure(BranchingOverloadBuilder) : BranchingOverload $branchProcessor
+	 * @phpstan-param \Closure(OverloadBuilder) : (void|OverloadBuilder) $builderProcessor
 	 */
-	public function branch(array $uniqueParameters, \Closure $branchProcessor) : static{
-		Utils::validateCallableSignature(fn(BranchingOverloadBuilder $builder) : BranchingOverload => die(), $branchProcessor);
+	public function branch(array $uniqueParameters, \Closure $builderProcessor) : static{
+		Utils::validateCallableSignature(function(OverloadBuilder $builder) : void{}, $builderProcessor);
 		if(count($uniqueParameters) === 0){
 			//no point making a sub branch for this - this allows us to maximise the effectiveness of named overloads
-			$branchProcessor($this);
+			$builderProcessor($this);
 			return $this;
 		}
 
 		$args = $this->commonParameters;
 		array_push($args, ...$uniqueParameters);
-		$branch = new BranchingOverloadBuilder($args);
-		$this->insertOverload($branchProcessor($branch), $uniqueParameters);
+		$builder = new OverloadBuilder($args);
+		$builderProcessor($builder);
+		$this->insertOverload($builder->build(), $uniqueParameters);
 		return $this;
 	}
 
@@ -108,7 +110,12 @@ final class BranchingOverloadBuilder{
 		}
 	}
 
-	public function build() : BranchingOverload{
-		return new BranchingOverload($this->commonParameters, $this->anonymousOverloads, $this->namedOverloads);
+	public function build() : Overload{
+		return match(count($this->namedOverloads) + count($this->anonymousOverloads)){
+			0 => throw new \LogicException("No overloads provided"),
+			//no need to branch if there's only a single overload registered
+			1 => $this->namedOverloads[0] ?? $this->anonymousOverloads[0] ?? throw new AssumptionFailedError(),
+			default => new BranchingOverload($this->commonParameters, $this->anonymousOverloads, $this->namedOverloads)
+		};
 	}
 }
