@@ -69,11 +69,11 @@ final class EffectCommand{
 						StringToEffectParser::getInstance()->parse($v) ??
 						throw new ParameterParseException("Invalid effect name")
 					)
-				], function(OverloadBuilder $builder){
+				], function(OverloadBuilder $builder) : void{
 					$amplifierParameter = new IntRangeParameter("amplifier", "amplifier", 0, 255);
 					$bubblesParameter = new BoolParameter("bubbles", "bubbles");
 					//TODO: would be nice if we could union this somehow?
-					return $builder
+					$builder
 						->executor([
 							new IntRangeParameter("duration", "duration", 0, (int) (Limits::INT32_MAX / 20)),
 							$amplifierParameter,
