@@ -30,7 +30,6 @@ use pocketmine\command\overload\OverloadBuilder;
 use pocketmine\command\overload\RelativeXYZ;
 use pocketmine\command\overload\RelativeXYZParameter;
 use pocketmine\command\overload\StringParameter;
-use pocketmine\command\utils\InvalidCommandSyntaxException;
 use pocketmine\entity\Location;
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\permission\DefaultPermissionNames;
@@ -115,7 +114,7 @@ final class TeleportCommand{
 		float $pitch = 0.0
 	) : void{
 		if(!$sender instanceof Player){
-			throw new InvalidCommandSyntaxException("This syntax can only be used as a player");
+			$sender->sendMessage(KnownTranslationFactory::pocketmine_command_error_playerUserOnly()->prefix(TextFormat::RED));
 		}
 
 		self::tpCoords($sender, $sender, $coordinates, $yaw, $pitch);
@@ -139,8 +138,7 @@ final class TeleportCommand{
 	private static function tpToPlayer(CommandSender $sender, Player $teleportedPlayer, string $destinationPlayerName) : void{
 		$destination = $sender->getServer()->getPlayerByPrefix($destinationPlayerName);
 		if($destination === null){
-			//TODO: this isn't really a syntax error, but we don't have strings for it currently
-			$sender->sendMessage(TextFormat::RED . "Cannot find destination player: $destinationPlayerName");
+			$sender->sendMessage(KnownTranslationFactory::pocketmine_command_error_playerNotFound($destinationPlayerName)->prefix(TextFormat::RED));
 			return;
 		}
 
@@ -150,7 +148,8 @@ final class TeleportCommand{
 
 	private static function tpSelfToPlayer(CommandSender $sender, string $destinationPlayer) : void{
 		if(!$sender instanceof Player){
-			throw new InvalidCommandSyntaxException("This syntax can only be used as a player");
+			$sender->sendMessage(KnownTranslationFactory::pocketmine_command_error_playerUserOnly()->prefix(TextFormat::RED));
+			return;
 		}
 
 		self::tpToPlayer($sender, $sender, $destinationPlayer);

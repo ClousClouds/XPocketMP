@@ -52,8 +52,7 @@ final class TransferServerCommand{
 
 	private static function execute(CommandSender $sender, string $serverAddress, int $serverPort = 19132) : void{
 		if(!($sender instanceof Player)){
-			$sender->sendMessage(TextFormat::RED . "This command must be executed as a player");
-
+			$sender->sendMessage(KnownTranslationFactory::pocketmine_command_error_playerUserOnly()->prefix(TextFormat::RED));
 			return;
 		}
 

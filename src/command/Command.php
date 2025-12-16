@@ -187,15 +187,14 @@ class Command{
 		//TODO: we need proper command selector support, but this one is useful and easy to hack in for now
 		if($target !== null && $target !== "@s"){
 			$player = $sender->getServer()->getPlayerByPrefix($target);
+			if($player === null){
+				$sender->sendMessage(KnownTranslationFactory::pocketmine_command_error_playerNotFound($target)->prefix(TextFormat::RED));
+				return null;
+			}
 		}elseif($sender instanceof Player){
 			$player = $sender;
 		}else{
 			throw new InvalidCommandSyntaxException();
-		}
-
-		if($player === null){
-			$sender->sendMessage(KnownTranslationFactory::commands_generic_player_notFound()->prefix(TextFormat::RED));
-			return null;
 		}
 
 		$permission = $player === $sender ? $selfPermission : $otherPermission;

@@ -55,7 +55,7 @@ final class SetWorldSpawnCommand{
 
 	private static function setSpawnHere(CommandSender $sender) : void{
 		if(!$sender instanceof Player){
-			$sender->sendMessage(TextFormat::RED . "You can only perform this command as a player");
+			$sender->sendMessage(KnownTranslationFactory::pocketmine_command_error_playerUserOnly()->prefix(TextFormat::RED));
 			return;
 		}
 		$location = $sender->getPosition();

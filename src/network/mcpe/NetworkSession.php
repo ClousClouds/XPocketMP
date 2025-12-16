@@ -1206,7 +1206,7 @@ class NetworkSession{
 				$lname, //TODO: commands containing uppercase letters in the name crash 1.9.0 client
 				$description instanceof Translatable ? $language->translate($description) : $description,
 				0,
-				0,
+				CommandPermissions::NORMAL,
 				$aliasObj,
 				$overloadData,
 				chainedSubCommandData: []
