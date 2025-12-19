@@ -1,9 +1,9 @@
 includes:
 	- tests/phpstan/analyse-for-current-php-version.neon.php
 	- tests/phpstan/configs/actual-problems.neon
-	- tests/phpstan/configs/impossible-generics.neon
 	- tests/phpstan/configs/php-bugs.neon
 	- tests/phpstan/configs/phpstan-bugs.neon
+	- tests/phpstan/configs/property-hook-sadness.neon
 	- tests/phpstan/configs/spl-fixed-array-sucks.neon
 	- vendor/phpstan/phpstan-phpunit/extension.neon
 	- vendor/phpstan/phpstan-phpunit/rules.neon
@@ -11,9 +11,11 @@ includes:
 
 rules:
 	- pocketmine\phpstan\rules\DeprecatedLegacyEnumAccessRule
+	- pocketmine\phpstan\rules\DisallowDynamicNewRule
 	- pocketmine\phpstan\rules\DisallowEnumComparisonRule
 	- pocketmine\phpstan\rules\DisallowForeachByReferenceRule
-	- pocketmine\phpstan\rules\UnsafeForeachArrayOfStringRule
+	- pocketmine\phpstan\rules\ExplodeLimitRule
+	- pocketmine\phpstan\rules\UnsafeForeachRule
 #	- pocketmine\phpstan\rules\ThreadedSupportedTypesRule
 
 parameters:
@@ -32,6 +34,7 @@ parameters:
 	paths:
 		- build
 		- src
+		- generated
 		- tests/phpstan/DummyPluginOwned.php
 		- tests/phpstan/rules
 		- tests/phpunit
@@ -45,6 +48,7 @@ parameters:
 		- pocketmine\VersionInfo::BUILD_CHANNEL
 		- pocketmine\DEBUG
 		- pocketmine\IS_DEVELOPMENT_BUILD
+		- pocketmine\network\mcpe\protocol\ProtocolInfo::CURRENT_PROTOCOL
 	stubFiles:
 		- tests/phpstan/stubs/chunkutils2.stub
 		- tests/phpstan/stubs/JsonMapper.stub

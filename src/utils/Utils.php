@@ -369,7 +369,7 @@ final class Utils{
 		debug_zval_dump($value);
 		$contents = ob_get_contents();
 		if($contents === false) throw new AssumptionFailedError("ob_get_contents() should never return false here");
-		$ret = explode("\n", $contents);
+		$ret = explode("\n", $contents, limit: 2);
 		ob_end_clean();
 
 		if(preg_match('/^.* refcount\\(([0-9]+)\\)\\{$/', trim($ret[0]), $m) > 0){
@@ -584,10 +584,10 @@ final class Utils{
 	/**
 	 * @phpstan-template TMemberType
 	 * @phpstan-param array<mixed, TMemberType> $array
-	 * @phpstan-param \Closure(TMemberType) : void $validator
+	 * @phpstan-param \Closure(TMemberType) : mixed $validator
 	 */
 	public static function validateArrayValueType(array $array, \Closure $validator) : void{
-		foreach($array as $k => $v){
+		foreach(Utils::promoteKeys($array) as $k => $v){
 			try{
 				$validator($v);
 			}catch(\TypeError $e){

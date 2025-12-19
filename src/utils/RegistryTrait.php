@@ -24,13 +24,13 @@ declare(strict_types=1);
 namespace pocketmine\utils;
 
 use function array_map;
-use function assert;
 use function count;
-use function get_class;
 use function mb_strtoupper;
 use function preg_match;
 
 /**
+ * @deprecated Superseded by {@link RegistrySource}
+ *
  * This trait allows a class to simulate object class constants, since PHP doesn't currently support this.
  * These faux constants are exposed in static class methods, which are handled using __callStatic().
  *
@@ -43,12 +43,6 @@ trait RegistryTrait{
 	 * @phpstan-var array<string, object>|null
 	 */
 	private static $members = null;
-
-	/**
-	 * @var OverloadedRegistryMember[]
-	 * @phpstan-var array<string, OverloadedRegistryMember>
-	 */
-	private static $overloadedMembers = [];
 
 	private static function verifyName(string $name) : void{
 		if(preg_match('/^(?!\d)[A-Za-z\d_]+$/u', $name) === 0){
@@ -67,35 +61,10 @@ trait RegistryTrait{
 		}
 		self::verifyName($name);
 		$upperName = mb_strtoupper($name);
-		if(isset(self::$members[$upperName]) || isset(self::$overloadedMembers[$upperName])){
+		if(isset(self::$members[$upperName])){
 			throw new \InvalidArgumentException("\"$upperName\" is already reserved");
 		}
 		self::$members[$upperName] = $member;
-	}
-
-	/**
-	 * @phpstan-template TEnum of \UnitEnum
-	 * @phpstan-param class-string<TEnum> $enumClass
-	 * @phpstan-param class-string        $returnClass
-	 */
-	private static function registerOverloaded(string $baseName, string $enumClass, string $returnClass) : void{
-		self::verifyName($baseName);
-		$upperName = mb_strtoupper($baseName);
-		if(isset(self::$members[$upperName]) || isset(self::$overloadedMembers[$upperName])){
-			throw new \InvalidArgumentException("\"$upperName\" is already reserved");
-		}
-		$enumToMemberMap = [];
-		foreach($enumClass::cases() as $case){
-			$memberName = mb_strtoupper($case->name . "_" . $baseName);
-			if(!isset(self::$members[$memberName])){
-				throw new \LogicException("\"$memberName\" needs to be registered to define overloaded member with enum $enumClass");
-			}
-			if(!self::$members[$memberName] instanceof $returnClass){
-				throw new \LogicException("\"$memberName\" doesn't satisfy the desired type $returnClass");
-			}
-			$enumToMemberMap[$case->name] = $memberName;
-		}
-		self::$overloadedMembers[$upperName] = new OverloadedRegistryMember($enumClass, $returnClass, $enumToMemberMap);
 	}
 
 	/**
@@ -144,36 +113,20 @@ trait RegistryTrait{
 	 * @return object
 	 */
 	public static function __callStatic($name, $arguments){
-		if(count($arguments) === 0){
-			//fast path
-			if(self::$members !== null && isset(self::$members[$name])){
-				return self::preprocessMember(self::$members[$name]);
-			}
+		if(count($arguments) > 0){
+			throw new \ArgumentCountError("Expected exactly 0 arguments, " . count($arguments) . " passed");
+		}
 
-			//fallback
-			try{
-				return self::_registryFromString($name);
-			}catch(\InvalidArgumentException $e){
-				throw new \Error($e->getMessage(), 0, $e);
-			}
-		}elseif(count($arguments) === 1 && $arguments[0] instanceof \UnitEnum){
-			$enum = $arguments[0];
-			self::checkInit();
+		//fast path
+		if(self::$members !== null && isset(self::$members[$name])){
+			return self::preprocessMember(self::$members[$name]);
+		}
 
-			$overloadInfo = self::$overloadedMembers[$name] ?? self::$overloadedMembers[mb_strtoupper($name)] ?? null;
-
-			if($overloadInfo !== null){
-				if($enum::class !== $overloadInfo->enumClass){
-					throw new \Error("Wrong enum type for overloaded registry member " . self::class . "::" . mb_strtoupper($name) . "($overloadInfo->enumClass)");
-				}
-				$memberName = $overloadInfo->enumToMemberMap[$enum->name];
-				assert(self::$members !== null);
-				return self::preprocessMember(self::$members[$memberName]);
-			}
-
-			throw new \Error("No such overloaded registry member: " . self::class . "::" . mb_strtoupper($name) . "(" . get_class($enum) . ")");
-		}else{
-			throw new \LogicException("Incorrect arguments passed to overloaded registry member: " . self::class . "::" . mb_strtoupper($name));
+		//fallback
+		try{
+			return self::_registryFromString($name);
+		}catch(\InvalidArgumentException $e){
+			throw new \Error($e->getMessage(), 0, $e);
 		}
 	}
 
@@ -184,13 +137,5 @@ trait RegistryTrait{
 	private static function _registryGetAll() : array{
 		self::checkInit();
 		return array_map(self::preprocessMember(...), self::$members ?? throw new AssumptionFailedError(self::class . "::checkInit() did not initialize self::\$members correctly"));
-	}
-
-	/**
-	 * @return string[]
-	 * @phpstan-return array<string, OverloadedRegistryMember>
-	 */
-	public static function getAllOverloaded() : array{
-		return self::$overloadedMembers;
 	}
 }

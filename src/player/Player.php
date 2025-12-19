@@ -26,6 +26,7 @@ namespace pocketmine\player;
 use pocketmine\block\BaseSign;
 use pocketmine\block\Bed;
 use pocketmine\block\BlockTypeTags;
+use pocketmine\block\RespawnAnchor;
 use pocketmine\block\UnknownBlock;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\command\CommandSender;
@@ -34,17 +35,20 @@ use pocketmine\data\java\GameModeIdMap;
 use pocketmine\entity\animation\Animation;
 use pocketmine\entity\animation\ArmSwingAnimation;
 use pocketmine\entity\animation\CriticalHitAnimation;
+use pocketmine\entity\animation\MagicHitAnimation;
 use pocketmine\entity\Attribute;
 use pocketmine\entity\effect\VanillaEffects;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Human;
 use pocketmine\entity\Living;
 use pocketmine\entity\Location;
+use pocketmine\entity\NeverSavedWithChunkEntity;
 use pocketmine\entity\object\ItemEntity;
 use pocketmine\entity\projectile\Arrow;
 use pocketmine\entity\Skin;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\event\entity\EntityExtinguishEvent;
 use pocketmine\event\inventory\InventoryCloseEvent;
 use pocketmine\event\inventory\InventoryOpenEvent;
 use pocketmine\event\player\PlayerBedEnterEvent;
@@ -135,6 +139,7 @@ use pocketmine\world\sound\EntityAttackNoDamageSound;
 use pocketmine\world\sound\EntityAttackSound;
 use pocketmine\world\sound\FireExtinguishSound;
 use pocketmine\world\sound\ItemBreakSound;
+use pocketmine\world\sound\RespawnAnchorDepleteSound;
 use pocketmine\world\sound\Sound;
 use pocketmine\world\World;
 use pocketmine\YmlServerProperties;
@@ -166,7 +171,7 @@ use const PHP_INT_MAX;
 /**
  * Main class that handles networking, recovery, and packet sending to the server part
  */
-class Player extends Human implements CommandSender, ChunkListener, IPlayer{
+class Player extends Human implements CommandSender, ChunkListener, IPlayer, NeverSavedWithChunkEntity{
 	use PermissibleDelegateTrait;
 
 	private const MOVES_PER_TICK = 2;
@@ -286,6 +291,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer{
 	protected bool $allowFlight = false;
 	protected bool $blockCollision = true;
 	protected bool $flying = false;
+	protected bool $sneakPressed = false;
 
 	protected float $flightSpeedMultiplier = self::DEFAULT_FLIGHT_SPEED_MULTIPLIER;
 
@@ -1276,6 +1282,18 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer{
 		return $this->gamemode === GameMode::SPECTATOR;
 	}
 
+	public function setSneakPressed(bool $sneakPressed) : void{
+		$this->sneakPressed = $sneakPressed;
+	}
+
+	/**
+	 * Returns whether the player is pressing the sneak key.
+	 * The player may still be sneaking even if this is false due to gameplay mechanics (e.g. releasing sneak while in a 1.5 block high space).
+	 */
+	public function isSneakPressed() : bool{
+		return $this->sneakPressed;
+	}
+
 	/**
 	 * TODO: make this a dynamic ability instead of being hardcoded
 	 */
@@ -1300,7 +1318,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer{
 	}
 
 	protected function checkGroundState(float $wantedX, float $wantedY, float $wantedZ, float $dx, float $dy, float $dz) : void{
-		if($this->gamemode === GameMode::SPECTATOR){
+		if(!$this->blockCollision){
 			$this->onGround = false;
 		}else{
 			$bb = clone $this->boundingBox;
@@ -1641,7 +1659,10 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer{
 			$newReplica = clone $oldHeldItem;
 			$newReplica->setCount($newHeldItem->getCount());
 			if($newReplica instanceof Durable && $newHeldItem instanceof Durable){
-				$newReplica->setDamage($newHeldItem->getDamage());
+				$newDamage = $newHeldItem->getDamage();
+				if($newDamage >= 0 && $newDamage <= $newReplica->getMaxDurability()){
+					$newReplica->setDamage($newDamage);
+				}
 			}
 			$damagedOrDeducted = $newReplica->equalsExact($newHeldItem);
 
@@ -1719,7 +1740,8 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer{
 		if($slot instanceof ConsumableItem){
 			$oldItem = clone $slot;
 
-			$ev = new PlayerItemConsumeEvent($this, $slot);
+			$residue = $slot->getResidue();
+			$ev = new PlayerItemConsumeEvent($this, $slot, $residue->isNull() ? [] : [$residue]);
 			if($this->hasItemCooldown($slot)){
 				$ev->cancel();
 			}
@@ -1733,7 +1755,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer{
 			$this->resetItemCooldown($oldItem);
 
 			$slot->pop();
-			$this->returnItemsFromAction($oldItem, $slot, [$slot->getResidue()]);
+			$this->returnItemsFromAction($oldItem, $slot, $ev->getResidue());
 
 			return true;
 		}
@@ -1993,6 +2015,9 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer{
 		if($ev->getModifier(EntityDamageEvent::MODIFIER_CRITICAL) > 0 && $entity instanceof Living){
 			$entity->broadcastAnimation(new CriticalHitAnimation($entity));
 		}
+		if($ev->getModifier(EntityDamageEvent::MODIFIER_WEAPON_ENCHANTMENTS) > 0 && $entity instanceof Living){
+			$entity->broadcastAnimation(new MagicHitAnimation($entity));
+		}
 
 		foreach($meleeEnchantments as $enchantment){
 			$type = $enchantment->getType();
@@ -2068,12 +2093,18 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer{
 		return true;
 	}
 
-	public function toggleSneak(bool $sneak) : bool{
-		if($sneak === $this->sneaking){
+	public function toggleSneak(bool $sneak, bool $sneakPressed = true) : bool{
+		if($sneak === $this->sneaking && $sneakPressed === $this->sneakPressed){
 			return true;
 		}
-		$ev = new PlayerToggleSneakEvent($this, $sneak);
+		$this->setSneakPressed($sneakPressed);
+
+		$ev = new PlayerToggleSneakEvent($this, $sneak, $sneakPressed);
+		if($sneak === $this->sneaking){
+			$ev->cancel();
+		}
 		$ev->call();
+
 		if($ev->isCancelled()){
 			return false;
 		}
@@ -2537,6 +2568,21 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer{
 				}
 				$this->logger->debug("Respawn position located, completing respawn");
 				$ev = new PlayerRespawnEvent($this, $safeSpawn);
+				$spawnPosition = $ev->getRespawnPosition();
+				$spawnBlock = $spawnPosition->getWorld()->getBlock($spawnPosition);
+				if($spawnBlock instanceof RespawnAnchor){
+					if($spawnBlock->getCharges() > 0){
+						$spawnPosition->getWorld()->setBlock($spawnPosition, $spawnBlock->setCharges($spawnBlock->getCharges() - 1));
+						$spawnPosition->getWorld()->addSound($spawnPosition, new RespawnAnchorDepleteSound());
+					}else{
+						$defaultSpawn = $this->server->getWorldManager()->getDefaultWorld()?->getSpawnLocation();
+						if($defaultSpawn !== null){
+							$this->setSpawn($defaultSpawn);
+							$ev->setRespawnPosition($defaultSpawn);
+							$this->sendMessage(KnownTranslationFactory::tile_respawn_anchor_notValid()->prefix(TextFormat::GRAY));
+						}
+					}
+				}
 				$ev->call();
 
 				$realSpawn = Position::fromObject($ev->getRespawnPosition()->add(0.5, 0, 0.5), $ev->getRespawnPosition()->getWorld());
@@ -2546,7 +2592,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer{
 				$this->setSneaking(false);
 				$this->setFlying(false);
 
-				$this->extinguish();
+				$this->extinguish(EntityExtinguishEvent::CAUSE_RESPAWN);
 				$this->setAirSupplyTicks($this->getMaxAirSupplyTicks());
 				$this->deadTicks = 0;
 				$this->noDamageTicks = 60;
@@ -2817,13 +2863,12 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer{
 
 	/**
 	 * Opens the player's sign editor GUI for the sign at the given position.
-	 * TODO: add support for editing the rear side of the sign (not currently supported due to technical limitations)
 	 */
-	public function openSignEditor(Vector3 $position) : void{
+	public function openSignEditor(Vector3 $position, bool $frontFace = true) : void{
 		$block = $this->getWorld()->getBlock($position);
 		if($block instanceof BaseSign){
 			$this->getWorld()->setBlock($position, $block->setEditorEntityRuntimeId($this->getId()));
-			$this->getNetworkSession()->onOpenSignEditor($position, true);
+			$this->getNetworkSession()->onOpenSignEditor($position, $frontFace);
 		}else{
 			throw new \InvalidArgumentException("Block at this position is not a sign");
 		}

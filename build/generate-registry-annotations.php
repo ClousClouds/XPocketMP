@@ -23,8 +23,10 @@ declare(strict_types=1);
 
 namespace pocketmine\build\update_registry_annotations;
 
-use pocketmine\utils\OverloadedRegistryMember;
 use pocketmine\utils\Utils;
+use function array_diff;
+use function array_map;
+use function array_unshift;
 use function basename;
 use function class_exists;
 use function count;
@@ -35,7 +37,6 @@ use function fwrite;
 use function implode;
 use function is_dir;
 use function ksort;
-use function lcfirst;
 use function mb_strtoupper;
 use function preg_match;
 use function sprintf;
@@ -50,18 +51,10 @@ if(count($argv) !== 2){
 }
 
 /**
- * @phpstan-param \ReflectionClass<*> $class
- */
-function makeTypehint(string $namespaceName, \ReflectionClass $class) : string{
-	return $class->getNamespaceName() === $namespaceName ? $class->getShortName() : '\\' . $class->getName();
-}
-
-/**
  * @param object[] $members
  * @phpstan-param array<string, object> $members
- * @phpstan-param array<string, OverloadedRegistryMember> $overloadedMembers
  */
-function generateMethodAnnotations(string $namespaceName, array $members, array $overloadedMembers) : string{
+function generateMethodAnnotations(string $namespaceName, array $members) : string{
 	$selfName = basename(__FILE__);
 	$lines = ["/**"];
 	$lines[] = " * This doc-block is generated automatically, do not modify it manually.";
@@ -74,24 +67,26 @@ function generateMethodAnnotations(string $namespaceName, array $members, array 
 	$memberLines = [];
 	foreach(Utils::stringifyKeys($members) as $name => $member){
 		$reflect = new \ReflectionClass($member);
-		while($reflect !== false && $reflect->isAnonymous()){
-			$reflect = $reflect->getParentClass();
+		$types = $reflect->getInterfaceNames();
+		$concreteClass = $reflect;
+		while($concreteClass !== false && $concreteClass->isAnonymous()){
+			$concreteClass = $concreteClass->getParentClass();
 		}
-		if($reflect === false){
+
+		if($concreteClass === false){
 			$typehint = "object";
 		}else{
-			$typehint = makeTypehint($namespaceName, $reflect);
+			$types = array_diff($types, $concreteClass->getInterfaceNames());
+			array_unshift($types, $concreteClass->getName());
+			$typehint = implode("&", array_map(function(string $class) use ($namespaceName) : string{
+				$reflect = new \ReflectionClass($class);
+				return $reflect->getNamespaceName() === $namespaceName ?
+					$reflect->getShortName() :
+					'\\' . $reflect->getName();
+			}, $types));
 		}
 		$accessor = mb_strtoupper($name);
 		$memberLines[$accessor] = sprintf($lineTmpl, $accessor, $typehint);
-	}
-	foreach(Utils::stringifyKeys($overloadedMembers) as $baseName => $member){
-		$accessor = mb_strtoupper($baseName);
-		$returnTypehint = makeTypehint($namespaceName, new \ReflectionClass($member->memberClass));
-		$enumReflect = new \ReflectionClass($member->enumClass);
-		$paramTypehint = makeTypehint($namespaceName, $enumReflect);
-
-		$memberLines[] = sprintf(" * @method static %s %s(%s \$%s)", $returnTypehint, $accessor, $paramTypehint, lcfirst($enumReflect->getShortName()));
 	}
 	ksort($memberLines, SORT_STRING);
 
@@ -123,7 +118,7 @@ function processFile(string $file) : void{
 	}
 	echo "Found registry in $file\n";
 
-	$replacement = generateMethodAnnotations($matches[1], $className::getAll(), $className::getAllOverloaded());
+	$replacement = generateMethodAnnotations($matches[1], $className::getAll());
 
 	$newContents = str_replace($docComment, $replacement, $contents);
 	if($newContents !== $contents){
