@@ -39,6 +39,7 @@ use pocketmine\math\Vector3;
 use pocketmine\utils\CloningRegistrySource;
 use pocketmine\world\World;
 use function is_int;
+use function mb_strtolower;
 use function mb_strtoupper;
 use function strtolower;
 
