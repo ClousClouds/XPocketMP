@@ -631,22 +631,10 @@ final class VanillaBlocksInputs extends CloningRegistrySource{
 	}
 
 	/**
-	 * @phpstan-return \Closure() : Item
+	 * @phpstan-param class-string<covariant Block> $returnType
 	 */
-	private static function getHangingSignItemCallback(WoodType $woodType) : \Closure{
-		return match ($woodType) {
-			WoodType::OAK => VanillaItems::OAK_HANGING_SIGN(...),
-			WoodType::SPRUCE => VanillaItems::SPRUCE_HANGING_SIGN(...),
-			WoodType::BIRCH => VanillaItems::BIRCH_HANGING_SIGN(...),
-			WoodType::JUNGLE => VanillaItems::JUNGLE_HANGING_SIGN(...),
-			WoodType::ACACIA => VanillaItems::ACACIA_HANGING_SIGN(...),
-			WoodType::DARK_OAK => VanillaItems::DARK_OAK_HANGING_SIGN(...),
-			WoodType::MANGROVE => VanillaItems::MANGROVE_HANGING_SIGN(...),
-			WoodType::CRIMSON => VanillaItems::CRIMSON_HANGING_SIGN(...),
-			WoodType::WARPED => VanillaItems::WARPED_HANGING_SIGN(...),
-			WoodType::CHERRY => VanillaItems::CHERRY_HANGING_SIGN(...),
-			WoodType::PALE_OAK => VanillaItems::PALE_OAK_HANGING_SIGN(...),
-		};
+	private function registerWoodOverload(string $baseName, string $returnType, ?string $suffix = null) : void{
+		self::registerOverloaded($baseName, WoodType::class, fn(WoodType $t) => mb_strtolower($t->name) . "_" . ($suffix ?? $baseName), $returnType);
 	}
 
 	private function registerWoodenBlocks() : void{
@@ -677,15 +665,21 @@ final class VanillaBlocksInputs extends CloningRegistrySource{
 			self::register($idName("pressure_plate"), fn(BID $id) => new WoodenPressurePlate($id, $name . " Pressure Plate", $woodenPressurePlateBreakInfo, $woodType, 20));
 			self::register($idName("trapdoor"), fn(BID $id) => new WoodenTrapdoor($id, $name . " Trapdoor", $woodenDoorBreakInfo, $woodType));
 
-			self::registerDelayed($idName("sign"), fn(string $idName) : FloorSign => new FloorSign(self::makeBID($idName, TileSign::class), $name . " Sign", $signBreakInfo, $woodType, fn() => VanillaItems::SIGN($woodType)));
-			self::registerDelayed($idName("wall_sign"), fn(string $idName) : WallSign => new WallSign(self::makeBID($idName, TileSign::class), $name . " Wall Sign", $signBreakInfo, $woodType, fn() => VanillaItems::SIGN($woodType)));
+			$signAsItem = fn() => VanillaItems::SIGN($woodType);
+			self::registerDelayed($idName("sign"), fn(string $idName) : FloorSign => new FloorSign(self::makeBID($idName, TileSign::class), $name . " Sign", $signBreakInfo, $woodType, $signAsItem));
+			self::registerDelayed($idName("wall_sign"), fn(string $idName) : WallSign => new WallSign(self::makeBID($idName, TileSign::class), $name . " Wall Sign", $signBreakInfo, $woodType, $signAsItem));
 
-			self::registerDelayed($idName("ceiling_center_hanging_sign"), fn(string $idName) : CeilingCenterHangingSign => new CeilingCenterHangingSign(self::makeBID($idName, TileHangingSign::class), $name . " Center Hanging Sign", $hangingSignBreakInfo, $woodType, self::getHangingSignItemCallback($woodType)));
-			self::registerDelayed($idName("ceiling_edges_hanging_sign"), fn(string $idName) : CeilingEdgesHangingSign => new CeilingEdgesHangingSign(self::makeBID($idName, TileHangingSign::class), $name . " Edges Hanging Sign", $hangingSignBreakInfo, $woodType, self::getHangingSignItemCallback($woodType)));
-			self::registerDelayed($idName("wall_hanging_sign"), fn(string $idName) : WallHangingSign => new WallHangingSign(self::makeBID($idName, TileHangingSign::class), $name . " Wall Hanging Sign", $hangingSignBreakInfo, $woodType, self::getHangingSignItemCallback($woodType)));
+			$hangingSignAsItem = fn() => VanillaItems::HANGING_SIGN($woodType);
+			self::registerDelayed($idName("ceiling_center_hanging_sign"), fn(string $idName) : CeilingCenterHangingSign => new CeilingCenterHangingSign(self::makeBID($idName, TileHangingSign::class), $name . " Center Hanging Sign", $hangingSignBreakInfo, $woodType, $hangingSignAsItem));
+			self::registerDelayed($idName("ceiling_edges_hanging_sign"), fn(string $idName) : CeilingEdgesHangingSign => new CeilingEdgesHangingSign(self::makeBID($idName, TileHangingSign::class), $name . " Edges Hanging Sign", $hangingSignBreakInfo, $woodType, $hangingSignAsItem));
+			self::registerDelayed($idName("wall_hanging_sign"), fn(string $idName) : WallHangingSign => new WallHangingSign(self::makeBID($idName, TileHangingSign::class), $name . " Wall Hanging Sign", $hangingSignBreakInfo, $woodType, $hangingSignAsItem));
 		}
-		self::registerOverloaded("sign", WoodType::class, fn(WoodType $t) => mb_strtolower($t->name) . "_sign", FloorSign::class);
-		self::registerOverloaded("wall_sign", WoodType::class, fn(WoodType $t) => mb_strtolower($t->name) . "_wall_sign", WallSign::class);
+
+		self::registerWoodOverload("sign", FloorSign::class);
+		self::registerWoodOverload("wall_sign", WallSign::class);
+		self::registerWoodOverload("ceiling_center_hanging_sign", CeilingCenterHangingSign::class);
+		self::registerWoodOverload("ceiling_edges_hanging_sign", CeilingEdgesHangingSign::class);
+		self::registerWoodOverload("wall_hanging_sign", WallHangingSign::class);
 	}
 
 	private function registerMushroomBlocks() : void{

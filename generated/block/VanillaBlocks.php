@@ -2146,6 +2146,38 @@ final class VanillaBlocks{
 		return VanillaBlocksInputs::preprocessMember(self::$_mCAVE_VINES);
 	}
 
+	public static function CEILING_CENTER_HANGING_SIGN(WoodType $case) : CeilingCenterHangingSign{
+		return match($case) {
+			WoodType::OAK => self::OAK_CEILING_CENTER_HANGING_SIGN(),
+			WoodType::SPRUCE => self::SPRUCE_CEILING_CENTER_HANGING_SIGN(),
+			WoodType::BIRCH => self::BIRCH_CEILING_CENTER_HANGING_SIGN(),
+			WoodType::JUNGLE => self::JUNGLE_CEILING_CENTER_HANGING_SIGN(),
+			WoodType::ACACIA => self::ACACIA_CEILING_CENTER_HANGING_SIGN(),
+			WoodType::DARK_OAK => self::DARK_OAK_CEILING_CENTER_HANGING_SIGN(),
+			WoodType::MANGROVE => self::MANGROVE_CEILING_CENTER_HANGING_SIGN(),
+			WoodType::CRIMSON => self::CRIMSON_CEILING_CENTER_HANGING_SIGN(),
+			WoodType::WARPED => self::WARPED_CEILING_CENTER_HANGING_SIGN(),
+			WoodType::CHERRY => self::CHERRY_CEILING_CENTER_HANGING_SIGN(),
+			WoodType::PALE_OAK => self::PALE_OAK_CEILING_CENTER_HANGING_SIGN(),
+		};
+	}
+
+	public static function CEILING_EDGES_HANGING_SIGN(WoodType $case) : CeilingEdgesHangingSign{
+		return match($case) {
+			WoodType::OAK => self::OAK_CEILING_EDGES_HANGING_SIGN(),
+			WoodType::SPRUCE => self::SPRUCE_CEILING_EDGES_HANGING_SIGN(),
+			WoodType::BIRCH => self::BIRCH_CEILING_EDGES_HANGING_SIGN(),
+			WoodType::JUNGLE => self::JUNGLE_CEILING_EDGES_HANGING_SIGN(),
+			WoodType::ACACIA => self::ACACIA_CEILING_EDGES_HANGING_SIGN(),
+			WoodType::DARK_OAK => self::DARK_OAK_CEILING_EDGES_HANGING_SIGN(),
+			WoodType::MANGROVE => self::MANGROVE_CEILING_EDGES_HANGING_SIGN(),
+			WoodType::CRIMSON => self::CRIMSON_CEILING_EDGES_HANGING_SIGN(),
+			WoodType::WARPED => self::WARPED_CEILING_EDGES_HANGING_SIGN(),
+			WoodType::CHERRY => self::CHERRY_CEILING_EDGES_HANGING_SIGN(),
+			WoodType::PALE_OAK => self::PALE_OAK_CEILING_EDGES_HANGING_SIGN(),
+		};
+	}
+
 	public static function CHAIN() : Chain{
 		if(!isset(self::$_mCHAIN)){ self::init(); }
 		return VanillaBlocksInputs::preprocessMember(self::$_mCHAIN);
@@ -5462,6 +5494,22 @@ final class VanillaBlocks{
 	public static function WALL_CORAL_FAN() : WallCoralFan{
 		if(!isset(self::$_mWALL_CORAL_FAN)){ self::init(); }
 		return VanillaBlocksInputs::preprocessMember(self::$_mWALL_CORAL_FAN);
+	}
+
+	public static function WALL_HANGING_SIGN(WoodType $case) : WallHangingSign{
+		return match($case) {
+			WoodType::OAK => self::OAK_WALL_HANGING_SIGN(),
+			WoodType::SPRUCE => self::SPRUCE_WALL_HANGING_SIGN(),
+			WoodType::BIRCH => self::BIRCH_WALL_HANGING_SIGN(),
+			WoodType::JUNGLE => self::JUNGLE_WALL_HANGING_SIGN(),
+			WoodType::ACACIA => self::ACACIA_WALL_HANGING_SIGN(),
+			WoodType::DARK_OAK => self::DARK_OAK_WALL_HANGING_SIGN(),
+			WoodType::MANGROVE => self::MANGROVE_WALL_HANGING_SIGN(),
+			WoodType::CRIMSON => self::CRIMSON_WALL_HANGING_SIGN(),
+			WoodType::WARPED => self::WARPED_WALL_HANGING_SIGN(),
+			WoodType::CHERRY => self::CHERRY_WALL_HANGING_SIGN(),
+			WoodType::PALE_OAK => self::PALE_OAK_WALL_HANGING_SIGN(),
+		};
 	}
 
 	public static function WALL_SIGN(WoodType $case) : WallSign{

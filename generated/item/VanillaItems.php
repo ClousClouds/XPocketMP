@@ -1545,6 +1545,22 @@ final class VanillaItems{
 		return VanillaItemsInputs::preprocessMember(self::$_mGUNPOWDER);
 	}
 
+	public static function HANGING_SIGN(WoodType $case) : HangingSign{
+		return match($case) {
+			WoodType::OAK => self::OAK_HANGING_SIGN(),
+			WoodType::SPRUCE => self::SPRUCE_HANGING_SIGN(),
+			WoodType::BIRCH => self::BIRCH_HANGING_SIGN(),
+			WoodType::JUNGLE => self::JUNGLE_HANGING_SIGN(),
+			WoodType::ACACIA => self::ACACIA_HANGING_SIGN(),
+			WoodType::DARK_OAK => self::DARK_OAK_HANGING_SIGN(),
+			WoodType::MANGROVE => self::MANGROVE_HANGING_SIGN(),
+			WoodType::CRIMSON => self::CRIMSON_HANGING_SIGN(),
+			WoodType::WARPED => self::WARPED_HANGING_SIGN(),
+			WoodType::CHERRY => self::CHERRY_HANGING_SIGN(),
+			WoodType::PALE_OAK => self::PALE_OAK_HANGING_SIGN(),
+		};
+	}
+
 	public static function HEART_OF_THE_SEA() : Item{
 		if(!isset(self::$_mHEART_OF_THE_SEA)){ self::init(); }
 		return VanillaItemsInputs::preprocessMember(self::$_mHEART_OF_THE_SEA);

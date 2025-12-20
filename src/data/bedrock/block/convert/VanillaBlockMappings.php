@@ -102,6 +102,7 @@ use pocketmine\block\utils\LeverFacing;
 use pocketmine\block\utils\MobHeadType;
 use pocketmine\block\utils\MushroomBlockType;
 use pocketmine\block\utils\PoweredByRedstone;
+use pocketmine\block\utils\WoodType;
 use pocketmine\block\VanillaBlocks as Blocks;
 use pocketmine\block\Vine;
 use pocketmine\data\bedrock\block\BlockLegacyMetadata;
@@ -1627,35 +1628,35 @@ final class VanillaBlockMappings{
 		self::mapAsymmetricSerializer($reg, Model::create(Blocks::OMINOUS_WALL_BANNER(), Ids::WALL_BANNER)->properties([$commonProperties->horizontalFacingClassic]));
 
 		foreach([
-			Ids::ACACIA_HANGING_SIGN => [Blocks::ACACIA_CEILING_CENTER_HANGING_SIGN(), Blocks::ACACIA_CEILING_EDGES_HANGING_SIGN(), Blocks::ACACIA_WALL_HANGING_SIGN()],
-			Ids::BIRCH_HANGING_SIGN => [Blocks::BIRCH_CEILING_CENTER_HANGING_SIGN(), Blocks::BIRCH_CEILING_EDGES_HANGING_SIGN(), Blocks::BIRCH_WALL_HANGING_SIGN()],
-			Ids::CHERRY_HANGING_SIGN => [Blocks::CHERRY_CEILING_CENTER_HANGING_SIGN(), Blocks::CHERRY_CEILING_EDGES_HANGING_SIGN(), Blocks::CHERRY_WALL_HANGING_SIGN()],
-			Ids::CRIMSON_HANGING_SIGN => [Blocks::CRIMSON_CEILING_CENTER_HANGING_SIGN(), Blocks::CRIMSON_CEILING_EDGES_HANGING_SIGN(), Blocks::CRIMSON_WALL_HANGING_SIGN()],
-			Ids::DARK_OAK_HANGING_SIGN => [Blocks::DARK_OAK_CEILING_CENTER_HANGING_SIGN(), Blocks::DARK_OAK_CEILING_EDGES_HANGING_SIGN(), Blocks::DARK_OAK_WALL_HANGING_SIGN()],
-			Ids::JUNGLE_HANGING_SIGN => [Blocks::JUNGLE_CEILING_CENTER_HANGING_SIGN(), Blocks::JUNGLE_CEILING_EDGES_HANGING_SIGN(), Blocks::JUNGLE_WALL_HANGING_SIGN()],
-			Ids::MANGROVE_HANGING_SIGN => [Blocks::MANGROVE_CEILING_CENTER_HANGING_SIGN(), Blocks::MANGROVE_CEILING_EDGES_HANGING_SIGN(), Blocks::MANGROVE_WALL_HANGING_SIGN()],
-			Ids::OAK_HANGING_SIGN => [Blocks::OAK_CEILING_CENTER_HANGING_SIGN(), Blocks::OAK_CEILING_EDGES_HANGING_SIGN(), Blocks::OAK_WALL_HANGING_SIGN()],
-			Ids::PALE_OAK_HANGING_SIGN => [Blocks::PALE_OAK_CEILING_CENTER_HANGING_SIGN(), Blocks::PALE_OAK_CEILING_EDGES_HANGING_SIGN(), Blocks::PALE_OAK_WALL_HANGING_SIGN()],
-			Ids::SPRUCE_HANGING_SIGN => [Blocks::SPRUCE_CEILING_CENTER_HANGING_SIGN(), Blocks::SPRUCE_CEILING_EDGES_HANGING_SIGN(), Blocks::SPRUCE_WALL_HANGING_SIGN()],
-			Ids::WARPED_HANGING_SIGN => [Blocks::WARPED_CEILING_CENTER_HANGING_SIGN(), Blocks::WARPED_CEILING_EDGES_HANGING_SIGN(), Blocks::WARPED_WALL_HANGING_SIGN()],
-		] as $id => [$center, $edges, $wall]){
+			Ids::ACACIA_HANGING_SIGN => WoodType::ACACIA,
+			Ids::BIRCH_HANGING_SIGN => WoodType::BIRCH,
+			Ids::CHERRY_HANGING_SIGN => WoodType::CHERRY,
+			Ids::CRIMSON_HANGING_SIGN => WoodType::CRIMSON,
+			Ids::DARK_OAK_HANGING_SIGN => WoodType::DARK_OAK,
+			Ids::JUNGLE_HANGING_SIGN => WoodType::JUNGLE,
+			Ids::MANGROVE_HANGING_SIGN => WoodType::MANGROVE,
+			Ids::OAK_HANGING_SIGN => WoodType::OAK,
+			Ids::PALE_OAK_HANGING_SIGN => WoodType::PALE_OAK,
+			Ids::SPRUCE_HANGING_SIGN => WoodType::SPRUCE,
+			Ids::WARPED_HANGING_SIGN => WoodType::WARPED
+		] as $id => $woodType){
 			//attached_bit          - true for ceiling center signs, false for ceiling edges signs and wall signs
 			//hanging               - true for all ceiling signs, false for wall signs
 			//facing_direction      - used for ceiling edges signs and wall signs
 			//ground_sign_direction - used by ceiling center signs only
-			$centerModel = Model::create($center, $id)->properties([
+			$centerModel = Model::create(Blocks::CEILING_CENTER_HANGING_SIGN($woodType), $id)->properties([
 				$commonProperties->floorSignLikeRotation,
 				new DummyProperty(StateNames::ATTACHED_BIT, true),
 				new DummyProperty(StateNames::HANGING, true),
 				new DummyProperty(StateNames::FACING_DIRECTION, 2)
 			]);
-			$edgesModel = Model::create($edges, $id)->properties([
+			$edgesModel = Model::create(Blocks::CEILING_EDGES_HANGING_SIGN($woodType), $id)->properties([
 				new DummyProperty(StateNames::GROUND_SIGN_DIRECTION, 0),
 				new DummyProperty(StateNames::ATTACHED_BIT, false),
 				new DummyProperty(StateNames::HANGING, true),
 				$commonProperties->horizontalFacingClassic,
 			]);
-			$wallModel = Model::create($wall, $id)->properties([
+			$wallModel = Model::create(Blocks::WALL_HANGING_SIGN($woodType), $id)->properties([
 				new DummyProperty(StateNames::GROUND_SIGN_DIRECTION, 0),
 				new DummyProperty(StateNames::ATTACHED_BIT, false),
 				new DummyProperty(StateNames::HANGING, false),
