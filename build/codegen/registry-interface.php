@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace pocketmine\build\update_registry_interface;
 
 use pocketmine\utils\AssumptionFailedError;
+use pocketmine\utils\CloningRegistrySource;
 use pocketmine\utils\Filesystem;
 use pocketmine\utils\RegistrySource;
 use pocketmine\utils\Utils;
@@ -76,13 +77,9 @@ if(count($argv) !== 3){
 }
 
 /**
- * @param object[] $memberDeclarations
- * @param string[] $docCommentLines
- *
- * @phpstan-param array<string, list<string>> $memberDeclarations
- * @phpstan-param list<string> $docCommentLines
+ * @phpstan-param RegistrySource<*> $registrySource
  */
-function generateRegistryInterface(string $namespaceName, string $sourceShortClassName, string $interfaceShortClassName, array $memberDeclarations, string $preprocessorFunc, array $docCommentLines) : string{
+function generateRegistryInterface(string $namespaceName, string $sourceShortClassName, RegistrySource $registrySource) : string{
 	$selfName = basename(__FILE__);
 	$importClasses = [
 		$namespaceName . "\\" . $sourceShortClassName => true
@@ -122,15 +119,17 @@ namespace $namespaceName;
 
 HEADER;
 
+	$interfaceShortClassName = $registrySource->getTargetClassName();
 	$startClass = <<<CLASS
  * This class is generated automatically from source class {@link $sourceShortClassName}. Do not modify it manually.
  * It must be regenerated whenever the source class is changed.
- * @see build/$selfName
+ * @see build/codegen/$selfName
  */
 final class $interfaceShortClassName{
 
 CLASS;
 	$docCommentPrepend = "";
+	$docCommentLines = $registrySource->getTargetClassDocComment();
 	if(count($docCommentLines) > 0){
 		foreach($docCommentLines as $line){
 			$docCommentPrepend .= " * $line\n";
@@ -142,7 +141,10 @@ CLASS;
 	$propertyLines = [];
 	$assignLines = [];
 
-	if($preprocessorFunc !== ""){
+	$preprocessorReflect = (new \ReflectionFunction($registrySource::preprocessMember(...)));
+
+	if($preprocessorReflect->getClosureScopeClass()?->getName() !== RegistrySource::class){
+		$preprocessorFunc = $preprocessorReflect->getName();
 		$preprocessorPrefix = "$sourceShortClassName::$preprocessorFunc(";
 		$preprocessorSuffix = ")";
 		$preprocessorMapper = "array_map($sourceShortClassName::$preprocessorFunc(...), self::\$members)";
@@ -152,9 +154,14 @@ CLASS;
 		$preprocessorSuffix = "";
 		$preprocessorMapper = "self::\$members";
 	}
+	if($registrySource instanceof CloningRegistrySource){
+		$preprocessorPrefix = "clone $preprocessorPrefix";
+		$preprocessorMapper = "Utils::cloneObjectArray($preprocessorMapper)";
+		$importClasses[Utils::class] = true;
+	}
 
 	$commonParent = null;
-	foreach(Utils::stringifyKeys($memberDeclarations) as $name => $memberTypes){
+	foreach(Utils::stringifyKeys($registrySource->getAllDeclarations()) as $name => $memberTypes){
 		if(count($memberTypes) === 0){
 			$typehint = "object";
 			$commonParent = false;
@@ -371,16 +378,12 @@ function processFile(string $file, string $sourceDir, string $outputDir) : void{
 		throw new \RuntimeException("Generated class name $interfaceClassName cannot be the same as the interface class name (file $file)");
 	}
 
-	$preprocessorReflect = (new \ReflectionFunction($source::preprocessMember(...)));
-	$preprocessor = $preprocessorReflect->getClosureScopeClass()?->getName() === RegistrySource::class ? "" : $preprocessorReflect->getName();
-
 	try{
 		$oldContents = Filesystem::fileGetContents($generatedFile);
 	}catch(\RuntimeException){
 		$oldContents = "";
 	}
-	$kvMap = $source->getAllDeclarations();
-	$newContents = generateRegistryInterface($namespace, $shortClassName, $interfaceClassName, $kvMap, $preprocessor, $source->getTargetClassDocComment());
+	$newContents = generateRegistryInterface($namespace, $shortClassName, $source);
 	if($newContents !== $oldContents){
 		echo "Writing changed file $generatedFile\n";
 		file_put_contents($generatedFile, $newContents);
@@ -389,7 +392,7 @@ function processFile(string $file, string $sourceDir, string $outputDir) : void{
 	}
 }
 
-require dirname(__DIR__) . '/vendor/autoload.php';
+require dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 if(is_dir($argv[1])){
 	if(file_exists($argv[2]) && !is_dir($argv[2])){
