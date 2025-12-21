@@ -47,6 +47,8 @@ final class VanillaItems{
 	private static Arrow $_mARROW;
 	private static BakedPotato $_mBAKED_POTATO;
 	private static Bamboo $_mBAMBOO;
+	private static HangingSign $_mBAMBOO_HANGING_SIGN;
+	private static ItemBlockWallOrFloor $_mBAMBOO_SIGN;
 	private static Banner $_mBANNER;
 	private static Beetroot $_mBEETROOT;
 	private static BeetrootSeeds $_mBEETROOT_SEEDS;
@@ -403,6 +405,8 @@ final class VanillaItems{
 			"arrow" => fn(Arrow $v) => self::$_mARROW = $v,
 			"baked_potato" => fn(BakedPotato $v) => self::$_mBAKED_POTATO = $v,
 			"bamboo" => fn(Bamboo $v) => self::$_mBAMBOO = $v,
+			"bamboo_hanging_sign" => fn(HangingSign $v) => self::$_mBAMBOO_HANGING_SIGN = $v,
+			"bamboo_sign" => fn(ItemBlockWallOrFloor $v) => self::$_mBAMBOO_SIGN = $v,
 			"banner" => fn(Banner $v) => self::$_mBANNER = $v,
 			"beetroot" => fn(Beetroot $v) => self::$_mBEETROOT = $v,
 			"beetroot_seeds" => fn(BeetrootSeeds $v) => self::$_mBEETROOT_SEEDS = $v,
@@ -797,6 +801,16 @@ final class VanillaItems{
 	public static function BAMBOO() : Bamboo{
 		if(!isset(self::$_mBAMBOO)){ self::init(); }
 		return clone self::$_mBAMBOO;
+	}
+
+	public static function BAMBOO_HANGING_SIGN() : HangingSign{
+		if(!isset(self::$_mBAMBOO_HANGING_SIGN)){ self::init(); }
+		return clone self::$_mBAMBOO_HANGING_SIGN;
+	}
+
+	public static function BAMBOO_SIGN() : ItemBlockWallOrFloor{
+		if(!isset(self::$_mBAMBOO_SIGN)){ self::init(); }
+		return clone self::$_mBAMBOO_SIGN;
 	}
 
 	public static function BANNER() : Banner{

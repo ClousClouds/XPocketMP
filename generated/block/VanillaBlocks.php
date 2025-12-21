@@ -71,7 +71,25 @@ final class VanillaBlocks{
 	private static Leaves $_mAZALEA_LEAVES;
 	private static Flower $_mAZURE_BLUET;
 	private static Bamboo $_mBAMBOO;
+	private static Wood $_mBAMBOO_BLOCK;
+	private static WoodenButton $_mBAMBOO_BUTTON;
+	private static CeilingCenterHangingSign $_mBAMBOO_CEILING_CENTER_HANGING_SIGN;
+	private static CeilingEdgesHangingSign $_mBAMBOO_CEILING_EDGES_HANGING_SIGN;
+	private static WoodenDoor $_mBAMBOO_DOOR;
+	private static WoodenFence $_mBAMBOO_FENCE;
+	private static FenceGate $_mBAMBOO_FENCE_GATE;
+	private static Planks $_mBAMBOO_MOSAIC;
+	private static WoodenSlab $_mBAMBOO_MOSAIC_SLAB;
+	private static WoodenStairs $_mBAMBOO_MOSAIC_STAIRS;
+	private static Planks $_mBAMBOO_PLANKS;
+	private static WoodenPressurePlate $_mBAMBOO_PRESSURE_PLATE;
 	private static BambooSapling $_mBAMBOO_SAPLING;
+	private static FloorSign $_mBAMBOO_SIGN;
+	private static WoodenSlab $_mBAMBOO_SLAB;
+	private static WoodenStairs $_mBAMBOO_STAIRS;
+	private static WoodenTrapdoor $_mBAMBOO_TRAPDOOR;
+	private static WallHangingSign $_mBAMBOO_WALL_HANGING_SIGN;
+	private static WallSign $_mBAMBOO_WALL_SIGN;
 	private static FloorBanner $_mBANNER;
 	private static Barrel $_mBARREL;
 	private static Transparent $_mBARRIER;
@@ -884,7 +902,25 @@ final class VanillaBlocks{
 			"azalea_leaves" => fn(Leaves $v) => self::$_mAZALEA_LEAVES = $v,
 			"azure_bluet" => fn(Flower $v) => self::$_mAZURE_BLUET = $v,
 			"bamboo" => fn(Bamboo $v) => self::$_mBAMBOO = $v,
+			"bamboo_block" => fn(Wood $v) => self::$_mBAMBOO_BLOCK = $v,
+			"bamboo_button" => fn(WoodenButton $v) => self::$_mBAMBOO_BUTTON = $v,
+			"bamboo_ceiling_center_hanging_sign" => fn(CeilingCenterHangingSign $v) => self::$_mBAMBOO_CEILING_CENTER_HANGING_SIGN = $v,
+			"bamboo_ceiling_edges_hanging_sign" => fn(CeilingEdgesHangingSign $v) => self::$_mBAMBOO_CEILING_EDGES_HANGING_SIGN = $v,
+			"bamboo_door" => fn(WoodenDoor $v) => self::$_mBAMBOO_DOOR = $v,
+			"bamboo_fence" => fn(WoodenFence $v) => self::$_mBAMBOO_FENCE = $v,
+			"bamboo_fence_gate" => fn(FenceGate $v) => self::$_mBAMBOO_FENCE_GATE = $v,
+			"bamboo_mosaic" => fn(Planks $v) => self::$_mBAMBOO_MOSAIC = $v,
+			"bamboo_mosaic_slab" => fn(WoodenSlab $v) => self::$_mBAMBOO_MOSAIC_SLAB = $v,
+			"bamboo_mosaic_stairs" => fn(WoodenStairs $v) => self::$_mBAMBOO_MOSAIC_STAIRS = $v,
+			"bamboo_planks" => fn(Planks $v) => self::$_mBAMBOO_PLANKS = $v,
+			"bamboo_pressure_plate" => fn(WoodenPressurePlate $v) => self::$_mBAMBOO_PRESSURE_PLATE = $v,
 			"bamboo_sapling" => fn(BambooSapling $v) => self::$_mBAMBOO_SAPLING = $v,
+			"bamboo_sign" => fn(FloorSign $v) => self::$_mBAMBOO_SIGN = $v,
+			"bamboo_slab" => fn(WoodenSlab $v) => self::$_mBAMBOO_SLAB = $v,
+			"bamboo_stairs" => fn(WoodenStairs $v) => self::$_mBAMBOO_STAIRS = $v,
+			"bamboo_trapdoor" => fn(WoodenTrapdoor $v) => self::$_mBAMBOO_TRAPDOOR = $v,
+			"bamboo_wall_hanging_sign" => fn(WallHangingSign $v) => self::$_mBAMBOO_WALL_HANGING_SIGN = $v,
+			"bamboo_wall_sign" => fn(WallSign $v) => self::$_mBAMBOO_WALL_SIGN = $v,
 			"banner" => fn(FloorBanner $v) => self::$_mBANNER = $v,
 			"barrel" => fn(Barrel $v) => self::$_mBARREL = $v,
 			"barrier" => fn(Transparent $v) => self::$_mBARRIER = $v,
@@ -1833,9 +1869,99 @@ final class VanillaBlocks{
 		return clone self::$_mBAMBOO;
 	}
 
+	public static function BAMBOO_BLOCK() : Wood{
+		if(!isset(self::$_mBAMBOO_BLOCK)){ self::init(); }
+		return clone self::$_mBAMBOO_BLOCK;
+	}
+
+	public static function BAMBOO_BUTTON() : WoodenButton{
+		if(!isset(self::$_mBAMBOO_BUTTON)){ self::init(); }
+		return clone self::$_mBAMBOO_BUTTON;
+	}
+
+	public static function BAMBOO_CEILING_CENTER_HANGING_SIGN() : CeilingCenterHangingSign{
+		if(!isset(self::$_mBAMBOO_CEILING_CENTER_HANGING_SIGN)){ self::init(); }
+		return clone self::$_mBAMBOO_CEILING_CENTER_HANGING_SIGN;
+	}
+
+	public static function BAMBOO_CEILING_EDGES_HANGING_SIGN() : CeilingEdgesHangingSign{
+		if(!isset(self::$_mBAMBOO_CEILING_EDGES_HANGING_SIGN)){ self::init(); }
+		return clone self::$_mBAMBOO_CEILING_EDGES_HANGING_SIGN;
+	}
+
+	public static function BAMBOO_DOOR() : WoodenDoor{
+		if(!isset(self::$_mBAMBOO_DOOR)){ self::init(); }
+		return clone self::$_mBAMBOO_DOOR;
+	}
+
+	public static function BAMBOO_FENCE() : WoodenFence{
+		if(!isset(self::$_mBAMBOO_FENCE)){ self::init(); }
+		return clone self::$_mBAMBOO_FENCE;
+	}
+
+	public static function BAMBOO_FENCE_GATE() : FenceGate{
+		if(!isset(self::$_mBAMBOO_FENCE_GATE)){ self::init(); }
+		return clone self::$_mBAMBOO_FENCE_GATE;
+	}
+
+	public static function BAMBOO_MOSAIC() : Planks{
+		if(!isset(self::$_mBAMBOO_MOSAIC)){ self::init(); }
+		return clone self::$_mBAMBOO_MOSAIC;
+	}
+
+	public static function BAMBOO_MOSAIC_SLAB() : WoodenSlab{
+		if(!isset(self::$_mBAMBOO_MOSAIC_SLAB)){ self::init(); }
+		return clone self::$_mBAMBOO_MOSAIC_SLAB;
+	}
+
+	public static function BAMBOO_MOSAIC_STAIRS() : WoodenStairs{
+		if(!isset(self::$_mBAMBOO_MOSAIC_STAIRS)){ self::init(); }
+		return clone self::$_mBAMBOO_MOSAIC_STAIRS;
+	}
+
+	public static function BAMBOO_PLANKS() : Planks{
+		if(!isset(self::$_mBAMBOO_PLANKS)){ self::init(); }
+		return clone self::$_mBAMBOO_PLANKS;
+	}
+
+	public static function BAMBOO_PRESSURE_PLATE() : WoodenPressurePlate{
+		if(!isset(self::$_mBAMBOO_PRESSURE_PLATE)){ self::init(); }
+		return clone self::$_mBAMBOO_PRESSURE_PLATE;
+	}
+
 	public static function BAMBOO_SAPLING() : BambooSapling{
 		if(!isset(self::$_mBAMBOO_SAPLING)){ self::init(); }
 		return clone self::$_mBAMBOO_SAPLING;
+	}
+
+	public static function BAMBOO_SIGN() : FloorSign{
+		if(!isset(self::$_mBAMBOO_SIGN)){ self::init(); }
+		return clone self::$_mBAMBOO_SIGN;
+	}
+
+	public static function BAMBOO_SLAB() : WoodenSlab{
+		if(!isset(self::$_mBAMBOO_SLAB)){ self::init(); }
+		return clone self::$_mBAMBOO_SLAB;
+	}
+
+	public static function BAMBOO_STAIRS() : WoodenStairs{
+		if(!isset(self::$_mBAMBOO_STAIRS)){ self::init(); }
+		return clone self::$_mBAMBOO_STAIRS;
+	}
+
+	public static function BAMBOO_TRAPDOOR() : WoodenTrapdoor{
+		if(!isset(self::$_mBAMBOO_TRAPDOOR)){ self::init(); }
+		return clone self::$_mBAMBOO_TRAPDOOR;
+	}
+
+	public static function BAMBOO_WALL_HANGING_SIGN() : WallHangingSign{
+		if(!isset(self::$_mBAMBOO_WALL_HANGING_SIGN)){ self::init(); }
+		return clone self::$_mBAMBOO_WALL_HANGING_SIGN;
+	}
+
+	public static function BAMBOO_WALL_SIGN() : WallSign{
+		if(!isset(self::$_mBAMBOO_WALL_SIGN)){ self::init(); }
+		return clone self::$_mBAMBOO_WALL_SIGN;
 	}
 
 	public static function BANNER() : FloorBanner{
