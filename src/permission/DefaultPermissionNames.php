@@ -93,11 +93,9 @@ final class DefaultPermissionNames{
 	public const GAME_BLOCK_PLACE = "pocketmine.game.block.place";
 	public const GAME_CHAT = "pocketmine.game.chat";
 	public const GAME_EMOTE = "pocketmine.game.emote";
-	public const GAME_HIDDEN = "pocketmine.game.hidden";
 	public const GAME_INVENTORY_CREATIVE = "pocketmine.game.inventory.creative";
 	public const GAME_INVENTORY_DROP = "pocketmine.game.inventory.drop";
 	public const GAME_INVENTORY_PICKUP = "pocketmine.game.inventory.pickup";
-	public const GAME_INVULNERABLE = "pocketmine.game.invulnerable";
 	public const GAME_ITEM_BYPASS_CANDESTROY = "pocketmine.game.item.bypass.candestroy";
 	public const GAME_ITEM_BYPASS_CANPLACEON = "pocketmine.game.item.bypass.canplaceon";
 	public const GAME_MOVE_FLIGHT = "pocketmine.game.move.flight";

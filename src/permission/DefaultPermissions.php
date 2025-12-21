@@ -173,10 +173,7 @@ abstract class DefaultPermissions{
 		self::registerNoArgsDesc(Names::GAME_INVENTORY_CREATIVE, [$creativeRoot]);;
 		self::registerNoArgsDesc(Names::GAME_MOVE_FLIGHT, [$creativeRoot]);;
 
-		self::registerNoArgsDesc(Names::GAME_HIDDEN, [$spectatorRoot]);;
 		self::registerNoArgsDesc(Names::GAME_MOVE_NOCLIP_BLOCK, [$spectatorRoot]);;
 		self::registerNoArgsDesc(Names::GAME_MOVE_NOCLIP_ENTITY, [$spectatorRoot]);;
-
-		self::registerNoArgsDesc(Names::GAME_INVULNERABLE, [$creativeRoot, $spectatorRoot]);;
 	}
 }

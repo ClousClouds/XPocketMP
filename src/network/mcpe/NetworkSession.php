@@ -1080,7 +1080,7 @@ class NetworkSession{
 			AbilitiesLayer::ABILITY_NO_CLIP => !$for->hasBlockCollision(),
 			AbilitiesLayer::ABILITY_OPERATOR => $isOp,
 			AbilitiesLayer::ABILITY_TELEPORT => $for->hasPermission(DefaultPermissionNames::COMMAND_TELEPORT_SELF),
-			AbilitiesLayer::ABILITY_INVULNERABLE => $for->hasPermission(DefaultPermissionNames::GAME_INVULNERABLE),
+			AbilitiesLayer::ABILITY_INVULNERABLE => $for->isCreative(),
 			AbilitiesLayer::ABILITY_MUTED => !$for->hasPermission(DefaultPermissionNames::GAME_CHAT),
 			AbilitiesLayer::ABILITY_WORLD_BUILDER => false,
 			AbilitiesLayer::ABILITY_INFINITE_RESOURCES => !$for->hasFiniteResources(),

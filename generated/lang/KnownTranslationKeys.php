@@ -564,11 +564,9 @@ final class KnownTranslationKeys{
 	public const POCKETMINE_PERMISSION_GAME_BLOCK_PLACE = "pocketmine.permission.game.block.place";
 	public const POCKETMINE_PERMISSION_GAME_CHAT = "pocketmine.permission.game.chat";
 	public const POCKETMINE_PERMISSION_GAME_EMOTE = "pocketmine.permission.game.emote";
-	public const POCKETMINE_PERMISSION_GAME_HIDDEN = "pocketmine.permission.game.hidden";
 	public const POCKETMINE_PERMISSION_GAME_INVENTORY_CREATIVE = "pocketmine.permission.game.inventory.creative";
 	public const POCKETMINE_PERMISSION_GAME_INVENTORY_DROP = "pocketmine.permission.game.inventory.drop";
 	public const POCKETMINE_PERMISSION_GAME_INVENTORY_PICKUP = "pocketmine.permission.game.inventory.pickup";
-	public const POCKETMINE_PERMISSION_GAME_INVULNERABLE = "pocketmine.permission.game.invulnerable";
 	public const POCKETMINE_PERMISSION_GAME_ITEM_BYPASS_CANDESTROY = "pocketmine.permission.game.item.bypass.candestroy";
 	public const POCKETMINE_PERMISSION_GAME_ITEM_BYPASS_CANPLACEON = "pocketmine.permission.game.item.bypass.canplaceon";
 	public const POCKETMINE_PERMISSION_GAME_MOVE_FLIGHT = "pocketmine.permission.game.move.flight";

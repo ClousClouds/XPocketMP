@@ -575,7 +575,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 	}
 
 	public function spawnTo(Player $player) : void{
-		if($this->isAlive() && $player->isAlive() && $player->canSee($this) && !$this->hasPermission(DefaultPermissionNames::GAME_HIDDEN)){
+		if($this->isAlive() && $player->isAlive() && $player->canSee($this) && !$this->isSpectator()){
 			parent::spawnTo($player);
 		}
 	}
@@ -946,14 +946,8 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 			if(isset($changedPermissionsOldValues[Server::BROADCAST_CHANNEL_ADMINISTRATIVE]) || isset($changedPermissionsOldValues[Server::BROADCAST_CHANNEL_USERS])){
 				$this->recheckBroadcastPermissions();
 			}
-			if(isset($changedPermissionsOldValues[DefaultPermissionNames::GAME_HIDDEN])){
-				$this->recheckHiddenPermissions();
-			}
 			if(isset($changedPermissionsOldValues[DefaultPermissionNames::GAME_MOVE_NOCLIP_BLOCK])){
 				$this->recheckBlockCollisionPermissions();
-			}
-			if(isset($changedPermissionsOldValues[DefaultPermissionNames::GAME_INVULNERABLE])){
-				$this->hungerManager->setEnabled(!$this->hasPermission(DefaultPermissionNames::GAME_INVULNERABLE));
 			}
 		});
 
@@ -1218,16 +1212,15 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 		//we should get rid of these when the deprecated setters are removed
 		$this->unsetBasePermission(DefaultPermissionNames::GAME_MOVE_FLIGHT);
 		$this->unsetBasePermission(DefaultPermissionNames::GAME_MOVE_NOCLIP_BLOCK);
-	}
 
-	private function recheckHiddenPermissions() : void{
-		if($this->hasPermission(DefaultPermissionNames::GAME_HIDDEN)){
+		if($this->isSpectator()){
 			$this->despawnFromAll();
 			$this->setSilent();
 		}else{
 			$this->spawnToAll();
 			$this->setSilent(false);
 		}
+		$this->hungerManager->setEnabled($this->isSurvival());
 	}
 
 	private function recheckBlockCollisionPermissions() : void{
@@ -1582,7 +1575,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 			$this->entityBaseTick($tickDiff);
 			Timings::$entityBaseTick->stopTiming();
 
-			if($this->hasPermission(DefaultPermissionNames::GAME_INVULNERABLE) && $this->fireTicks > 1){
+			if($this->isCreative() && $this->fireTicks > 1){
 				$this->fireTicks = 1;
 			}
 
@@ -1603,11 +1596,11 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 	}
 
 	public function canEat() : bool{
-		return $this->hasPermission(DefaultPermissionNames::GAME_INVULNERABLE) || parent::canEat();
+		return $this->isCreative() || parent::canEat();
 	}
 
 	public function canBreathe() : bool{
-		return $this->hasPermission(DefaultPermissionNames::GAME_INVULNERABLE) || parent::canBreathe();
+		return $this->isCreative() || parent::canBreathe();
 	}
 
 	/**
@@ -2693,7 +2686,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 			return;
 		}
 
-		if($this->hasPermission(DefaultPermissionNames::GAME_INVULNERABLE)
+		if($this->isCreative()
 			&& $source->getCause() !== EntityDamageEvent::CAUSE_SUICIDE
 		){
 			$source->cancel();
