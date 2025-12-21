@@ -23,8 +23,13 @@ declare(strict_types=1);
 
 namespace pocketmine\permission;
 
-use pocketmine\lang\KnownTranslationFactory as l10n;
+use pocketmine\lang\KnownTranslationParameterInfo;
+use pocketmine\lang\Translatable;
 use pocketmine\permission\DefaultPermissionNames as Names;
+use pocketmine\utils\AssumptionFailedError;
+use function count;
+use function preg_last_error_msg;
+use function preg_replace;
 
 abstract class DefaultPermissions{
 	public const ROOT_CONSOLE = Names::GROUP_CONSOLE;
@@ -47,105 +52,131 @@ abstract class DefaultPermissions{
 		return PermissionManager::getInstance()->getPermission($candidate->getName());
 	}
 
+	/**
+	 * @param Permission[] $grantedBy
+	 */
+	private static function registerNoArgsDesc(string $permission, array $grantedBy) : Permission{
+		$translationKey = preg_replace("/^pocketmine\./", "pocketmine.permission.", $permission) ?? throw new AssumptionFailedError(preg_last_error_msg());
+		$parameters = KnownTranslationParameterInfo::TABLE[$translationKey] ?? null;
+		if($parameters === null){
+			throw new \InvalidArgumentException("Expected translation key $translationKey not defined");
+		}
+		if(count($parameters) !== 0){
+			throw new \InvalidArgumentException("Cannot use this function to register a permission with a parameterisable description string");
+		}
+		$translatable = new Translatable($translationKey);
+		return self::registerPermission(new Permission($permission, $translatable), $grantedBy);
+	}
+
 	public static function registerCorePermissions() : void{
-		$consoleRoot = self::registerPermission(new Permission(self::ROOT_CONSOLE, l10n::pocketmine_permission_group_console()));
-		$operatorRoot = self::registerPermission(new Permission(self::ROOT_OPERATOR, l10n::pocketmine_permission_group_operator()), [$consoleRoot]);
-		$everyoneRoot = self::registerPermission(new Permission(self::ROOT_USER, l10n::pocketmine_permission_group_user()), [$operatorRoot]);
+		$consoleRoot = self::registerNoArgsDesc(self::ROOT_CONSOLE, []);
+		$operatorRoot = self::registerNoArgsDesc(self::ROOT_OPERATOR, [$consoleRoot]);
+		$everyoneRoot = self::registerNoArgsDesc(self::ROOT_USER, [$operatorRoot]);
 
-		self::registerPermission(new Permission(Names::BROADCAST_ADMIN, l10n::pocketmine_permission_broadcast_admin()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::BROADCAST_USER, l10n::pocketmine_permission_broadcast_user()), [$everyoneRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_BAN_IP, l10n::pocketmine_permission_command_ban_ip()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_BAN_LIST, l10n::pocketmine_permission_command_ban_list()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_BAN_PLAYER, l10n::pocketmine_permission_command_ban_player()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_CLEAR_OTHER, l10n::pocketmine_permission_command_clear_other()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_CLEAR_SELF, l10n::pocketmine_permission_command_clear_self()), [$everyoneRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_DEFAULTGAMEMODE, l10n::pocketmine_permission_command_defaultgamemode()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_DIFFICULTY, l10n::pocketmine_permission_command_difficulty()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_DUMPMEMORY, l10n::pocketmine_permission_command_dumpmemory()), [$consoleRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_EFFECT_OTHER, l10n::pocketmine_permission_command_effect_other()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_EFFECT_SELF, l10n::pocketmine_permission_command_effect_self()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_ENCHANT_OTHER, l10n::pocketmine_permission_command_enchant_other()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_ENCHANT_SELF, l10n::pocketmine_permission_command_enchant_self()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_GAMEMODE_OTHER, l10n::pocketmine_permission_command_gamemode_other()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_GAMEMODE_SELF, l10n::pocketmine_permission_command_gamemode_self()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_GC, l10n::pocketmine_permission_command_gc()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_GIVE_OTHER, l10n::pocketmine_permission_command_give_other()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_GIVE_SELF, l10n::pocketmine_permission_command_give_self()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_HELP, l10n::pocketmine_permission_command_help()), [$everyoneRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_KICK, l10n::pocketmine_permission_command_kick()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_KILL_OTHER, l10n::pocketmine_permission_command_kill_other()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_KILL_SELF, l10n::pocketmine_permission_command_kill_self()), [$everyoneRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_LIST, l10n::pocketmine_permission_command_list()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_ME, l10n::pocketmine_permission_command_me()), [$everyoneRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_OP_GIVE, l10n::pocketmine_permission_command_op_give()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_OP_TAKE, l10n::pocketmine_permission_command_op_take()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_PARTICLE, l10n::pocketmine_permission_command_particle()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_PLUGINS, l10n::pocketmine_permission_command_plugins()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_SAVE_DISABLE, l10n::pocketmine_permission_command_save_disable()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_SAVE_ENABLE, l10n::pocketmine_permission_command_save_enable()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_SAVE_PERFORM, l10n::pocketmine_permission_command_save_perform()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_SAY, l10n::pocketmine_permission_command_say()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_SEED, l10n::pocketmine_permission_command_seed()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_SETWORLDSPAWN, l10n::pocketmine_permission_command_setworldspawn()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_SPAWNPOINT_OTHER, l10n::pocketmine_permission_command_spawnpoint_other()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_SPAWNPOINT_SELF, l10n::pocketmine_permission_command_spawnpoint_self()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_STATUS, l10n::pocketmine_permission_command_status()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_STOP, l10n::pocketmine_permission_command_stop()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_TELEPORT_OTHER, l10n::pocketmine_permission_command_teleport_other()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_TELEPORT_SELF, l10n::pocketmine_permission_command_teleport_self()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_TELL, l10n::pocketmine_permission_command_tell()), [$everyoneRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_TIME_ADD, l10n::pocketmine_permission_command_time_add()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_TIME_QUERY, l10n::pocketmine_permission_command_time_query()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_TIME_SET, l10n::pocketmine_permission_command_time_set()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_TIME_START, l10n::pocketmine_permission_command_time_start()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_TIME_STOP, l10n::pocketmine_permission_command_time_stop()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_TIMINGS, l10n::pocketmine_permission_command_timings()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_TITLE_OTHER, l10n::pocketmine_permission_command_title_other()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_TITLE_SELF, l10n::pocketmine_permission_command_title_self()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_TRANSFERSERVER, l10n::pocketmine_permission_command_transferserver()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_UNBAN_IP, l10n::pocketmine_permission_command_unban_ip()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_UNBAN_PLAYER, l10n::pocketmine_permission_command_unban_player()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_VERSION, l10n::pocketmine_permission_command_version()), [$everyoneRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_WHITELIST_ADD, l10n::pocketmine_permission_command_whitelist_add()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_WHITELIST_DISABLE, l10n::pocketmine_permission_command_whitelist_disable()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_WHITELIST_ENABLE, l10n::pocketmine_permission_command_whitelist_enable()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_WHITELIST_LIST, l10n::pocketmine_permission_command_whitelist_list()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_WHITELIST_RELOAD, l10n::pocketmine_permission_command_whitelist_reload()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_WHITELIST_REMOVE, l10n::pocketmine_permission_command_whitelist_remove()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_XP_OTHER, l10n::pocketmine_permission_command_xp_other()), [$operatorRoot]);
-		self::registerPermission(new Permission(Names::COMMAND_XP_SELF, l10n::pocketmine_permission_command_xp_self()), [$operatorRoot]);
+		self::registerNoArgsDesc(Names::COMMAND_DUMPMEMORY, [$consoleRoot]);
 
-		self::registerPermission(new Permission(Names::GAME_CHAT, l10n::pocketmine_permission_game_chat()), [$everyoneRoot]);
-		self::registerPermission(new Permission(Names::GAME_EMOTE, l10n::pocketmine_permission_game_emote()), [$everyoneRoot]);
+		foreach([
+			Names::BROADCAST_ADMIN,
+			Names::COMMAND_BAN_IP,
+			Names::COMMAND_BAN_LIST,
+			Names::COMMAND_BAN_PLAYER,
+			Names::COMMAND_CLEAR_OTHER,
+			Names::COMMAND_DEFAULTGAMEMODE,
+			Names::COMMAND_DIFFICULTY,
+			Names::COMMAND_EFFECT_OTHER,
+			Names::COMMAND_EFFECT_SELF,
+			Names::COMMAND_ENCHANT_OTHER,
+			Names::COMMAND_ENCHANT_SELF,
+			Names::COMMAND_GAMEMODE_OTHER,
+			Names::COMMAND_GAMEMODE_SELF,
+			Names::COMMAND_GC,
+			Names::COMMAND_GIVE_OTHER,
+			Names::COMMAND_GIVE_SELF,
+			Names::COMMAND_KICK,
+			Names::COMMAND_KILL_OTHER,
+			Names::COMMAND_LIST,
+			Names::COMMAND_OP_GIVE,
+			Names::COMMAND_OP_TAKE,
+			Names::COMMAND_PARTICLE,
+			Names::COMMAND_PLUGINS,
+			Names::COMMAND_SAVE_DISABLE,
+			Names::COMMAND_SAVE_ENABLE,
+			Names::COMMAND_SAVE_PERFORM,
+			Names::COMMAND_SAY,
+			Names::COMMAND_SEED,
+			Names::COMMAND_SETWORLDSPAWN,
+			Names::COMMAND_SPAWNPOINT_OTHER,
+			Names::COMMAND_SPAWNPOINT_SELF,
+			Names::COMMAND_STATUS,
+			Names::COMMAND_STOP,
+			Names::COMMAND_TELEPORT_OTHER,
+			Names::COMMAND_TELEPORT_SELF,
+			Names::COMMAND_TIME_ADD,
+			Names::COMMAND_TIME_QUERY,
+			Names::COMMAND_TIME_SET,
+			Names::COMMAND_TIME_START,
+			Names::COMMAND_TIME_STOP,
+			Names::COMMAND_TIMINGS,
+			Names::COMMAND_TITLE_OTHER,
+			Names::COMMAND_TITLE_SELF,
+			Names::COMMAND_TRANSFERSERVER,
+			Names::COMMAND_UNBAN_IP,
+			Names::COMMAND_UNBAN_PLAYER,
+			Names::COMMAND_WHITELIST_ADD,
+			Names::COMMAND_WHITELIST_DISABLE,
+			Names::COMMAND_WHITELIST_ENABLE,
+			Names::COMMAND_WHITELIST_LIST,
+			Names::COMMAND_WHITELIST_RELOAD,
+			Names::COMMAND_WHITELIST_REMOVE,
+			Names::COMMAND_XP_OTHER,
+			Names::COMMAND_XP_SELF,
+		] as $permission){
+			self::registerNoArgsDesc($permission, [$operatorRoot]);
+		}
 
-		$survivalRoot = self::registerPermission(new Permission(Names::GROUP_GAMEMODE_SURVIVAL, l10n::pocketmine_permission_group_gamemode_survival()));
-		$creativeRoot = self::registerPermission(new Permission(Names::GROUP_GAMEMODE_CREATIVE, l10n::pocketmine_permission_group_gamemode_creative()));
-		$adventureRoot = self::registerPermission(new Permission(Names::GROUP_GAMEMODE_ADVENTURE, l10n::pocketmine_permission_group_gamemode_adventure()));
-		$spectatorRoot = self::registerPermission(new Permission(Names::GROUP_GAMEMODE_SPECTATOR, l10n::pocketmine_permission_group_gamemode_spectator()));
+		foreach([
+			Names::COMMAND_KILL_SELF,
+			Names::COMMAND_ME,
+			Names::COMMAND_HELP,
+			Names::BROADCAST_USER,
+			Names::COMMAND_CLEAR_SELF,
+			Names::COMMAND_TELL,
+			Names::COMMAND_VERSION,
+		] as $permission){
+			self::registerNoArgsDesc($permission, [$everyoneRoot]);
+		}
 
-		self::registerPermission(new Permission(Names::GAME_ATTACK_ENTITY, l10n::pocketmine_permission_game_attack_entity()), [$survivalRoot, $creativeRoot, $adventureRoot]);
-		self::registerPermission(new Permission(Names::GAME_ATTACK_PLAYER, l10n::pocketmine_permission_game_attack_player()), [$survivalRoot, $creativeRoot, $adventureRoot]);
-		self::registerPermission(new Permission(Names::GAME_BLOCK_MINE, l10n::pocketmine_permission_game_block_mine()), [$survivalRoot, $creativeRoot, $adventureRoot]);
-		self::registerPermission(new Permission(Names::GAME_BLOCK_PLACE, l10n::pocketmine_permission_game_block_place()), [$survivalRoot, $creativeRoot, $adventureRoot]);
-		self::registerPermission(new Permission(Names::GAME_INVENTORY_DROP, l10n::pocketmine_permission_game_inventory_drop()), [$survivalRoot, $creativeRoot, $adventureRoot]);
-		self::registerPermission(new Permission(Names::GAME_INVENTORY_PICKUP, l10n::pocketmine_permission_game_inventory_pickup()), [$survivalRoot, $creativeRoot, $adventureRoot]);
-		self::registerPermission(new Permission(Names::GAME_USE_BLOCK, l10n::pocketmine_permission_game_use_block()), [$survivalRoot, $creativeRoot, $adventureRoot]);
-		self::registerPermission(new Permission(Names::GAME_USE_ENTITY, l10n::pocketmine_permission_game_use_entity()), [$survivalRoot, $creativeRoot, $adventureRoot]);
-		self::registerPermission(new Permission(Names::GAME_USE_ITEM, l10n::pocketmine_permission_game_use_item()), [$survivalRoot, $creativeRoot, $adventureRoot]);
+		self::registerNoArgsDesc(Names::GAME_CHAT, [$everyoneRoot]);;
+		self::registerNoArgsDesc(Names::GAME_EMOTE, [$everyoneRoot]);;
+
+		$survivalRoot = self::registerNoArgsDesc(Names::GROUP_GAMEMODE_SURVIVAL, []);;
+		$creativeRoot = self::registerNoArgsDesc(Names::GROUP_GAMEMODE_CREATIVE, []);;
+		$adventureRoot = self::registerNoArgsDesc(Names::GROUP_GAMEMODE_ADVENTURE, []);;
+		$spectatorRoot = self::registerNoArgsDesc(Names::GROUP_GAMEMODE_SPECTATOR, []);;
+
+		self::registerNoArgsDesc(Names::GAME_ATTACK_ENTITY, [$survivalRoot, $creativeRoot, $adventureRoot]);;
+		self::registerNoArgsDesc(Names::GAME_ATTACK_PLAYER, [$survivalRoot, $creativeRoot, $adventureRoot]);;
+		self::registerNoArgsDesc(Names::GAME_BLOCK_MINE, [$survivalRoot, $creativeRoot, $adventureRoot]);;
+		self::registerNoArgsDesc(Names::GAME_BLOCK_PLACE, [$survivalRoot, $creativeRoot, $adventureRoot]);;
+		self::registerNoArgsDesc(Names::GAME_INVENTORY_DROP, [$survivalRoot, $creativeRoot, $adventureRoot]);;
+		self::registerNoArgsDesc(Names::GAME_INVENTORY_PICKUP, [$survivalRoot, $creativeRoot, $adventureRoot]);;
+		self::registerNoArgsDesc(Names::GAME_USE_BLOCK, [$survivalRoot, $creativeRoot, $adventureRoot]);;
+		self::registerNoArgsDesc(Names::GAME_USE_ENTITY, [$survivalRoot, $creativeRoot, $adventureRoot]);;
+		self::registerNoArgsDesc(Names::GAME_USE_ITEM, [$survivalRoot, $creativeRoot, $adventureRoot]);;
 
 		//TODO: maybe we should add deny inherits for the adventure group for these, instead of just granting them to the survival and creative groups
 		//we'll end up needing to add these to new game modes if they are added
-		self::registerPermission(new Permission(Names::GAME_ITEM_BYPASS_CANDESTROY, l10n::pocketmine_permission_game_item_bypass_candestroy()), [$survivalRoot, $creativeRoot]);
-		self::registerPermission(new Permission(Names::GAME_ITEM_BYPASS_CANPLACEON, l10n::pocketmine_permission_game_item_bypass_canplaceon()), [$survivalRoot, $creativeRoot]);
+		self::registerNoArgsDesc(Names::GAME_ITEM_BYPASS_CANDESTROY, [$survivalRoot, $creativeRoot]);;
+		self::registerNoArgsDesc(Names::GAME_ITEM_BYPASS_CANPLACEON, [$survivalRoot, $creativeRoot]);;
 
-		self::registerPermission(new Permission(Names::GAME_BLOCK_INSTABREAK, l10n::pocketmine_permission_game_block_instabreak()), [$creativeRoot]);
-		self::registerPermission(new Permission(Names::GAME_INVENTORY_CREATIVE, l10n::pocketmine_permission_game_inventory_creative()), [$creativeRoot]);
-		self::registerPermission(new Permission(Names::GAME_MOVE_FLIGHT, l10n::pocketmine_permission_game_move_flight()), [$creativeRoot]);
+		self::registerNoArgsDesc(Names::GAME_BLOCK_INSTABREAK, [$creativeRoot]);;
+		self::registerNoArgsDesc(Names::GAME_INVENTORY_CREATIVE, [$creativeRoot]);;
+		self::registerNoArgsDesc(Names::GAME_MOVE_FLIGHT, [$creativeRoot]);;
 
-		self::registerPermission(new Permission(Names::GAME_HIDDEN, l10n::pocketmine_permission_game_hidden()), [$spectatorRoot]);
-		self::registerPermission(new Permission(Names::GAME_MOVE_NOCLIP_BLOCK, l10n::pocketmine_permission_game_move_noclip_block()), [$spectatorRoot]);
-		self::registerPermission(new Permission(Names::GAME_MOVE_NOCLIP_ENTITY, l10n::pocketmine_permission_game_move_noclip_entity()), [$spectatorRoot]);
+		self::registerNoArgsDesc(Names::GAME_HIDDEN, [$spectatorRoot]);;
+		self::registerNoArgsDesc(Names::GAME_MOVE_NOCLIP_BLOCK, [$spectatorRoot]);;
+		self::registerNoArgsDesc(Names::GAME_MOVE_NOCLIP_ENTITY, [$spectatorRoot]);;
 
-		self::registerPermission(new Permission(Names::GAME_INVULNERABLE, l10n::pocketmine_permission_game_invulnerable()), [$creativeRoot, $spectatorRoot]);
+		self::registerNoArgsDesc(Names::GAME_INVULNERABLE, [$creativeRoot, $spectatorRoot]);;
 	}
 }
