@@ -70,7 +70,7 @@ use const STDERR;
  * You can see VanillaBlocksInputs (source example) and VanillaBlocks (generated example) for a look at how this works.
  */
 
-if(count($argv) !== 3){
+if(!isset($argv) || count($argv) !== 3){
 	fwrite(STDERR, "Usage: " . __FILE__ . " <source file/folder> <destination file/folder>\n");
 	exit(1);
 }
