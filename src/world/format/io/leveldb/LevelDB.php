@@ -575,7 +575,7 @@ class LevelDB extends BaseWorldProvider implements WritableWorldProvider{
 
 		$subChunkKeyOffset = self::hasOffsetCavesAndCliffsSubChunks($chunkVersion) ? self::CAVES_CLIFFS_EXPERIMENTAL_SUBCHUNK_KEY_OFFSET : 0;
 		for($y = Chunk::MIN_SUBCHUNK_INDEX; $y <= Chunk::MAX_SUBCHUNK_INDEX; ++$y){
-			if(($data = $this->db->get($index . ChunkDataKey::SUBCHUNK . chr($y + $subChunkKeyOffset))) === false){
+			if(($data = $this->db->get($index . ChunkDataKey::SUBCHUNK . chr(($y + $subChunkKeyOffset) & 0xff))) === false){
 				$subChunks[$y] = new SubChunk(Block::EMPTY_STATE_ID, null, null, $biomeArrays[$y]);
 				continue;
 			}
@@ -769,7 +769,7 @@ class LevelDB extends BaseWorldProvider implements WritableWorldProvider{
 		if(($dirtyFlags & Chunk::DIRTY_FLAG_BLOCKS) !== 0){
 
 			foreach($subChunks as $y => $subChunk){
-				$key = $index . ChunkDataKey::SUBCHUNK . chr($y);
+				$key = $index . ChunkDataKey::SUBCHUNK . chr($y & 0xff);
 				if($subChunk->isEmptyAuthoritative()){
 					$write->delete($key);
 				}else{
