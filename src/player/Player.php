@@ -1573,7 +1573,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 				$this->blockBreakHandler = null;
 			}
 
-			if($this->isUsingItem() && $this->getItemUseDuration() % 4 === 0 && ($item = $this->inventory->getItemInHand()) instanceof ConsumableItem){
+			if($this->isUsingItem() && $this->getItemUseDuration() % 4 === 0 && ($item = $this->getMainHandItem()) instanceof ConsumableItem){
 				$this->broadcastAnimation(new ConsumingItemAnimation($this, $item));
 			}
 		}
