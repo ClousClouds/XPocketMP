@@ -1007,7 +1007,7 @@ class NetworkSession{
 		foreach($resourcePacks as $resourcePack){
 			$key = $packManager->getPackEncryptionKey($resourcePack->getPackId());
 			if($key !== null){
-				$keys[$resourcePack->getPackId()] = $key;
+				$keys[$resourcePack->getPackId()->toString()] = $key;
 			}
 		}
 		$event = new PlayerResourcePackOfferEvent($this->info, $resourcePacks, $keys, $packManager->resourcePacksRequired());
