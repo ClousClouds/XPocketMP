@@ -46,6 +46,7 @@ use function count;
 use function implode;
 use function sprintf;
 use function strpos;
+use function strtolower;
 use function substr;
 
 /**

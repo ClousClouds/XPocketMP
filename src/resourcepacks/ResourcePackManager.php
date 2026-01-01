@@ -28,6 +28,7 @@ use pocketmine\utils\Filesystem;
 use pocketmine\utils\Utils;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Filesystem\Path;
+use function array_map;
 use function copy;
 use function count;
 use function file_exists;
