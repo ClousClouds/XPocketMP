@@ -523,6 +523,18 @@ parameters:
 			path: ../../../src/command/defaults/TimeCommand.php
 
 		-
+			message: '#^Parameter \#1 \$array of function sort expects an array of values castable to string, array\<mixed\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../../../src/command/defaults/WhitelistCommand.php
+
+		-
+			message: '#^Parameter \#2 \$array of function implode expects array\<string\>, list\<mixed\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../../../src/command/defaults/WhitelistCommand.php
+
+		-
 			message: '#^Possibly invalid array key type float\|int\<0, max\>\.$#'
 			identifier: offsetAccess.invalidOffset
 			count: 1
