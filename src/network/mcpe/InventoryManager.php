@@ -562,7 +562,7 @@ class InventoryManager implements InventoryListener{
 				$windowId,
 				$netSlot,
 				new FullContainerName($this->lastWindowNetworkId),
-				new ItemStackWrapper(0, ItemStack::null()),
+				null,
 				new ItemStackWrapper(0, ItemStack::null())
 			));
 		}
@@ -571,7 +571,7 @@ class InventoryManager implements InventoryListener{
 			$windowId,
 			$netSlot,
 			new FullContainerName($this->lastWindowNetworkId),
-			new ItemStackWrapper(0, ItemStack::null()),
+			null,
 			$itemStackWrapper
 		));
 	}
