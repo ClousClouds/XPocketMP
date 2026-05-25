@@ -634,9 +634,6 @@ final class VanillaBlocksInputs extends RegistrySource{
 		self::registerCauldronBlocks();
 	}
 
-	/**
-	 * @phpstan-param class-string<covariant Block> $returnType
-	 */
 	private function registerWoodOverload(string $baseName) : void{
 		self::registerOverloaded($baseName, WoodType::class, fn(WoodType $t) => mb_strtolower($t->name) . "_" . $baseName);
 	}

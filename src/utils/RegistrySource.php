@@ -26,6 +26,10 @@ namespace pocketmine\utils;
 use function array_diff;
 use function array_unshift;
 use function array_values;
+use function class_exists;
+use function count;
+use function implode;
+use function interface_exists;
 
 /**
  * Extend this class to define source values for a generated registry class.
