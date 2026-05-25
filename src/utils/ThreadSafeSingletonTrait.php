@@ -56,20 +56,6 @@ trait ThreadSafeSingletonTrait{
 		});
 	}
 
-	public static function setInstance(self $instance) : void{
-		Thread::getSharedGlobals()->synchronized(function() use ($instance) : void{
-			Thread::getSharedGlobals()[self::getProcessGlobalStateKey()] = $instance;
-			self::$instanceCache = $instance;
-		});
-	}
-
-	public static function reset() : void{
-		Thread::getSharedGlobals()->synchronized(function() : void{
-			unset(Thread::getSharedGlobals()[self::getProcessGlobalStateKey()]);
-			self::$instanceCache = null;
-		});
-	}
-
 	final protected static function getProcessGlobalStateKey() : string{
 		return self::class . "::processGlobalState";
 	}
