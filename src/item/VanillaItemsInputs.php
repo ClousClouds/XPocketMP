@@ -317,8 +317,8 @@ final class VanillaItemsInputs extends RegistrySource{
 			self::register(strtolower($type->name) . "_boat", fn(IID $id) => new Boat($id, $type->getDisplayName() . " Boat", $type));
 		}
 		foreach(WoodType::cases() as $type){
-			self::registerDelayed(mb_strtolower($type->name) . "_sign", fn(string $name) : ItemBlockWallOrFloor => new ItemBlockWallOrFloor(self::makeIID($name), Blocks::SIGN($type), Blocks::WALL_SIGN($type)));
-			self::registerDelayed(mb_strtolower($type->name) . "_hanging_sign", fn(string $name) : HangingSign => new HangingSign(self::makeIID($name), $type->getDisplayName() . " Hanging Sign", Blocks::CEILING_CENTER_HANGING_SIGN($type), Blocks::CEILING_EDGES_HANGING_SIGN($type), Blocks::WALL_HANGING_SIGN($type)));
+			self::registerDelayed(mb_strtolower($type->name) . "_sign", fn(string $name) : ItemBlockWallOrFloor => new ItemBlockWallOrFloor(self::makeIID($name), Blocks::WOODEN_SIGN($type), Blocks::WOODEN_WALL_SIGN($type)));
+			self::registerDelayed(mb_strtolower($type->name) . "_hanging_sign", fn(string $name) : HangingSign => new HangingSign(self::makeIID($name), $type->getDisplayName() . " Hanging Sign", Blocks::WOODEN_CEILING_CENTER_HANGING_SIGN($type), Blocks::WOODEN_CEILING_EDGES_HANGING_SIGN($type), Blocks::WOODEN_WALL_HANGING_SIGN($type)));
 		}
 		self::registerOverloaded("sign", WoodType::class, fn(WoodType $t) => mb_strtolower($t->name) . "_sign");
 		self::registerOverloaded("hanging_sign", WoodType::class, fn(WoodType $t) => mb_strtolower($t->name) . "_hanging_sign");

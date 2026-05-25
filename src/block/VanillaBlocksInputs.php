@@ -69,7 +69,9 @@ use pocketmine\item\ToolTier;
 use pocketmine\item\VanillaItems;
 use pocketmine\math\Facing;
 use pocketmine\utils\RegistrySource;
+use pocketmine\utils\Utils;
 use pocketmine\world\generator\object\TreeType;
+use function count;
 use function is_int;
 use function mb_strtolower;
 use function mb_strtoupper;
@@ -634,10 +636,6 @@ final class VanillaBlocksInputs extends RegistrySource{
 		self::registerCauldronBlocks();
 	}
 
-	private function registerWoodOverload(string $baseName) : void{
-		self::registerOverloaded($baseName, WoodType::class, fn(WoodType $t) => mb_strtolower($t->name) . "_" . $baseName);
-	}
-
 	private function registerWoodenBlocks() : void{
 		$planksBreakInfo = new Info(BreakInfo::axe(2.0, null, 15.0));
 		$signBreakInfo = new Info(BreakInfo::axe(1.0));
@@ -647,16 +645,21 @@ final class VanillaBlocksInputs extends RegistrySource{
 		$woodenButtonBreakInfo = new Info(BreakInfo::axe(0.5));
 		$woodenPressurePlateBreakInfo = new Info(BreakInfo::axe(0.5));
 
+		$overloads = [];
 		foreach(WoodType::cases() as $woodType){
 			$name = $woodType->getDisplayName();
-			$idName = fn(string $suffix) => strtolower($woodType->name) . "_" . $suffix;
+			$idName = function(string $name, ?string $suffix = null) use ($woodType, &$overloads) : string{
+				$idName = mb_strtolower($woodType->name) . "_" . ($suffix !== null ? mb_strtolower($suffix, 'US-ASCII') : $name);
+				$overloads[$name][$woodType->name] = $idName;
+				return $idName;
+			};
 
-			self::register($idName(mb_strtolower($woodType->getStandardLogSuffix() ?? "log", 'US-ASCII')), fn(BID $id) => new Wood($id, $name . " " . ($woodType->getStandardLogSuffix() ?? "Log"), $logBreakInfo, $woodType));
+			self::register($idName("log", $woodType->getStandardLogSuffix()), fn(BID $id) => new Wood($id, $name . " " . ($woodType->getStandardLogSuffix() ?? "Log"), $logBreakInfo, $woodType));
 			if($woodType !== WoodType::BAMBOO){
 				//TODO: kinda sus hack - there's no all-sided log for bamboo
 				//maybe log type and wood type need to be separated
 				//we won't be able to do an overloaded accessor for wood until this is addressed
-				self::register($idName(mb_strtolower($woodType->getAllSidedLogSuffix() ?? "wood", 'US-ASCII')), fn(BID $id) => new Wood($id, $name . " " . ($woodType->getAllSidedLogSuffix() ?? "Wood"), $logBreakInfo, $woodType));
+				self::register($idName("wood", $woodType->getAllSidedLogSuffix()), fn(BID $id) => new Wood($id, $name . " " . ($woodType->getAllSidedLogSuffix() ?? "Wood"), $logBreakInfo, $woodType));
 			}
 
 			self::register($idName("planks"), fn(BID $id) => new Planks($id, $name . " Planks", $planksBreakInfo, $woodType));
@@ -681,11 +684,16 @@ final class VanillaBlocksInputs extends RegistrySource{
 			self::registerDelayed($idName("wall_hanging_sign"), fn(string $idName) : WallHangingSign => new WallHangingSign(self::makeBID($idName, TileHangingSign::class), $name . " Wall Hanging Sign", $hangingSignBreakInfo, $woodType, $hangingSignAsItem));
 		}
 
-		self::registerWoodOverload("sign");
-		self::registerWoodOverload("wall_sign");
-		self::registerWoodOverload("ceiling_center_hanging_sign");
-		self::registerWoodOverload("ceiling_edges_hanging_sign", );
-		self::registerWoodOverload("wall_hanging_sign", );
+		foreach(Utils::stringifyKeys($overloads) as $overloadName => $cases){
+			if(count($cases) !== count(WoodType::cases())){
+				continue;
+			}
+			$typeOverloads = $overloads[$overloadName];
+			if($overloadName !== "log" && $overloadName !== "wood"){
+				$overloadName = "wooden_" . $overloadName;
+			}
+			self::registerOverloaded($overloadName, WoodType::class, fn(WoodType $t) => $typeOverloads[$t->name]);
+		}
 
 		$mosaicBreakInfo = new Info(BreakInfo::axe(2.0, null, 15.0), [Tags::BAMBOO_MOSAIC]);
 		self::register("bamboo_mosaic", fn(BID $id) => new Planks($id, "Bamboo Mosaic", $mosaicBreakInfo, WoodType::BAMBOO));
