@@ -34,6 +34,7 @@ use pocketmine\crafting\CraftingGrid;
 use pocketmine\data\java\GameModeIdMap;
 use pocketmine\entity\animation\Animation;
 use pocketmine\entity\animation\ArmSwingAnimation;
+use pocketmine\entity\animation\ConsumingItemAnimation;
 use pocketmine\entity\animation\CriticalHitAnimation;
 use pocketmine\entity\animation\MagicHitAnimation;
 use pocketmine\entity\Attribute;
@@ -775,6 +776,16 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 		if($ticks > 0){
 			$this->usedItemsCooldown[$item->getCooldownTag() ?? $item->getStateId()] = $this->server->getTick() + $ticks;
 			$this->getNetworkSession()->onItemCooldownChanged($item, $ticks);
+		}
+	}
+
+	/**
+	 * Removes the player's cooldown time for the given item.
+	 */
+	public function removeItemCooldown(Item $item) : void{
+		if($this->hasItemCooldown($item)){
+			unset($this->usedItemsCooldown[$item->getCooldownTag() ?? $item->getStateId()]);
+			$this->getNetworkSession()->onItemCooldownChanged($item, 0);
 		}
 	}
 
@@ -1553,6 +1564,10 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 			if($this->blockBreakHandler !== null && !$this->blockBreakHandler->update()){
 				$this->blockBreakHandler = null;
 			}
+
+			if($this->isUsingItem() && $this->getItemUseDuration() % 4 === 0 && ($item = $this->inventory->getItemInHand()) instanceof ConsumableItem){
+				$this->broadcastAnimation(new ConsumingItemAnimation($this, $item));
+			}
 		}
 
 		$this->timings->stopTiming();
@@ -1815,7 +1830,9 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 
 	public function pickEntity(int $entityId) : bool{
 		$entity = $this->getWorld()->getEntity($entityId);
-		if($entity === null){
+		//TODO: HACK! We really shouldn't be keeping disconnected players (and generally flagged-for-despawn entities)
+		//in the world's entity table, but changing that is too risky for a hotfix. This workaround will do for now.
+		if($entity === null || $entity->isFlaggedForDespawn()){
 			return true;
 		}
 
@@ -2293,6 +2310,14 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 	}
 
 	/**
+	 * @internal
+	 * Returns whether the server is waiting for a response for a form with the given ID.
+	 */
+	public function hasPendingForm(int $formId) : bool{
+		return isset($this->forms[$formId]);
+	}
+
+	/**
 	 * Closes the current viewing form and forms in queue.
 	 */
 	public function closeAllForms() : void{
@@ -2650,7 +2675,12 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 		$properties->setGenericFlag(EntityMetadataFlags::HAS_COLLISION, $this->hasBlockCollision());
 
 		$properties->setPlayerFlag(PlayerMetadataFlags::SLEEP, $this->sleeping !== null);
-		$properties->setBlockPos(EntityMetadataProperties::PLAYER_BED_POSITION, $this->sleeping !== null ? BlockPosition::fromVector3($this->sleeping) : new BlockPosition(0, 0, 0));
+		if($this->sleeping !== null){
+			//this should only be sent when the player enters the bed, as of 1.26.??
+			//previously we were setting this to 0,0,0 if the player wasn't sleeping, but that now causes the player to
+			//teleport to that position temporarily when leaving the bed. Bugrock moment...
+			$properties->setBlockPos(EntityMetadataProperties::PLAYER_BED_POSITION, BlockPosition::fromVector3($this->sleeping));
+		}
 
 		if($this->deathPosition !== null && $this->deathPosition->world === $this->location->world){
 			$properties->setBlockPos(EntityMetadataProperties::PLAYER_DEATH_POSITION, BlockPosition::fromVector3($this->deathPosition));
@@ -2877,6 +2907,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 	use ChunkListenerNoOpTrait {
 		onChunkChanged as private;
 		onChunkUnloaded as private;
+		onBlockChanged as private;
 	}
 
 	public function onChunkChanged(int $chunkX, int $chunkZ, Chunk $chunk) : void{
@@ -2891,6 +2922,13 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 		if($this->isUsingChunk($chunkX, $chunkZ)){
 			$this->logger->debug("Detected forced unload of chunk " . $chunkX . " " . $chunkZ);
 			$this->unloadChunk($chunkX, $chunkZ);
+		}
+	}
+
+	public function onBlockChanged(Vector3 $block) : void{
+		if($this->sleeping !== null && $block->equals($this->sleeping) && !($this->getWorld()->getBlock($block) instanceof Bed)){
+			$this->logger->debug("Bed was changed or deleted, aborting sleep");
+			$this->stopSleep();
 		}
 	}
 }

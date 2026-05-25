@@ -163,6 +163,7 @@ final class VanillaBlockMappings{
 		$reg->mapSimple(Blocks::AMETHYST(), Ids::AMETHYST_BLOCK);
 		$reg->mapSimple(Blocks::ANCIENT_DEBRIS(), Ids::ANCIENT_DEBRIS);
 		$reg->mapSimple(Blocks::ANDESITE(), Ids::ANDESITE);
+		$reg->mapSimple(Blocks::AZALEA(), Ids::AZALEA);
 		$reg->mapSimple(Blocks::BARRIER(), Ids::BARRIER);
 		$reg->mapSimple(Blocks::BEACON(), Ids::BEACON);
 		$reg->mapSimple(Blocks::BLACKSTONE(), Ids::BLACKSTONE);
@@ -344,6 +345,7 @@ final class VanillaBlockMappings{
 		$reg->mapSimple(Blocks::END_STONE_BRICKS(), Ids::END_BRICKS);
 		$reg->mapSimple(Blocks::FERN(), Ids::FERN);
 		$reg->mapSimple(Blocks::FLETCHING_TABLE(), Ids::FLETCHING_TABLE);
+		$reg->mapSimple(Blocks::FLOWERING_AZALEA(), Ids::FLOWERING_AZALEA);
 		$reg->mapSimple(Blocks::GILDED_BLACKSTONE(), Ids::GILDED_BLACKSTONE);
 		$reg->mapSimple(Blocks::GLASS(), Ids::GLASS);
 		$reg->mapSimple(Blocks::GLASS_PANE(), Ids::GLASS_PANE);
@@ -994,6 +996,7 @@ final class VanillaBlockMappings{
 		//buttons
 		foreach([
 			[Blocks::ACACIA_BUTTON(), Ids::ACACIA_BUTTON],
+			[Blocks::BAMBOO_BUTTON(), Ids::BAMBOO_BUTTON],
 			[Blocks::BIRCH_BUTTON(), Ids::BIRCH_BUTTON],
 			[Blocks::CHERRY_BUTTON(), Ids::CHERRY_BUTTON],
 			[Blocks::CRIMSON_BUTTON(), Ids::CRIMSON_BUTTON],
@@ -1011,6 +1014,7 @@ final class VanillaBlockMappings{
 		//doors
 		foreach([
 			[Blocks::ACACIA_DOOR(), Ids::ACACIA_DOOR],
+			[Blocks::BAMBOO_DOOR(), Ids::BAMBOO_DOOR],
 			[Blocks::BIRCH_DOOR(), Ids::BIRCH_DOOR],
 			[Blocks::CHERRY_DOOR(), Ids::CHERRY_DOOR],
 			[Blocks::CRIMSON_DOOR(), Ids::CRIMSON_DOOR],
@@ -1028,6 +1032,7 @@ final class VanillaBlockMappings{
 		//fences
 		foreach([
 			[Blocks::ACACIA_FENCE(), Ids::ACACIA_FENCE],
+			[Blocks::BAMBOO_FENCE(), Ids::BAMBOO_FENCE],
 			[Blocks::BIRCH_FENCE(), Ids::BIRCH_FENCE],
 			[Blocks::CHERRY_FENCE(), Ids::CHERRY_FENCE],
 			[Blocks::DARK_OAK_FENCE(), Ids::DARK_OAK_FENCE],
@@ -1044,6 +1049,7 @@ final class VanillaBlockMappings{
 
 		foreach([
 			[Blocks::ACACIA_FENCE_GATE(), Ids::ACACIA_FENCE_GATE],
+			[Blocks::BAMBOO_FENCE_GATE(), Ids::BAMBOO_FENCE_GATE],
 			[Blocks::BIRCH_FENCE_GATE(), Ids::BIRCH_FENCE_GATE],
 			[Blocks::CHERRY_FENCE_GATE(), Ids::CHERRY_FENCE_GATE],
 			[Blocks::DARK_OAK_FENCE_GATE(), Ids::DARK_OAK_FENCE_GATE],
@@ -1060,6 +1066,7 @@ final class VanillaBlockMappings{
 
 		foreach([
 			[Blocks::ACACIA_SIGN(), Ids::ACACIA_STANDING_SIGN],
+			[Blocks::BAMBOO_SIGN(), Ids::BAMBOO_STANDING_SIGN],
 			[Blocks::BIRCH_SIGN(), Ids::BIRCH_STANDING_SIGN],
 			[Blocks::CHERRY_SIGN(), Ids::CHERRY_STANDING_SIGN],
 			[Blocks::DARK_OAK_SIGN(), Ids::DARKOAK_STANDING_SIGN],
@@ -1099,7 +1106,10 @@ final class VanillaBlockMappings{
 			[Blocks::PALE_OAK_WOOD(), "pale_oak_wood"],
 			[Blocks::SPRUCE_WOOD(), "spruce_wood"],
 			[Blocks::CRIMSON_HYPHAE(), "crimson_hyphae"],
-			[Blocks::WARPED_HYPHAE(), "warped_hyphae"]
+			[Blocks::WARPED_HYPHAE(), "warped_hyphae"],
+
+			//bamboo is a special cookie - its name differs and there's no all-sided variant
+			[Blocks::BAMBOO_BLOCK(), "bamboo_block"],
 		] as [$block, $idSuffix]){
 			$reg->mapFlattenedId(FlattenedIdModel::create($block)
 				->idComponents([...$commonProperties->woodIdPrefixes, $idSuffix])
@@ -1110,6 +1120,8 @@ final class VanillaBlockMappings{
 		//planks
 		foreach([
 			[Blocks::ACACIA_PLANKS(), Ids::ACACIA_PLANKS],
+			[Blocks::BAMBOO_PLANKS(), Ids::BAMBOO_PLANKS],
+			[Blocks::BAMBOO_MOSAIC(), Ids::BAMBOO_MOSAIC], //special bamboo variant block
 			[Blocks::BIRCH_PLANKS(), Ids::BIRCH_PLANKS],
 			[Blocks::CHERRY_PLANKS(), Ids::CHERRY_PLANKS],
 			[Blocks::DARK_OAK_PLANKS(), Ids::DARK_OAK_PLANKS],
@@ -1127,6 +1139,7 @@ final class VanillaBlockMappings{
 		//pressure plates
 		foreach([
 			[Blocks::ACACIA_PRESSURE_PLATE(), Ids::ACACIA_PRESSURE_PLATE],
+			[Blocks::BAMBOO_PRESSURE_PLATE(), Ids::BAMBOO_PRESSURE_PLATE],
 			[Blocks::BIRCH_PRESSURE_PLATE(), Ids::BIRCH_PRESSURE_PLATE],
 			[Blocks::CHERRY_PRESSURE_PLATE(), Ids::CHERRY_PRESSURE_PLATE],
 			[Blocks::DARK_OAK_PRESSURE_PLATE(), Ids::DARK_OAK_PRESSURE_PLATE],
@@ -1144,6 +1157,8 @@ final class VanillaBlockMappings{
 		//slabs
 		foreach([
 			[Blocks::ACACIA_SLAB(), "acacia"],
+			[Blocks::BAMBOO_SLAB(), "bamboo"],
+			[Blocks::BAMBOO_MOSAIC_SLAB(), "bamboo_mosaic"], //special bamboo variant block
 			[Blocks::BIRCH_SLAB(), "birch"],
 			[Blocks::CHERRY_SLAB(), "cherry"],
 			[Blocks::DARK_OAK_SLAB(), "dark_oak"],
@@ -1161,6 +1176,8 @@ final class VanillaBlockMappings{
 		//stairs
 		foreach([
 			[Blocks::ACACIA_STAIRS(), Ids::ACACIA_STAIRS],
+			[Blocks::BAMBOO_STAIRS(), Ids::BAMBOO_STAIRS],
+			[Blocks::BAMBOO_MOSAIC_STAIRS(), Ids::BAMBOO_MOSAIC_STAIRS], //special bamboo variant block
 			[Blocks::BIRCH_STAIRS(), Ids::BIRCH_STAIRS],
 			[Blocks::CHERRY_STAIRS(), Ids::CHERRY_STAIRS],
 			[Blocks::DARK_OAK_STAIRS(), Ids::DARK_OAK_STAIRS],
@@ -1178,6 +1195,7 @@ final class VanillaBlockMappings{
 		//trapdoors
 		foreach([
 			[Blocks::ACACIA_TRAPDOOR(), Ids::ACACIA_TRAPDOOR],
+			[Blocks::BAMBOO_TRAPDOOR(), Ids::BAMBOO_TRAPDOOR],
 			[Blocks::BIRCH_TRAPDOOR(), Ids::BIRCH_TRAPDOOR],
 			[Blocks::CHERRY_TRAPDOOR(), Ids::CHERRY_TRAPDOOR],
 			[Blocks::DARK_OAK_TRAPDOOR(), Ids::DARK_OAK_TRAPDOOR],
@@ -1195,6 +1213,7 @@ final class VanillaBlockMappings{
 		//wall signs
 		foreach([
 			[Blocks::ACACIA_WALL_SIGN(), Ids::ACACIA_WALL_SIGN],
+			[Blocks::BAMBOO_WALL_SIGN(), Ids::BAMBOO_WALL_SIGN],
 			[Blocks::BIRCH_WALL_SIGN(), Ids::BIRCH_WALL_SIGN],
 			[Blocks::CHERRY_WALL_SIGN(), Ids::CHERRY_WALL_SIGN],
 			[Blocks::DARK_OAK_WALL_SIGN(), Ids::DARKOAK_WALL_SIGN],
@@ -1629,6 +1648,7 @@ final class VanillaBlockMappings{
 
 		foreach([
 			Ids::ACACIA_HANGING_SIGN => WoodType::ACACIA,
+			Ids::BAMBOO_HANGING_SIGN => WoodType::BAMBOO,
 			Ids::BIRCH_HANGING_SIGN => WoodType::BIRCH,
 			Ids::CHERRY_HANGING_SIGN => WoodType::CHERRY,
 			Ids::CRIMSON_HANGING_SIGN => WoodType::CRIMSON,

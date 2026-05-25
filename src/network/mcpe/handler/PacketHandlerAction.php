@@ -21,22 +21,19 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\crafting\json;
+namespace pocketmine\network\mcpe\handler;
 
-final class FurnaceRecipeData{
-
-	/** @required */
-	public RecipeIngredientData $input;
-
-	/** @required */
-	public ItemStackData $output;
-
-	/** @required */
-	public string $block;
-
-	public function __construct(RecipeIngredientData $input, ItemStackData $output, string $block){
-		$this->input = $input;
-		$this->output = $output;
-		$this->block = $block;
-	}
+enum PacketHandlerAction{
+	/**
+	 * The packet will be handled normally
+	 */
+	case HANDLED;
+	/**
+	 * The packet will be discarded and a debug message logged, usually because the packet wasn't expected
+	 */
+	case DISCARD_WITH_DEBUG;
+	/**
+	 * The packet will be discarded silently, usually because it was explicitly marked as discarded
+	 */
+	case DISCARD_SILENT;
 }
