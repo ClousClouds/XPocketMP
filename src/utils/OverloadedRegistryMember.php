@@ -26,14 +26,13 @@ namespace pocketmine\utils;
 final class OverloadedRegistryMember{
 
 	/**
-	 * @phpstan-template TMember of object
 	 * @phpstan-param class-string<covariant \UnitEnum> $enumClass
-	 * @phpstan-param class-string<TMember> $memberClass
-	 * @phpstan-param array<string, string> $enumToMemberMap
+	 * @phpstan-param list<list<class-string>>          $memberTypeTree
+	 * @phpstan-param array<string, string>             $enumToMemberMap
 	 */
 	public function __construct(
 		public readonly string $enumClass,
-		public readonly string $memberClass,
+		public readonly array $memberTypeTree,
 		public readonly array $enumToMemberMap
 	){}
 }

@@ -190,9 +190,21 @@ TEMPLATE;
 
 	foreach(Utils::stringifyKeys($registrySource->getOverloadedDeclarations()) as $name => $overload){
 		$accessor = mb_strtoupper($name);
-		$typehint = (new \ReflectionClass($overload->memberClass))->getShortName();
+		if(count($overload->memberTypeTree) === 0){
+			$typehint = "object";
+		}else{
+			$intersections = [];
+			foreach($overload->memberTypeTree as $memberTypeIntersection){
+				sort($memberTypeIntersection, SORT_STRING);
+				$intersections[] = implode("&", array_map(function(string $t) use (&$importClasses) : string{
+					$importClasses[$t] = true;
+					return (new \ReflectionClass($t))->getShortName();
+				}, $memberTypeIntersection));
+			}
+			sort($intersections, SORT_STRING);
+			$typehint = implode("|", $intersections);
+		}
 		$enumName = (new \ReflectionClass($overload->enumClass))->getShortName();
-		$importClasses[$overload->memberClass] = true;
 		$importClasses[$overload->enumClass] = true;
 		$overloadCode = <<<TEMPLATE
 	public static function $accessor($enumName \$case) : $typehint{

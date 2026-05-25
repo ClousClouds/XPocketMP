@@ -320,8 +320,8 @@ final class VanillaItemsInputs extends RegistrySource{
 			self::registerDelayed(mb_strtolower($type->name) . "_sign", fn(string $name) : ItemBlockWallOrFloor => new ItemBlockWallOrFloor(self::makeIID($name), Blocks::SIGN($type), Blocks::WALL_SIGN($type)));
 			self::registerDelayed(mb_strtolower($type->name) . "_hanging_sign", fn(string $name) : HangingSign => new HangingSign(self::makeIID($name), $type->getDisplayName() . " Hanging Sign", Blocks::CEILING_CENTER_HANGING_SIGN($type), Blocks::CEILING_EDGES_HANGING_SIGN($type), Blocks::WALL_HANGING_SIGN($type)));
 		}
-		self::registerOverloaded("sign", WoodType::class, fn(WoodType $t) => mb_strtolower($t->name) . "_sign", ItemBlockWallOrFloor::class);
-		self::registerOverloaded("hanging_sign", WoodType::class, fn(WoodType $t) => mb_strtolower($t->name) . "_hanging_sign", HangingSign::class);
+		self::registerOverloaded("sign", WoodType::class, fn(WoodType $t) => mb_strtolower($t->name) . "_sign");
+		self::registerOverloaded("hanging_sign", WoodType::class, fn(WoodType $t) => mb_strtolower($t->name) . "_hanging_sign");
 	}
 
 	private function registerSpawnEggs() : void{

@@ -514,12 +514,12 @@ final class VanillaBlocksInputs extends RegistrySource{
 			$name = $saplingType->getDisplayName();
 			self::register(strtolower($saplingType->name) . "_sapling", fn(BID $id) => new Sapling($id, $name . " Sapling", $saplingTypeInfo, $saplingType));
 		}
-		self::registerOverloaded("sapling", SaplingType::class, fn(SaplingType $t) => mb_strtolower($t->name) . "_sapling", Sapling::class);
+		self::registerOverloaded("sapling", SaplingType::class, fn(SaplingType $t) => mb_strtolower($t->name) . "_sapling");
 		foreach(LeavesType::cases() as $leavesType){
 			$name = $leavesType->getDisplayName();
 			self::register(strtolower($leavesType->name) . "_leaves", fn(BID $id) => new Leaves($id, $name . " Leaves", $leavesBreakInfo, $leavesType));
 		}
-		self::registerOverloaded("leaves", LeavesType::class, fn(LeavesType $t) => mb_strtolower($t->name) . "_leaves", Leaves::class);
+		self::registerOverloaded("leaves", LeavesType::class, fn(LeavesType $t) => mb_strtolower($t->name) . "_leaves");
 
 		$sandstoneBreakInfo = new Info(BreakInfo::pickaxe(0.8, ToolTier::WOOD));
 		$smoothSandstoneBreakInfo = new Info(BreakInfo::pickaxe(2.0, ToolTier::WOOD, 30.0));
@@ -637,8 +637,8 @@ final class VanillaBlocksInputs extends RegistrySource{
 	/**
 	 * @phpstan-param class-string<covariant Block> $returnType
 	 */
-	private function registerWoodOverload(string $baseName, string $returnType, ?string $suffix = null) : void{
-		self::registerOverloaded($baseName, WoodType::class, fn(WoodType $t) => mb_strtolower($t->name) . "_" . ($suffix ?? $baseName), $returnType);
+	private function registerWoodOverload(string $baseName) : void{
+		self::registerOverloaded($baseName, WoodType::class, fn(WoodType $t) => mb_strtolower($t->name) . "_" . $baseName);
 	}
 
 	private function registerWoodenBlocks() : void{
@@ -684,11 +684,11 @@ final class VanillaBlocksInputs extends RegistrySource{
 			self::registerDelayed($idName("wall_hanging_sign"), fn(string $idName) : WallHangingSign => new WallHangingSign(self::makeBID($idName, TileHangingSign::class), $name . " Wall Hanging Sign", $hangingSignBreakInfo, $woodType, $hangingSignAsItem));
 		}
 
-		self::registerWoodOverload("sign", FloorSign::class);
-		self::registerWoodOverload("wall_sign", WallSign::class);
-		self::registerWoodOverload("ceiling_center_hanging_sign", CeilingCenterHangingSign::class);
-		self::registerWoodOverload("ceiling_edges_hanging_sign", CeilingEdgesHangingSign::class);
-		self::registerWoodOverload("wall_hanging_sign", WallHangingSign::class);
+		self::registerWoodOverload("sign");
+		self::registerWoodOverload("wall_sign");
+		self::registerWoodOverload("ceiling_center_hanging_sign");
+		self::registerWoodOverload("ceiling_edges_hanging_sign", );
+		self::registerWoodOverload("wall_hanging_sign", );
 
 		$mosaicBreakInfo = new Info(BreakInfo::axe(2.0, null, 15.0), [Tags::BAMBOO_MOSAIC]);
 		self::register("bamboo_mosaic", fn(BID $id) => new Planks($id, "Bamboo Mosaic", $mosaicBreakInfo, WoodType::BAMBOO));

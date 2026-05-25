@@ -172,21 +172,28 @@ abstract class RegistrySource{
 
 	/**
 	 * @phpstan-template TEnum of \UnitEnum
-	 * @phpstan-param class-string<TEnum> $enumClass
-	 * @phpstan-param \Closure(TEnum) : string $mapper
-	 * @phpstan-param class-string<covariant TMember> $returnType
+	 * @phpstan-param class-string<TEnum>             $enumClass
+	 * @phpstan-param \Closure(TEnum) : string        $mapper
 	 */
-	final protected function registerOverloaded(string $name, string $enumClass, \Closure $mapper, string $returnType) : void{
+	final protected function registerOverloaded(string $name, string $enumClass, \Closure $mapper) : void{
 		$this->checkNameAvailability($name);
 		$enumToMemberMap = [];
+
+		$returnTypeTree = [];
 		foreach($enumClass::cases() as $case){
 			$memberName = $mapper($case);
 			if(!isset($this->simpleMembers[$memberName]) && !isset($this->delayedMembers[$memberName])){
 				throw new \LogicException("\"$memberName\" needs to be registered to define overloaded member with enum $enumClass");
 			}
 			$enumToMemberMap[$case->name] = $memberName;
+
+			$memberType = $this->inferReturnTypes($memberName);
+			if(count($memberType) > 0){
+				$returnTypeTree[implode("&", $memberType)] = $memberType;
+			}
 		}
-		$this->overloadedMembers[$name] = new OverloadedRegistryMember($enumClass, $returnType, $enumToMemberMap);
+
+		$this->overloadedMembers[$name] = new OverloadedRegistryMember($enumClass, array_values($returnTypeTree), $enumToMemberMap);
 	}
 
 	/**
@@ -204,6 +211,61 @@ abstract class RegistrySource{
 	}
 
 	/**
+	 * @phpstan-return list<class-string>
+	 */
+	private function inferReturnTypes(string $name) : array{
+		if(isset($this->simpleMembers[$name])){
+			$reflect = new \ReflectionClass($this->simpleMembers[$name]);
+			$concrete = $reflect;
+			if($reflect->isAnonymous()){
+				while($concrete !== false && $concrete->isAnonymous()){
+					$concrete = $concrete->getParentClass();
+				}
+
+				if($concrete === false){
+					return [];
+				}else{
+					$anonInterfaces = array_diff($reflect->getInterfaceNames(), $concrete->getInterfaceNames());
+					array_unshift($anonInterfaces, $concrete->getName());
+					return array_values($anonInterfaces);
+				}
+			}else{
+				return [$reflect->getName()];
+			}
+		}
+		if(isset($this->delayedMembers[$name])){
+			$callback = $this->delayedMembers[$name];
+			$return = (new \ReflectionFunction($callback))->getReturnType();
+			if($return === null){
+				return [];
+			}elseif($return instanceof \ReflectionNamedType){
+				if(!class_exists($return->getName()) && !interface_exists($return->getName())){
+					//TODO: this feels like the wrong place to be throwing this. why aren't we verifying this sooner?
+					throw new \LogicException("Invalid non-class return type for \"$name\": " . $return->getName());
+				}
+				return [$return->getName()];
+			}elseif($return instanceof \ReflectionIntersectionType){
+				$memberTypes = [];
+				foreach($return->getTypes() as $type){
+					if(!$type instanceof \ReflectionNamedType){
+						throw new \InvalidArgumentException("Unsupported nested type in intersection type for \"$name\"");
+					}
+					if(!class_exists($type->getName()) && !interface_exists($type->getName())){
+						//TODO: this feels like the wrong place to be throwing this. why aren't we verifying this sooner?
+						throw new \LogicException("Invalid non-class return type for \"$name\": " . $type->getName());
+					}
+					$memberTypes[] = $type->getName();
+				}
+				return $memberTypes;
+			}else{
+				throw new \LogicException("Unsupported delayed member type for \"$name\"");
+			}
+		}
+
+		throw new \InvalidArgumentException("No such simple or delayed registry member \"$name\"");
+	}
+
+	/**
 	 * @internal Returns type info for all registry members for code generation, without initializing delayed members.
 	 *
 	 * @return string[][]
@@ -213,42 +275,13 @@ abstract class RegistrySource{
 		$this->setupWrapper();
 		$memberTypes = [];
 		foreach(Utils::stringifyKeys($this->simpleMembers) as $name => $value){
-			$reflect = new \ReflectionClass($value);
-			$concrete = $reflect;
-			if($reflect->isAnonymous()){
-				while($concrete !== false && $concrete->isAnonymous()){
-					$concrete = $concrete->getParentClass();
-				}
-
-				if($concrete === false){
-					$memberTypes[$name] = [];
-				}else{
-					$anonInterfaces = array_diff($reflect->getInterfaceNames(), $concrete->getInterfaceNames());
-					array_unshift($anonInterfaces, $concrete->getName());
-					$memberTypes[$name] = array_values($anonInterfaces);
-				}
-			}else{
-				$memberTypes[$name] = [$reflect->getName()];
-			}
+			$memberTypes[$name] = $this->inferReturnTypes($name);
 		}
 
 		foreach(Utils::stringifyKeys($this->delayedMembers) as $name => $callback){
-			$return = (new \ReflectionFunction($callback))->getReturnType();
-			if($return === null){
+			$memberTypes[$name] = $this->inferReturnTypes($name);
+			if(count($memberTypes[$name]) === 0){
 				\GlobalLogger::get()->warning("Delayed registry member " . $this->getTargetClassName() . "::" . $name . " doesn't have a return type, using \"object\"");
-				$memberTypes[$name] = [];
-			}elseif($return instanceof \ReflectionNamedType){
-				$memberTypes[$name] = [$return->getName()];
-			}elseif($return instanceof \ReflectionIntersectionType){
-				$memberTypes[$name] = [];
-				foreach($return->getTypes() as $type){
-					if(!$type instanceof \ReflectionNamedType){
-						throw new \InvalidArgumentException("Unsupported nested type in intersection type for \"$name\"");
-					}
-					$memberTypes[$name][] = $type->getName();
-				}
-			}else{
-				throw new \LogicException("Unsupported delayed member type for \"$name\"");
 			}
 		}
 
