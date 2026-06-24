@@ -25,7 +25,6 @@ namespace pocketmine\block\utils;
 
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\lang\Translatable;
-use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use function spl_object_id;
 
 /**
