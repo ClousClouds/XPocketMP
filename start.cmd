@@ -26,7 +26,7 @@ if exist PocketMine-MP.phar (
 	set POCKETMINE_FILE=PocketMine-MP.phar
 ) else (
 	echo PocketMine-MP.phar not found
-	echo Downloads can be found at https://github.com/pmmp/PocketMine-MP/releases
+	echo Downloads can be found at https://github.com/ClousClouds/XPocketMP/releases
 	pause
 	exit 1
 )

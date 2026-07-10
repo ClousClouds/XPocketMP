@@ -25,7 +25,7 @@ if($file -eq ""){
 	    $file = "PocketMine-MP.phar"
 	}else{
 	    echo "PocketMine-MP.phar not found"
-	    echo "Downloads can be found at https://github.com/pmmp/PocketMine-MP/releases"
+	    echo "Downloads can be found at https://github.com/ClousClouds/XPocketMP/releases"
 	    pause
 	    exit 1
 	}
