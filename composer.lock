@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f101c20db9d6825e6ab2ed6c1791a545",
+    "content-hash": "99faddbd141c43e1cbaac3e7f2254728",
     "packages": [
         {
             "name": "adhocore/json-comment",
@@ -67,24 +67,25 @@
         },
         {
             "name": "brick/math",
-            "version": "0.18.0",
+            "version": "0.13.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/brick/math.git",
-                "reference": "82944324d1c1bdb2c2618e89978d4e2ad78d69ad"
+                "reference": "fc7ed316430118cc7836bf45faff18d5dfc8de04"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brick/math/zipball/82944324d1c1bdb2c2618e89978d4e2ad78d69ad",
-                "reference": "82944324d1c1bdb2c2618e89978d4e2ad78d69ad",
+                "url": "https://api.github.com/repos/brick/math/zipball/fc7ed316430118cc7836bf45faff18d5dfc8de04",
+                "reference": "fc7ed316430118cc7836bf45faff18d5dfc8de04",
                 "shasum": ""
             },
             "require": {
-                "php": "^8.2"
+                "php": "^8.1"
             },
             "require-dev": {
-                "phpstan/phpstan": "2.1.22",
-                "phpunit/phpunit": "^11.5"
+                "php-coveralls/php-coveralls": "^2.2",
+                "phpunit/phpunit": "^10.1",
+                "vimeo/psalm": "6.8.8"
             },
             "type": "library",
             "autoload": {
@@ -114,7 +115,7 @@
             ],
             "support": {
                 "issues": "https://github.com/brick/math/issues",
-                "source": "https://github.com/brick/math/tree/0.18.0"
+                "source": "https://github.com/brick/math/tree/0.13.1"
             },
             "funding": [
                 {
@@ -122,20 +123,20 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-06-14T18:21:03+00:00"
+            "time": "2025-03-29T13:50:30+00:00"
         },
         {
             "name": "netresearch/jsonmapper",
-            "version": "v5.0.1",
+            "version": "v6.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cweiske/jsonmapper.git",
-                "reference": "980674efdda65913492d29a8fd51c82270dd37bb"
+                "reference": "31226dd465e3e38f5a8f66ef1393cd8daad248dd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cweiske/jsonmapper/zipball/980674efdda65913492d29a8fd51c82270dd37bb",
-                "reference": "980674efdda65913492d29a8fd51c82270dd37bb",
+                "url": "https://api.github.com/repos/cweiske/jsonmapper/zipball/31226dd465e3e38f5a8f66ef1393cd8daad248dd",
+                "reference": "31226dd465e3e38f5a8f66ef1393cd8daad248dd",
                 "shasum": ""
             },
             "require": {
@@ -143,11 +144,13 @@
                 "ext-pcre": "*",
                 "ext-reflection": "*",
                 "ext-spl": "*",
-                "php": ">=7.1"
+                "php": ">=8.1"
             },
             "require-dev": {
+                "phpstan/phpstan": "^2.2",
                 "phpunit/phpunit": "~7.5 || ~8.0 || ~9.0 || ~10.0",
-                "squizlabs/php_codesniffer": "~3.5"
+                "psr/log": "^3.0",
+                "squizlabs/php_codesniffer": "^4.0"
             },
             "type": "library",
             "autoload": {
@@ -171,9 +174,9 @@
             "support": {
                 "email": "cweiske@cweiske.de",
                 "issues": "https://github.com/cweiske/jsonmapper/issues",
-                "source": "https://github.com/cweiske/jsonmapper/tree/v5.0.1"
+                "source": "https://github.com/cweiske/jsonmapper/tree/v6.0.0"
             },
-            "time": "2026-02-22T16:28:03+00:00"
+            "time": "2026-06-29T16:03:16+00:00"
         },
         {
             "name": "pocketmine/bedrock-block-upgrade-schema",
@@ -252,55 +255,6 @@
                 "source": "https://github.com/pmmp/BedrockItemUpgradeSchema/tree/1.17.0"
             },
             "time": "2026-05-06T13:12:04+00:00"
-        },
-        {
-            "name": "pocketmine/bedrock-protocol",
-            "version": "dev-master",
-            "dist": {
-                "type": "path",
-                "url": "../BedrockProtocol",
-                "reference": "8eb5a390a8d913ee54b97ac71f42899ecbb5c419"
-            },
-            "require": {
-                "ext-encoding": "~1.0.0",
-                "ext-json": "*",
-                "php": "^8.1",
-                "pocketmine/binaryutils": "^0.2.0",
-                "pocketmine/color": "^0.2.0 || ^0.3.0",
-                "pocketmine/math": "^0.3.0 || ^0.4.0 || ^1.0.0",
-                "pocketmine/nbt": "^1.0.0",
-                "ramsey/uuid": "^4.1"
-            },
-            "require-dev": {
-                "phpstan/phpstan": "2.1.0",
-                "phpstan/phpstan-phpunit": "^2.0.0",
-                "phpstan/phpstan-strict-rules": "^2.0.0",
-                "phpunit/phpunit": "^9.5 || ^10.0 || ^11.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "pocketmine\\network\\mcpe\\protocol\\": "src/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "pocketmine\\network\\mcpe\\protocol\\": "tests/phpunit/"
-                }
-            },
-            "scripts": {
-                "update-create-methods": [
-                    "@php tools/generate-create-static-methods.php"
-                ]
-            },
-            "license": [
-                "LGPL-3.0"
-            ],
-            "description": "An implementation of the Minecraft: Bedrock Edition protocol in PHP",
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
         },
         {
             "name": "pocketmine/binaryutils",
@@ -943,6 +897,53 @@
                 }
             ],
             "time": "2026-05-07T13:11:42+00:00"
+        },
+        {
+            "name": "xpocketmp/bedrock-protocol",
+            "version": "dev-bedrock-1.26.40",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ClousClouds/BedrockProtocol.git",
+                "reference": "8bde572c97e7d24f1185fe396d4fceb1b0a825b0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ClousClouds/BedrockProtocol/zipball/8bde572c97e7d24f1185fe396d4fceb1b0a825b0",
+                "reference": "8bde572c97e7d24f1185fe396d4fceb1b0a825b0",
+                "shasum": ""
+            },
+            "require": {
+                "ext-encoding": "~1.0.0",
+                "ext-json": "*",
+                "php": "^8.1",
+                "pocketmine/binaryutils": "^0.2.0",
+                "pocketmine/color": "^0.2.0 || ^0.3.0",
+                "pocketmine/math": "^0.3.0 || ^0.4.0 || ^1.0.0",
+                "pocketmine/nbt": "^1.0.0",
+                "ramsey/uuid": "^4.1"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "2.1.0",
+                "phpstan/phpstan-phpunit": "^2.0.0",
+                "phpstan/phpstan-strict-rules": "^2.0.0",
+                "phpunit/phpunit": "^9.5 || ^10.0 || ^11.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "pocketmine\\network\\mcpe\\protocol\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0"
+            ],
+            "description": "An implementation of the Minecraft: Bedrock Edition protocol in PHP",
+            "support": {
+                "issues": "https://github.com/ClousClouds/BedrockProtocol/issues",
+                "source": "https://github.com/ClousClouds/BedrockProtocol/tree/bedrock-1.26.40"
+            },
+            "time": "2026-07-19T05:02:28+00:00"
         }
     ],
     "packages-dev": [
@@ -2762,7 +2763,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "pocketmine/bedrock-protocol": 20
+        "xpocketmp/bedrock-protocol": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
@@ -2799,5 +2800,5 @@
     "platform-overrides": {
         "php": "8.1.0"
     },
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }
