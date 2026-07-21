@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "482670aca3f767182160d41895848203",
+    "content-hash": "c082961b6f84e62d5368f6331a197df6",
     "packages": [
         {
             "name": "adhocore/json-comment",
@@ -897,16 +897,16 @@
         },
         {
             "name": "xpocketmp/bedrock-protocol",
-            "version": "58.0.1+bedrock-1.26.30",
+            "version": "dev-bedrock-1.26.40",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ClousClouds/BedrockProtocol.git",
-                "reference": "8eb5a390a8d913ee54b97ac71f42899ecbb5c419"
+                "reference": "872fbdeb73b27c6e6ae5eb01e8370f01737838b3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ClousClouds/BedrockProtocol/zipball/8eb5a390a8d913ee54b97ac71f42899ecbb5c419",
-                "reference": "8eb5a390a8d913ee54b97ac71f42899ecbb5c419",
+                "url": "https://api.github.com/repos/ClousClouds/BedrockProtocol/zipball/872fbdeb73b27c6e6ae5eb01e8370f01737838b3",
+                "reference": "872fbdeb73b27c6e6ae5eb01e8370f01737838b3",
                 "shasum": ""
             },
             "require": {
@@ -938,9 +938,9 @@
             "description": "An implementation of the Minecraft: Bedrock Edition protocol in PHP",
             "support": {
                 "issues": "https://github.com/ClousClouds/BedrockProtocol/issues",
-                "source": "https://github.com/ClousClouds/BedrockProtocol/tree/58.0.1+bedrock-1.26.30"
+                "source": "https://github.com/ClousClouds/BedrockProtocol/tree/bedrock-1.26.40"
             },
-            "time": "2026-07-05T17:46:09+00:00"
+            "time": "2026-07-20T06:27:33+00:00"
         }
     ],
     "packages-dev": [
@@ -2759,7 +2759,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "xpocketmp/bedrock-protocol": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
