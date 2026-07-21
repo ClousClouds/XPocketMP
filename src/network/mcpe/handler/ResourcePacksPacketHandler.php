@@ -33,6 +33,7 @@ use pocketmine\network\mcpe\protocol\ResourcePackDataInfoPacket;
 use pocketmine\network\mcpe\protocol\ResourcePacksInfoPacket;
 use pocketmine\network\mcpe\protocol\ResourcePackStackPacket;
 use pocketmine\network\mcpe\protocol\types\Experiments;
+use pocketmine\network\mcpe\protocol\types\resourcepacks\DownloadingResourcePackClientResponse;
 use pocketmine\network\mcpe\protocol\types\resourcepacks\ResourcePackClientResponseType;
 use pocketmine\network\mcpe\protocol\types\resourcepacks\ResourcePackInfoEntry;
 use pocketmine\network\mcpe\protocol\types\resourcepacks\ResourcePackStackEntry;
@@ -170,6 +171,7 @@ class ResourcePacksPacketHandler extends PacketHandler{
 					throw new PacketHandlingException("Cannot request resource pack metadata after resource pack stack");
 				}
 
+				/** @var DownloadingResourcePackClientResponse $response */
 				$response = $packet->getResponse();
 
 				if(count($response->getPackIds()) > count($this->resourcePacksById)){
