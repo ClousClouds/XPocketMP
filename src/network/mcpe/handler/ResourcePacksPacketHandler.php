@@ -207,7 +207,7 @@ class ResourcePacksPacketHandler extends PacketHandler{
 					));
 					$seen[$pack->getPackId()] = true;
 				}
-				$this->session->getLogger()->debug("Player requested download of " . count($packet->packIds) . " resource packs");
+				$this->session->getLogger()->debug("Player requested download of " . count($response->getPackIds()) . " resource packs");
 				break;
 			case ResourcePackClientResponseType::DOWNLOADING_FINISHED:
 				if($this->requestedStack){
