@@ -901,12 +901,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ClousClouds/BedrockProtocol.git",
-                "reference": "872fbdeb73b27c6e6ae5eb01e8370f01737838b3"
+                "reference": "08ff4f6ee70f5e704b71b14d4e64de7d1b7e46a5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ClousClouds/BedrockProtocol/zipball/872fbdeb73b27c6e6ae5eb01e8370f01737838b3",
-                "reference": "872fbdeb73b27c6e6ae5eb01e8370f01737838b3",
+                "url": "https://api.github.com/repos/ClousClouds/BedrockProtocol/zipball/08ff4f6ee70f5e704b71b14d4e64de7d1b7e46a5",
+                "reference": "08ff4f6ee70f5e704b71b14d4e64de7d1b7e46a5",
                 "shasum": ""
             },
             "require": {
@@ -940,7 +940,7 @@
                 "issues": "https://github.com/ClousClouds/BedrockProtocol/issues",
                 "source": "https://github.com/ClousClouds/BedrockProtocol/tree/bedrock-1.26.40"
             },
-            "time": "2026-07-20T06:27:33+00:00"
+            "time": "2026-07-22T06:37:17+00:00"
         }
     ],
     "packages-dev": [
