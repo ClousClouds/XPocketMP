@@ -156,7 +156,7 @@ class ResourcePacksPacketHandler extends PacketHandler{
 
 	public function handleResourcePackClientResponse(ResourcePackClientResponsePacket $packet) : bool{
 		switch($packet->getResponse()->getType()){
-      case ResourcePackClientResponseType::CANCEL:
+	  case ResourcePackClientResponseType::CANCEL:
 				//TODO: add lang strings for this
 				$this->session->disconnect("Refused resource packs", "You must accept resource packs to join this server.", true);
 				break;
