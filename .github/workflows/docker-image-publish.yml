@@ -1,9 +1,6 @@
 name: Update Docker Hub images
 
 on:
-  release:
-    types:
-      - published
   workflow_dispatch:
     inputs:
       release:
