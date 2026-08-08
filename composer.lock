@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c082961b6f84e62d5368f6331a197df6",
+    "content-hash": "2921f363394e7820c0e9ca743237c6a9",
     "packages": [
         {
             "name": "adhocore/json-comment",
@@ -200,32 +200,6 @@
                 "source": "https://github.com/pmmp/BedrockBlockUpgradeSchema/tree/5.2.0"
             },
             "time": "2025-10-02T13:22:10+00:00"
-        },
-        {
-            "name": "pocketmine/bedrock-data",
-            "version": "6.7.0+bedrock-1.26.30",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/pmmp/BedrockData.git",
-                "reference": "bdb44a48fb6beffb6e9f6864f06d2232eb62b6a3"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/pmmp/BedrockData/zipball/bdb44a48fb6beffb6e9f6864f06d2232eb62b6a3",
-                "reference": "bdb44a48fb6beffb6e9f6864f06d2232eb62b6a3",
-                "shasum": ""
-            },
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "CC0-1.0"
-            ],
-            "description": "Blobs of data generated from Minecraft: Bedrock Edition, used by PocketMine-MP",
-            "support": {
-                "issues": "https://github.com/pmmp/BedrockData/issues",
-                "source": "https://github.com/pmmp/BedrockData/tree/bedrock-1.26.30"
-            },
-            "time": "2026-06-22T19:41:55+00:00"
         },
         {
             "name": "pocketmine/bedrock-item-upgrade-schema",
@@ -827,16 +801,16 @@
         },
         {
             "name": "symfony/filesystem",
-            "version": "v6.4.39",
+            "version": "v6.4.43",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",
-                "reference": "c507b077756b4e3e09adbbe7975fac81cd3722ca"
+                "reference": "9ff03da12d67649fbd1f34ca95951554624d0a16"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/filesystem/zipball/c507b077756b4e3e09adbbe7975fac81cd3722ca",
-                "reference": "c507b077756b4e3e09adbbe7975fac81cd3722ca",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/9ff03da12d67649fbd1f34ca95951554624d0a16",
+                "reference": "9ff03da12d67649fbd1f34ca95951554624d0a16",
                 "shasum": ""
             },
             "require": {
@@ -873,7 +847,7 @@
             "description": "Provides basic utilities for the filesystem",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/filesystem/tree/v6.4.39"
+                "source": "https://github.com/symfony/filesystem/tree/v6.4.43"
             },
             "funding": [
                 {
@@ -893,7 +867,34 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-05-07T13:11:42+00:00"
+            "time": "2026-06-27T10:13:35+00:00"
+        },
+        {
+            "name": "xpocketmp/bedrock-data",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ClousClouds/BedrockData.git",
+                "reference": "dd9cc11a252840e5c1a2e2f0f628ce20a2c6967f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ClousClouds/BedrockData/zipball/dd9cc11a252840e5c1a2e2f0f628ce20a2c6967f",
+                "reference": "dd9cc11a252840e5c1a2e2f0f628ce20a2c6967f",
+                "shasum": ""
+            },
+            "default-branch": true,
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "CC0-1.0"
+            ],
+            "description": "Blobs of data generated from Minecraft: Bedrock Edition, used by PocketMine-MP",
+            "support": {
+                "issues": "https://github.com/ClousClouds/BedrockData/issues",
+                "source": "https://github.com/ClousClouds/BedrockData/tree/master"
+            },
+            "time": "2026-08-08T03:28:45+00:00"
         },
         {
             "name": "xpocketmp/bedrock-protocol",
@@ -901,12 +902,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ClousClouds/BedrockProtocol.git",
-                "reference": "59c42f78bc3c2797e225cf92b3c51aff7c775f52"
+                "reference": "4e6cc80308386bab380960e5089e76df2b994366"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ClousClouds/BedrockProtocol/zipball/59c42f78bc3c2797e225cf92b3c51aff7c775f52",
-                "reference": "59c42f78bc3c2797e225cf92b3c51aff7c775f52",
+                "url": "https://api.github.com/repos/ClousClouds/BedrockProtocol/zipball/4e6cc80308386bab380960e5089e76df2b994366",
+                "reference": "4e6cc80308386bab380960e5089e76df2b994366",
                 "shasum": ""
             },
             "require": {
@@ -940,7 +941,7 @@
                 "issues": "https://github.com/ClousClouds/BedrockProtocol/issues",
                 "source": "https://github.com/ClousClouds/BedrockProtocol/tree/bedrock-1.26.40"
             },
-            "time": "2026-07-22T06:50:24+00:00"
+            "time": "2026-08-08T03:30:44+00:00"
         }
     ],
     "packages-dev": [
@@ -2760,6 +2761,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "xpocketmp/bedrock-data": 20,
         "xpocketmp/bedrock-protocol": 20
     },
     "prefer-stable": false,
