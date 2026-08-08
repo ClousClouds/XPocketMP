@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2921f363394e7820c0e9ca743237c6a9",
+    "content-hash": "70b80d549b88450fa9337624739ee6d8",
     "packages": [
         {
             "name": "adhocore/json-comment",
@@ -871,7 +871,7 @@
         },
         {
             "name": "xpocketmp/bedrock-data",
-            "version": "dev-master",
+            "version": "6.8.0+bedrock-1.26.40",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ClousClouds/BedrockData.git",
@@ -883,7 +883,6 @@
                 "reference": "ebc5c01fa9436a1b4d8d11a42f651ae4d46e4762",
                 "shasum": ""
             },
-            "default-branch": true,
             "type": "library",
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -892,22 +891,22 @@
             "description": "Blobs of data generated from Minecraft: Bedrock Edition, used by PocketMine-MP",
             "support": {
                 "issues": "https://github.com/ClousClouds/BedrockData/issues",
-                "source": "https://github.com/ClousClouds/BedrockData/tree/master"
+                "source": "https://github.com/ClousClouds/BedrockData/tree/6.8.0+bedrock-1.26.40"
             },
             "time": "2026-08-08T08:02:24+00:00"
         },
         {
             "name": "xpocketmp/bedrock-protocol",
-            "version": "dev-bedrock-1.26.40",
+            "version": "59.0.0+bedrock-1.26.40",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ClousClouds/BedrockProtocol.git",
-                "reference": "b94f7768875db89821938e016af8a4f3445f4f10"
+                "reference": "00e5520ab905a1b6d7689e32ab01bec3193ee250"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ClousClouds/BedrockProtocol/zipball/b94f7768875db89821938e016af8a4f3445f4f10",
-                "reference": "b94f7768875db89821938e016af8a4f3445f4f10",
+                "url": "https://api.github.com/repos/ClousClouds/BedrockProtocol/zipball/00e5520ab905a1b6d7689e32ab01bec3193ee250",
+                "reference": "00e5520ab905a1b6d7689e32ab01bec3193ee250",
                 "shasum": ""
             },
             "require": {
@@ -939,9 +938,9 @@
             "description": "An implementation of the Minecraft: Bedrock Edition protocol in PHP",
             "support": {
                 "issues": "https://github.com/ClousClouds/BedrockProtocol/issues",
-                "source": "https://github.com/ClousClouds/BedrockProtocol/tree/bedrock-1.26.40"
+                "source": "https://github.com/ClousClouds/BedrockProtocol/tree/59.0.0+bedrock-1.26.40"
             },
-            "time": "2026-08-08T05:49:34+00:00"
+            "time": "2026-08-08T08:32:52+00:00"
         }
     ],
     "packages-dev": [
@@ -2760,10 +2759,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "xpocketmp/bedrock-data": 20,
-        "xpocketmp/bedrock-protocol": 20
-    },
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
