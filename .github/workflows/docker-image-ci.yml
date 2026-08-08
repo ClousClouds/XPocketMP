@@ -1,8 +1,8 @@
 name: Docker image CI
 
 on:
-  push:
-  pull_request:
+  workflow_dispatch:
+l
 
 jobs:
   build:
