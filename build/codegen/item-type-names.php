@@ -38,6 +38,7 @@ use function fopen;
 use function fwrite;
 use function is_dir;
 use function mkdir;
+use function str_replace;
 use function strtoupper;
 use const SORT_STRING;
 use const STDERR;

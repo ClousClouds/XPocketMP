@@ -303,8 +303,13 @@ class InGamePacketHandler extends PacketHandler{
 
 	public function handleInventoryTransaction(InventoryTransactionPacket $packet) : bool{
 		$result = true;
+		$trData = $packet->trData;
 
-		if(count($packet->trData->getActions()) > 50){
+		if($trData === null){
+			throw new PacketHandlingException("Missing transaction data");
+		}
+
+		if(count($trData->getActions()) > 50){
 			throw new PacketHandlingException("Too many actions in inventory transaction");
 		}
 		if($packet->requestChangedSlots !== null && count($packet->requestChangedSlots) > 10){
@@ -312,20 +317,20 @@ class InGamePacketHandler extends PacketHandler{
 		}
 
 		$this->inventoryManager->setCurrentItemStackRequestId($packet->requestId);
-		$this->inventoryManager->addRawPredictedSlotChanges($packet->trData->getActions());
+		$this->inventoryManager->addRawPredictedSlotChanges($trData->getActions());
 
-		if($packet->trData instanceof NormalTransactionData){
-			$result = $this->handleNormalTransaction($packet->trData, $packet->requestId);
-		}elseif($packet->trData instanceof MismatchTransactionData){
+		if($trData instanceof NormalTransactionData){
+			$result = $this->handleNormalTransaction($trData, $packet->requestId);
+		}elseif($trData instanceof MismatchTransactionData){
 			$this->session->getLogger()->debug("Mismatch transaction received");
 			$this->inventoryManager->requestSyncAll();
 			$result = true;
-		}elseif($packet->trData instanceof UseItemTransactionData){
-			$result = $this->handleUseItemTransaction($packet->trData);
-		}elseif($packet->trData instanceof UseItemOnEntityTransactionData){
-			$result = $this->handleUseItemOnEntityTransaction($packet->trData);
-		}elseif($packet->trData instanceof ReleaseItemTransactionData){
-			$result = $this->handleReleaseItemTransaction($packet->trData);
+		}elseif($trData instanceof UseItemTransactionData){
+			$result = $this->handleUseItemTransaction($trData);
+		}elseif($trData instanceof UseItemOnEntityTransactionData){
+			$result = $this->handleUseItemOnEntityTransaction($trData);
+		}elseif($trData instanceof ReleaseItemTransactionData){
+			$result = $this->handleReleaseItemTransaction($trData);
 		}
 
 		$this->inventoryManager->syncMismatchedPredictedSlotChanges();
@@ -337,7 +342,11 @@ class InGamePacketHandler extends PacketHandler{
 		if($packet->requestChangedSlots !== null){
 			foreach($packet->requestChangedSlots as $containerInfo){
 				foreach($containerInfo->getChangedSlotIndexes() as $netSlot){
-					[$windowId, $slot] = ItemStackContainerIdTranslator::translate($containerInfo->getContainerId(), $this->inventoryManager->getCurrentWindowId(), $netSlot);
+					[$windowId, $slot] = ItemStackContainerIdTranslator::translate(
+						$containerInfo->getContainerId(),
+						$this->inventoryManager->getCurrentWindowId(),
+						$netSlot
+					);
 					$inventoryAndSlot = $this->inventoryManager->locateWindowAndSlot($windowId, $slot);
 					if($inventoryAndSlot !== null){ //trigger the normal slot sync logic
 						$this->inventoryManager->onSlotChange($inventoryAndSlot[0], $inventoryAndSlot[1]);
