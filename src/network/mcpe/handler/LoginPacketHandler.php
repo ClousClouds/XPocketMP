@@ -288,23 +288,34 @@ class LoginPacketHandler extends PacketHandler{
 			throw PacketHandlingException::wrap($e);
 		}
 
-		if(isset($clientDataClaims["PersonaPieces"]) && is_array($clientDataClaims["PersonaPieces"])){
-			foreach($clientDataClaims["PersonaPieces"] as &$piece){
+		$personaPieces = $clientDataClaims["PersonaPieces"] ?? null;
+
+		if(is_array($personaPieces)){
+			foreach($personaPieces as $i => $piece){
+				if(!is_array($piece)){
+					continue;
+				}
+
 				if(isset($piece["PieceType"])){
-					$piece["PieceType"] = (int) $piece["PieceType"];
+					$pieceType = $piece["PieceType"];
+					if(is_int($pieceType) || is_float($pieceType) || is_string($pieceType)){
+						$piece["PieceType"] = (int) $pieceType;
+					}
 				}
 
 				if(isset($piece["PackId"]) && is_string($piece["PackId"])){
 					$piece["PackId"] = Uuid::fromString($piece["PackId"]);
 				}
-			}
-			unset($piece);
-		}
 
-		foreach($clientDataClaims["PersonaPieces"] ?? [] as $i => $piece){
-			$this->session->getLogger()->debug(
-				"PersonaPieces[$i].PackId type: " . get_debug_type($piece["PackId"] ?? null)
-			);
+				$personaPieces[$i] = $piece;
+
+				$this->session->getLogger()->debug(
+					"PersonaPieces[" . (string) $i . "].PackId type: " .
+					get_debug_type($piece["PackId"] ?? null)
+				);
+			}
+
+			$clientDataClaims["PersonaPieces"] = $personaPieces;
 		}
 
 		$mapper = $this->defaultJsonMapper("ClientData JWT body");
@@ -313,6 +324,7 @@ class LoginPacketHandler extends PacketHandler{
 		}catch(\JsonMapper_Exception $e){
 			throw PacketHandlingException::wrap($e);
 		}
+
 		return $clientData;
 	}
 
