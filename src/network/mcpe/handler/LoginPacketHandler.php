@@ -50,8 +50,11 @@ use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use function base64_decode;
 use function chr;
+use function get_debug_type;
 use function gettype;
+use function is_array;
 use function is_object;
+use function is_string;
 use function json_decode;
 use function md5;
 use function ord;
@@ -283,6 +286,31 @@ class LoginPacketHandler extends PacketHandler{
 			[, $clientDataClaims, ] = JwtUtils::parse($clientDataJwt);
 		}catch(JwtException $e){
 			throw PacketHandlingException::wrap($e);
+		}
+
+		if(isset($clientDataClaims["PersonaPieces"]) && is_array($clientDataClaims["PersonaPieces"])){
+			/** @var array<string, mixed> $pieces */
+			$pieces = $clientDataClaims["PersonaPieces"];
+			foreach($pieces as $i => $piece){
+				if(is_array($piece)){
+					if(isset($piece["PieceType"])){
+						$pieces[$i]["PieceType"] = (int) $piece["PieceType"];
+					}
+
+					if(isset($piece["PackId"]) && is_string($piece["PackId"])){
+						$pieces[$i]["PackId"] = Uuid::fromString($piece["PackId"]);
+					}
+				}
+			}
+			$clientDataClaims["PersonaPieces"] = $pieces;
+		}
+
+		foreach($clientDataClaims["PersonaPieces"] ?? [] as $i => $piece){
+			if(is_array($piece)){
+				$this->session->getLogger()->debug(
+					"PersonaPieces[" . ((int) $i) . "].PackId type: " . get_debug_type($piece["PackId"] ?? null)
+				);
+			}
 		}
 
 		$mapper = $this->defaultJsonMapper("ClientData JWT body");
