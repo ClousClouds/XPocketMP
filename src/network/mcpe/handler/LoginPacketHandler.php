@@ -53,6 +53,8 @@ use function chr;
 use function get_debug_type;
 use function gettype;
 use function is_array;
+use function is_float;
+use function is_int;
 use function is_object;
 use function is_string;
 use function json_decode;
@@ -291,6 +293,7 @@ class LoginPacketHandler extends PacketHandler{
 		$personaPieces = $clientDataClaims["PersonaPieces"] ?? null;
 
 		if(is_array($personaPieces)){
+			/** @var array<int|string, mixed> $personaPieces */
 			foreach($personaPieces as $i => $piece){
 				if(!is_array($piece)){
 					continue;
