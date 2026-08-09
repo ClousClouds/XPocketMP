@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "70b80d549b88450fa9337624739ee6d8",
+    "content-hash": "4b7e7fa277ed1c18181c3afe65eddcfa",
     "packages": [
         {
             "name": "adhocore/json-comment",
@@ -897,16 +897,16 @@
         },
         {
             "name": "xpocketmp/bedrock-protocol",
-            "version": "59.0.0+bedrock-1.26.40",
+            "version": "60.0.2+bedrock-1.26.40",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ClousClouds/BedrockProtocol.git",
-                "reference": "00e5520ab905a1b6d7689e32ab01bec3193ee250"
+                "reference": "6f467c49365a3ebd041ff279045a4892ad0579d2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ClousClouds/BedrockProtocol/zipball/00e5520ab905a1b6d7689e32ab01bec3193ee250",
-                "reference": "00e5520ab905a1b6d7689e32ab01bec3193ee250",
+                "url": "https://api.github.com/repos/ClousClouds/BedrockProtocol/zipball/6f467c49365a3ebd041ff279045a4892ad0579d2",
+                "reference": "6f467c49365a3ebd041ff279045a4892ad0579d2",
                 "shasum": ""
             },
             "require": {
@@ -938,9 +938,9 @@
             "description": "An implementation of the Minecraft: Bedrock Edition protocol in PHP",
             "support": {
                 "issues": "https://github.com/ClousClouds/BedrockProtocol/issues",
-                "source": "https://github.com/ClousClouds/BedrockProtocol/tree/59.0.0+bedrock-1.26.40"
+                "source": "https://github.com/ClousClouds/BedrockProtocol/tree/60.0.2+bedrock-1.26.40"
             },
-            "time": "2026-08-08T08:32:52+00:00"
+            "time": "2026-08-09T10:27:36+00:00"
         }
     ],
     "packages-dev": [

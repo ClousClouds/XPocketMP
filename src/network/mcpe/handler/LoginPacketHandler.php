@@ -50,8 +50,11 @@ use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use function base64_decode;
 use function chr;
+use function get_debug_type;
 use function gettype;
+use function is_array;
 use function is_object;
+use function is_string;
 use function json_decode;
 use function md5;
 use function ord;
@@ -283,6 +286,25 @@ class LoginPacketHandler extends PacketHandler{
 			[, $clientDataClaims, ] = JwtUtils::parse($clientDataJwt);
 		}catch(JwtException $e){
 			throw PacketHandlingException::wrap($e);
+		}
+
+		if(isset($clientDataClaims["PersonaPieces"]) && is_array($clientDataClaims["PersonaPieces"])){
+			foreach($clientDataClaims["PersonaPieces"] as &$piece){
+				if(isset($piece["PieceType"])){
+					$piece["PieceType"] = (int) $piece["PieceType"];
+				}
+
+				if(isset($piece["PackId"]) && is_string($piece["PackId"])){
+					$piece["PackId"] = Uuid::fromString($piece["PackId"]);
+				}
+			}
+			unset($piece);
+		}
+
+		foreach($clientDataClaims["PersonaPieces"] ?? [] as $i => $piece){
+			$this->session->getLogger()->debug(
+				"PersonaPieces[$i].PackId type: " . get_debug_type($piece["PackId"] ?? null)
+			);
 		}
 
 		$mapper = $this->defaultJsonMapper("ClientData JWT body");
