@@ -53,6 +53,7 @@ use function chr;
 use function get_debug_type;
 use function gettype;
 use function is_array;
+use function is_int;
 use function is_object;
 use function is_string;
 use function json_decode;
@@ -293,12 +294,14 @@ class LoginPacketHandler extends PacketHandler{
 			$pieces = $clientDataClaims["PersonaPieces"];
 			foreach($pieces as $i => $piece){
 				if(is_array($piece)){
-					if(isset($piece["PieceType"])){
-						$pieces[$i]["PieceType"] = (int) $piece["PieceType"];
-					}
-
-					if(isset($piece["PackId"]) && is_string($piece["PackId"])){
-						$pieces[$i]["PackId"] = Uuid::fromString($piece["PackId"]);
+					if(isset($piece["PieceType"]) && isset($piece["PackId"])){
+						$pieceType = (int) $piece["PieceType"];
+						$packId = $piece["PackId"];
+						$pieces[$i]["PieceType"] = $pieceType;
+						
+						if(is_string($packId)){
+							$pieces[$i]["PackId"] = Uuid::fromString($packId);
+						}
 					}
 				}
 			}
@@ -307,8 +310,9 @@ class LoginPacketHandler extends PacketHandler{
 
 		foreach($clientDataClaims["PersonaPieces"] ?? [] as $i => $piece){
 			if(is_array($piece)){
+				$id = is_int($i) ? $i : (int) $i;
 				$this->session->getLogger()->debug(
-					"PersonaPieces[" . ((int) $i) . "].PackId type: " . get_debug_type($piece["PackId"] ?? null)
+					"PersonaPieces[" . $id . "].PackId type: " . get_debug_type($piece["PackId"] ?? null)
 				);
 			}
 		}
