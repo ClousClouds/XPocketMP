@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3e61eda9869debd01596bd18810ee048",
+    "content-hash": "7e6e59598a0edda1ecb1ca4849f945d3",
     "packages": [
         {
             "name": "adhocore/json-comment",
@@ -199,6 +199,7 @@
                 "issues": "https://github.com/pmmp/BedrockBlockUpgradeSchema/issues",
                 "source": "https://github.com/pmmp/BedrockBlockUpgradeSchema/tree/5.2.0"
             },
+            "abandoned": true,
             "time": "2025-10-02T13:22:10+00:00"
         },
         {
@@ -898,16 +899,16 @@
         },
         {
             "name": "xpocketmp/bedrock-protocol",
-            "version": "60.0.6+bedrock-1.26.40",
+            "version": "60.1.0+bedrock-1.26.40",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ClousClouds/BedrockProtocol.git",
-                "reference": "f7f584f98f8768e836b019a23c3473039a04cbf4"
+                "reference": "6484492aad1241d3d84d49b0f9b4bcb6f0d5e938"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ClousClouds/BedrockProtocol/zipball/f7f584f98f8768e836b019a23c3473039a04cbf4",
-                "reference": "f7f584f98f8768e836b019a23c3473039a04cbf4",
+                "url": "https://api.github.com/repos/ClousClouds/BedrockProtocol/zipball/6484492aad1241d3d84d49b0f9b4bcb6f0d5e938",
+                "reference": "6484492aad1241d3d84d49b0f9b4bcb6f0d5e938",
                 "shasum": ""
             },
             "require": {
@@ -939,9 +940,9 @@
             "description": "An implementation of the Minecraft: Bedrock Edition protocol in PHP",
             "support": {
                 "issues": "https://github.com/ClousClouds/BedrockProtocol/issues",
-                "source": "https://github.com/ClousClouds/BedrockProtocol/tree/60.0.6+bedrock-1.26.40"
+                "source": "https://github.com/ClousClouds/BedrockProtocol/tree/60.1.0+bedrock-1.26.40"
             },
-            "time": "2026-08-09T12:38:49+00:00"
+            "time": "2026-08-14T08:46:49+00:00"
         }
     ],
     "packages-dev": [
