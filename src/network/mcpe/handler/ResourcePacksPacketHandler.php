@@ -33,8 +33,6 @@ use pocketmine\network\mcpe\protocol\ResourcePackDataInfoPacket;
 use pocketmine\network\mcpe\protocol\ResourcePacksInfoPacket;
 use pocketmine\network\mcpe\protocol\ResourcePackStackPacket;
 use pocketmine\network\mcpe\protocol\types\Experiments;
-use pocketmine\network\mcpe\protocol\types\resourcepacks\DownloadingResourcePackClientResponse;
-use pocketmine\network\mcpe\protocol\types\resourcepacks\ResourcePackClientResponseType;
 use pocketmine\network\mcpe\protocol\types\resourcepacks\ResourcePackInfoEntry;
 use pocketmine\network\mcpe\protocol\types\resourcepacks\ResourcePackStackEntry;
 use pocketmine\network\mcpe\protocol\types\resourcepacks\ResourcePackType;
@@ -155,12 +153,12 @@ class ResourcePacksPacketHandler extends PacketHandler{
 	}
 
 	public function handleResourcePackClientResponse(ResourcePackClientResponsePacket $packet) : bool{
-		switch($packet->getResponse()->getType()){
-	  case ResourcePackClientResponseType::CANCEL:
+		switch($packet->status){
+			case ResourcePackClientResponsePacket::STATUS_REFUSED:
 				//TODO: add lang strings for this
 				$this->session->disconnect("Refused resource packs", "You must accept resource packs to join this server.", true);
 				break;
-			case ResourcePackClientResponseType::DOWNLOADING:
+			case ResourcePackClientResponsePacket::STATUS_SEND_PACKS:
 				if($this->requestedMetadata){
 					throw new PacketHandlingException("Cannot request resource pack metadata multiple times");
 				}
@@ -171,15 +169,12 @@ class ResourcePacksPacketHandler extends PacketHandler{
 					throw new PacketHandlingException("Cannot request resource pack metadata after resource pack stack");
 				}
 
-				/** @var DownloadingResourcePackClientResponse $response */
-				$response = $packet->getResponse();
-
-				if(count($response->getPackIds()) > count($this->resourcePacksById)){
-					throw new PacketHandlingException(sprintf("Requested metadata for more resource packs (%d) than available on the server (%d)", count($response->getPackIds()), count($this->resourcePacksById)));
+				if(count($packet->packIds) > count($this->resourcePacksById)){
+					throw new PacketHandlingException(sprintf("Requested metadata for more resource packs (%d) than available on the server (%d)", count($packet->packIds), count($this->resourcePacksById)));
 				}
 
 				$seen = [];
-				foreach($response->getPackIds() as $uuid){
+				foreach($packet->packIds as $uuid){
 					//dirty hack for mojang's dirty hack for versions
 					$splitPos = strpos($uuid, "_");
 					if($splitPos !== false){
@@ -207,9 +202,9 @@ class ResourcePacksPacketHandler extends PacketHandler{
 					));
 					$seen[$pack->getPackId()] = true;
 				}
-				$this->session->getLogger()->debug("Player requested download of " . count($response->getPackIds()) . " resource packs");
+				$this->session->getLogger()->debug("Player requested download of " . count($packet->packIds) . " resource packs");
 				break;
-			case ResourcePackClientResponseType::DOWNLOADING_FINISHED:
+			case ResourcePackClientResponsePacket::STATUS_HAVE_ALL_PACKS:
 				if($this->requestedStack){
 					throw new PacketHandlingException("Cannot request resource pack stack multiple times");
 				}
@@ -230,7 +225,7 @@ class ResourcePacksPacketHandler extends PacketHandler{
 				$this->session->sendDataPacket(ResourcePackStackPacket::create($stack, false, ProtocolInfo::MINECRAFT_VERSION_NETWORK, new Experiments([], false), false));
 				$this->session->getLogger()->debug("Applying resource pack stack");
 				break;
-			case ResourcePackClientResponseType::RESOURCE_PACK_STACK_FINISHED:
+			case ResourcePackClientResponsePacket::STATUS_COMPLETED:
 				$this->session->getLogger()->debug("Resource packs sequence completed");
 				if($this->session->getHandler() === $this){
 					$this->session->setHandler(null);

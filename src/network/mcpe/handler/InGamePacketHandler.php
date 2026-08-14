@@ -314,9 +314,7 @@ class InGamePacketHandler extends PacketHandler{
 		}
 
 		$this->inventoryManager->setCurrentItemStackRequestId($packet->requestId);
-		if($trData !== null){
-			$this->inventoryManager->addRawPredictedSlotChanges($trData->getActions());
-		}
+		$this->inventoryManager->addRawPredictedSlotChanges($trData->getActions());
 
 		if($trData instanceof NormalTransactionData){
 			$result = $this->handleNormalTransaction($trData, $packet->requestId);

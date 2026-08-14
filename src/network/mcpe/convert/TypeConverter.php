@@ -148,7 +148,7 @@ class TypeConverter{
 		if($ingredient instanceof MetaWildcardRecipeIngredient){
 			$id = $ingredient->getItemId();
 			$meta = self::RECIPE_INPUT_WILDCARD_META;
-			$descriptor = new IntIdMetaItemDescriptor($id, $meta);
+			$descriptor = new NameItemDescriptor($id, $meta);
 		}elseif($ingredient instanceof ExactRecipeIngredient){
 			$item = $ingredient->getItem();
 			[$id, $meta, $blockRuntimeId] = $this->itemTranslator->toNetworkId($item);
