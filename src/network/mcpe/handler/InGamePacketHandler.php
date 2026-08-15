@@ -90,7 +90,6 @@ use pocketmine\network\mcpe\protocol\types\inventory\UseItemOnEntityTransactionD
 use pocketmine\network\mcpe\protocol\types\inventory\UseItemTransactionData;
 use pocketmine\network\mcpe\protocol\types\PlayerAction;
 use pocketmine\network\mcpe\protocol\types\PlayerAuthInputFlags;
-use pocketmine\network\mcpe\protocol\types\PlayerBlockActionStopBreak;
 use pocketmine\network\mcpe\protocol\types\PlayerBlockActionWithBlockInfo;
 use pocketmine\network\PacketHandlingException;
 use pocketmine\player\Player;
@@ -280,9 +279,7 @@ class InGamePacketHandler extends PacketHandler{
 			}
 			foreach(Utils::promoteKeys($blockActions) as $k => $blockAction){
 				$actionHandled = false;
-				if($blockAction instanceof PlayerBlockActionStopBreak){
-					$actionHandled = $this->handlePlayerActionFromData($blockAction->getActionType(), new BlockPosition(0, 0, 0), Facing::DOWN);
-				}elseif($blockAction instanceof PlayerBlockActionWithBlockInfo){
+				if($blockAction instanceof PlayerBlockActionWithBlockInfo){
 					$actionHandled = $this->handlePlayerActionFromData($blockAction->getActionType(), $blockAction->getBlockPosition(), $blockAction->getFace());
 				}
 
@@ -303,29 +300,34 @@ class InGamePacketHandler extends PacketHandler{
 
 	public function handleInventoryTransaction(InventoryTransactionPacket $packet) : bool{
 		$result = true;
+		$trData = $packet->trData;
 
-		if(count($packet->trData->getActions()) > 50){
+		if($trData === null){
+			throw new PacketHandlingException("Missing transaction data");
+		}
+
+		if(count($trData->getActions()) > 50){
 			throw new PacketHandlingException("Too many actions in inventory transaction");
 		}
-		if($packet->requestChangedSlots !== null && count($packet->requestChangedSlots) > 10){
+		if(count($packet->requestChangedSlots) > 10){
 			throw new PacketHandlingException("Too many slot sync requests in inventory transaction");
 		}
 
 		$this->inventoryManager->setCurrentItemStackRequestId($packet->requestId);
-		$this->inventoryManager->addRawPredictedSlotChanges($packet->trData->getActions());
+		$this->inventoryManager->addRawPredictedSlotChanges($trData->getActions());
 
-		if($packet->trData instanceof NormalTransactionData){
-			$result = $this->handleNormalTransaction($packet->trData, $packet->requestId);
-		}elseif($packet->trData instanceof MismatchTransactionData){
+		if($trData instanceof NormalTransactionData){
+			$result = $this->handleNormalTransaction($trData, $packet->requestId);
+		}elseif($trData instanceof MismatchTransactionData){
 			$this->session->getLogger()->debug("Mismatch transaction received");
 			$this->inventoryManager->requestSyncAll();
 			$result = true;
-		}elseif($packet->trData instanceof UseItemTransactionData){
-			$result = $this->handleUseItemTransaction($packet->trData);
-		}elseif($packet->trData instanceof UseItemOnEntityTransactionData){
-			$result = $this->handleUseItemOnEntityTransaction($packet->trData);
-		}elseif($packet->trData instanceof ReleaseItemTransactionData){
-			$result = $this->handleReleaseItemTransaction($packet->trData);
+		}elseif($trData instanceof UseItemTransactionData){
+			$result = $this->handleUseItemTransaction($trData);
+		}elseif($trData instanceof UseItemOnEntityTransactionData){
+			$result = $this->handleUseItemOnEntityTransaction($trData);
+		}elseif($trData instanceof ReleaseItemTransactionData){
+			$result = $this->handleReleaseItemTransaction($trData);
 		}
 
 		$this->inventoryManager->syncMismatchedPredictedSlotChanges();
@@ -334,10 +336,14 @@ class InGamePacketHandler extends PacketHandler{
 		//haven't changed. Handling these is necessary to ensure the client inventory stays in sync if the server
 		//rejects the transaction. The most common example of this is equipping armor by right-click, which doesn't send
 		//a legacy prediction action for the destination armor slot.
-		if($packet->requestChangedSlots !== null){
+		if(count($packet->requestChangedSlots) > 0){
 			foreach($packet->requestChangedSlots as $containerInfo){
 				foreach($containerInfo->getChangedSlotIndexes() as $netSlot){
-					[$windowId, $slot] = ItemStackContainerIdTranslator::translate($containerInfo->getContainerId(), $this->inventoryManager->getCurrentWindowId(), $netSlot);
+					[$windowId, $slot] = ItemStackContainerIdTranslator::translate(
+						$containerInfo->getContainerId(),
+						$this->inventoryManager->getCurrentWindowId(),
+						$netSlot
+					);
 					$inventoryAndSlot = $this->inventoryManager->locateWindowAndSlot($windowId, $slot);
 					if($inventoryAndSlot !== null){ //trigger the normal slot sync logic
 						$this->inventoryManager->onSlotChange($inventoryAndSlot[0], $inventoryAndSlot[1]);

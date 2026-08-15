@@ -50,8 +50,13 @@ use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use function base64_decode;
 use function chr;
+use function get_debug_type;
 use function gettype;
+use function is_array;
+use function is_float;
+use function is_int;
 use function is_object;
+use function is_string;
 use function json_decode;
 use function md5;
 use function ord;
@@ -285,12 +290,44 @@ class LoginPacketHandler extends PacketHandler{
 			throw PacketHandlingException::wrap($e);
 		}
 
+		$personaPieces = $clientDataClaims["PersonaPieces"] ?? null;
+
+		if(is_array($personaPieces)){
+			/** @var array<int|string, mixed> $personaPieces */
+			foreach($personaPieces as $i => $piece){
+				if(!is_array($piece)){
+					continue;
+				}
+
+				if(isset($piece["PieceType"])){
+					$pieceType = $piece["PieceType"];
+					if(is_int($pieceType) || is_float($pieceType) || is_string($pieceType)){
+						$piece["PieceType"] = (int) $pieceType;
+					}
+				}
+
+				if(isset($piece["PackId"]) && is_string($piece["PackId"])){
+					$piece["PackId"] = Uuid::fromString($piece["PackId"]);
+				}
+
+				$personaPieces[$i] = $piece;
+
+				$this->session->getLogger()->debug(
+					"PersonaPieces[" . (string) $i . "].PackId type: " .
+					get_debug_type($piece["PackId"] ?? null)
+				);
+			}
+
+			$clientDataClaims["PersonaPieces"] = $personaPieces;
+		}
+
 		$mapper = $this->defaultJsonMapper("ClientData JWT body");
 		try{
 			$clientData = $mapper->map($clientDataClaims, new ClientData());
 		}catch(\JsonMapper_Exception $e){
 			throw PacketHandlingException::wrap($e);
 		}
+
 		return $clientData;
 	}
 
